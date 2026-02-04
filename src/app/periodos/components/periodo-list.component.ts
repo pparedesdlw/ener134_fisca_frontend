@@ -130,14 +130,14 @@ export class PeriodoListComponent implements OnInit {
   }
 
   eliminar(periodo: Periodo): void {
-    if (confirm(`¿Está seguro de eliminar el periodo ${periodo.codigoPeriodo}?`)) {
-      this.periodoService.eliminar(periodo.id!).subscribe({
+    if (confirm(`¿Está seguro de dar de baja el periodo ${periodo.codigoPeriodo}?`)) {
+      this.periodoService.cambiarEstado(periodo.id!, false, 'admin').subscribe({
         next: () => {
-          this.snackBar.open('Periodo eliminado correctamente', 'Cerrar', { duration: 3000 });
+          this.snackBar.open('Periodo dado de baja correctamente', 'Cerrar', { duration: 3000 });
           this.cargarPeriodos();
         },
         error: (error) => {
-          this.mostrarError('Error al eliminar periodo', error);
+          this.mostrarError('Error al dar de baja el periodo', error);
         }
       });
     }
