@@ -9,7 +9,6 @@ import { NgxSpinnerService } from 'ngx-spinner';
 export class LoaderComponent {
   constructor(public loader: LoaderService, private spinner: NgxSpinnerService) { }
   ngOnInit() {
-    /** spinner starts on init */
     this.loader.isLoading$.subscribe(isLoading => {
       if (isLoading) {
         this.spinner.show();

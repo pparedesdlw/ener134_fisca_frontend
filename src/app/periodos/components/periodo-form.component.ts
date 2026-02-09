@@ -45,6 +45,7 @@ export class PeriodoFormComponent implements OnInit {
     this.isEditMode = data.mode === 'edit';
     this.form = this.fb.group({
       codigoPeriodo: ['', [Validators.required, Validators.pattern(/^\d{4}-T[1-4]$/)]],
+      descripcion: ['', [Validators.required, Validators.minLength(10)]],
       fechaInicio: ['', Validators.required],
       fechaFin: ['', Validators.required],
       estadoActivo: [true]
@@ -53,13 +54,22 @@ export class PeriodoFormComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.isEditMode && this.data.periodo) {
+      const fechaInicio = this.parsearFecha(this.data.periodo.fechaInicio);
+      const fechaFin = this.parsearFecha(this.data.periodo.fechaFin);
+      
       this.form.patchValue({
         codigoPeriodo: this.data.periodo.codigoPeriodo,
-        fechaInicio: this.data.periodo.fechaInicio,
-        fechaFin: this.data.periodo.fechaFin,
+        descripcion: this.data.periodo.descripcion || '',
+        fechaInicio: fechaInicio,
+        fechaFin: fechaFin,
         estadoActivo: this.data.periodo.estadoActivo
       });
     }
+  }
+
+  private parsearFecha(fechaStr: string): Date {
+    const partes = fechaStr.split('/');
+    return new Date(parseInt(partes[2]), parseInt(partes[1]) - 1, parseInt(partes[0]));
   }
 
   guardar(): void {
@@ -81,6 +91,7 @@ export class PeriodoFormComponent implements OnInit {
     
     const request: PeriodoCreateRequest = {
       codigoPeriodo: this.form.value.codigoPeriodo,
+      descripcion: this.form.value.descripcion,
       fechaInicio: this.formatearFecha(fechaInicio),
       fechaFin: this.formatearFecha(fechaFin),
       estadoActivo: this.form.value.estadoActivo,
@@ -106,6 +117,7 @@ export class PeriodoFormComponent implements OnInit {
     const request: PeriodoUpdateRequest = {
       id: this.data.periodo!.id!,
       codigoPeriodo: this.form.value.codigoPeriodo,
+      descripcion: this.form.value.descripcion,
       fechaInicio: this.formatearFecha(fechaInicio),
       fechaFin: this.formatearFecha(fechaFin),
       estadoActivo: this.form.value.estadoActivo,

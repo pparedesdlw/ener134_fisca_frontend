@@ -27,7 +27,12 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 export class MainLayoutComponent {
   menuItems = [
     { path: '/home', icon: 'home', label: 'Inicio' },
-    { path: '/periodos', icon: 'calendar_today', label: 'Periodos de Fiscalización' }
+    { path: '/periodos', icon: 'calendar_today', label: 'Periodos de Fiscalización' },
+    { path: '/empresas', icon: 'business', label: 'Empresas' },
+    { path: '/feriados', icon: 'event', label: 'Feriados' },
+    { path: '/roles', icon: 'assessment', label: 'Roles' },
+    { path: '/parametros', icon: 'assessment', label: 'Parámetros' },
+    { path: '/muestras', icon: 'assessment', label: 'Muestras' }
   ];
 
   constructor(private router: Router) {}

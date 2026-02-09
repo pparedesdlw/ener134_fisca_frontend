@@ -1,0 +1,72 @@
+<h2 mat-dialog-title>{{isEditMode ? 'Editar' : 'Nueva'}} Muestra</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="form">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Código de Muestra</mat-label>
+      <input matInput formControlName="codigoMuestra" placeholder="Ej: 00001">
+      <mat-hint>Formato: 0000# (Ej: 00001)</mat-hint>
+      <mat-error *ngIf="form.get('codigoMuestra')?.hasError('required')">
+        El código es requerido
+      </mat-error>
+      <mat-error *ngIf="form.get('codigoMuestra')?.hasError('minlength')">
+        El código debe tener al menos 5 caracteres
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Tamaño de Muestra</mat-label>
+      <input matInput formControlName="muestra" maxlength="8" placeholder="Tamaño de Muestra">
+      <mat-hint>Ingrese el tamaño de muestra (mínimo 1 caracter)</mat-hint>
+      <mat-hint align="end">{{ form.get('muestra')?.value?.length || 0 }}/8</mat-hint>
+      <mat-error *ngIf="form.get('muestra')?.hasError('required')">
+        El tamaño de muestra es requerido
+      </mat-error>
+      <mat-error *ngIf="form.get('muestra')?.hasError('minlength')">
+        El tamaño de muestra debe tener al menos 1 caracter
+      </mat-error>
+      <mat-error *ngIf="form.get('muestra')?.hasError('pattern')">
+        Solo se permiten números
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Nivel de Confianza</mat-label>
+      <input matInput formControlName="confianza" maxlength="8" placeholder="Nivel de Confianza">
+      <mat-hint>Ingrese el nivel de confianza (mínimo 1 caracter)</mat-hint>
+      <mat-hint align="end">{{ form.get('confianza')?.value?.length || 0 }}/8</mat-hint>
+      <mat-error *ngIf="form.get('confianza')?.hasError('required')">
+        El nivel de confianza es requerido
+      </mat-error>
+      <mat-error *ngIf="form.get('confianza')?.hasError('minlength')">
+        El nivel de confianza debe tener al menos 1 caracter
+      </mat-error>
+      <mat-error *ngIf="form.get('confianza')?.hasError('pattern')">
+        Solo se permiten números
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Margen de Error</mat-label>
+      <input matInput formControlName="error" maxlength="8" placeholder="Margen de Error">
+      <mat-hint>Ingrese el margen de error (mínimo 1 caracter)</mat-hint>
+      <mat-hint align="end">{{ form.get('error')?.value?.length || 0 }}/8</mat-hint>
+      <mat-error *ngIf="form.get('error')?.hasError('required')">
+        El margen de error es requerido
+      </mat-error>
+      <mat-error *ngIf="form.get('error')?.hasError('minlength')">
+        El margen de error debe tener al menos 1 caracter
+      </mat-error>
+      <mat-error *ngIf="form.get('error')?.hasError('pattern')">
+        Solo se permiten números
+      </mat-error>
+    </mat-form-field>
+
+    <mat-checkbox formControlName="estado">Estado Activo</mat-checkbox>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="cancelar()">Cancelar</button>
+  <button mat-raised-button color="primary" (click)="guardar()" [disabled]="form.invalid">Guardar</button>
+</mat-dialog-actions>
