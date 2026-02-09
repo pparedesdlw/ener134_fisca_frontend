@@ -1,0 +1,48 @@
+<h2 mat-dialog-title>{{isEditMode ? 'Editar' : 'Nuevo'}} Rol</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="form">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Código de Rol</mat-label>
+      <input matInput formControlName="codigoRol" placeholder="Ej: 0001">
+      <mat-hint>Formato: 0000 (Ej: 0001)</mat-hint>
+      <mat-error *ngIf="form.get('codigoRol')?.hasError('required')">
+        El código es requerido
+      </mat-error>
+      <mat-error *ngIf="form.get('codigoRol')?.hasError('pattern')">
+        Formato inválido. Use 0000 (Ej: 0001)
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Responsable del Rol</mat-label>
+      <input matInput formControlName="responsableRol" placeholder="Ingrese el responsable del rol">
+      <mat-hint>Ingrese el responsable del rol</mat-hint>
+      <mat-error *ngIf="form.get('responsableRol')?.hasError('required')">
+        El responsable del rol es requerido
+      </mat-error>
+      <mat-error *ngIf="form.get('responsableRol')?.hasError('minlength')">
+        El responsable del rol debe tener al menos 3 caracteres
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Descripción del Rol</mat-label>
+      <input matInput formControlName="descripcionRol" placeholder="Descripción del rol">
+      <mat-hint>Ingrese una descripción detallada (mínimo 5 caracteres)</mat-hint>
+      <mat-error *ngIf="form.get('descripcionRol')?.hasError('required')">
+        La descripción del rol es requerida
+      </mat-error>
+      <mat-error *ngIf="form.get('descripcionRol')?.hasError('minlength')">
+        La descripción del rol debe tener al menos 5 caracteres
+      </mat-error>
+    </mat-form-field>
+
+    <mat-checkbox formControlName="estado">Estado Activo</mat-checkbox>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="cancelar()">Cancelar</button>
+  <button mat-raised-button color="primary" (click)="guardar()" [disabled]="form.invalid">Guardar</button>
+</mat-dialog-actions>

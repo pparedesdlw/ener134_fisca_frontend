@@ -1,0 +1,60 @@
+<h2 mat-dialog-title>{{isEditMode ? 'Editar' : 'Nuevo'}} Parámetro</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="form">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Código de Parámetro</mat-label>
+      <input matInput formControlName="codigoParametro" placeholder="Ej: XXXXX_ITEM_1">
+      <mat-hint>Formato: XXXXX_ITEM_1 (Ej: UMBRAL_ITEM_1)</mat-hint>
+      <mat-error *ngIf="form.get('codigoParametro')?.hasError('required')">
+        El código es requerido
+      </mat-error>
+      <mat-error *ngIf="form.get('codigoParametro')?.hasError('minlength')">
+        El código debe tener al menos 4 caracteres
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Descripción del Parámetro</mat-label>
+      <input matInput formControlName="descripcionParametro" placeholder="Descripción del parámetro">
+      <mat-hint>Ingrese una descripción detallada (mínimo 5 caracteres)</mat-hint>
+      <mat-error *ngIf="form.get('descripcionParametro')?.hasError('required')">
+        La descripción del parámetro es requerida
+      </mat-error>
+      <mat-error *ngIf="form.get('descripcionParametro')?.hasError('minlength')">
+        La descripción del parámetro debe tener al menos 5 caracteres
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>valor</mat-label>
+      <input matInput formControlName="valor" placeholder="Ingrese el valor">
+      <mat-hint>Ingrese el valor del parámetro</mat-hint>
+      <mat-error *ngIf="form.get('valor')?.hasError('required')">
+        El valor es requerido
+      </mat-error>
+      <mat-error *ngIf="form.get('valor')?.hasError('minlength')">
+        El valor debe tener al menos 1 caracter
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Tipo</mat-label>
+      <mat-select formControlName="tipoParametro">
+        <mat-option value="UMBRAL">Umbral</mat-option>
+        <mat-option value="CUMPLE">Cumple</mat-option>
+      </mat-select>
+      <mat-hint>Seleccione un Tipo de Parámetro</mat-hint>
+      <mat-error *ngIf="form.get('tipoParametro')?.hasError('required')">
+        El Tipo es requerido
+      </mat-error>
+    </mat-form-field>
+
+    <mat-checkbox formControlName="estado">Estado Activo</mat-checkbox>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="cancelar()">Cancelar</button>
+  <button mat-raised-button color="primary" (click)="guardar()" [disabled]="form.invalid">Guardar</button>
+</mat-dialog-actions>

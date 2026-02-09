@@ -1,0 +1,89 @@
+<mat-card>
+  <mat-card-header>
+    <mat-card-title>
+      <h2>Parámetros</h2>
+    </mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content>
+    <div class="toolbar">
+      <div class="actions">
+        <button mat-raised-button color="primary" (click)="crear()">
+          <mat-icon>add</mat-icon>
+          Nuevo Parametro
+        </button>
+      </div>
+
+      <div class="filters">
+        <button mat-button 
+                [color]="filtroEstado === 'todos' ? 'primary' : ''"
+                (click)="filtrarPorEstado('todos')">
+          Todos
+        </button>
+        <button mat-button 
+                [color]="filtroEstado === 'activos' ? 'primary' : ''"
+                (click)="filtrarPorEstado('activos')">
+          Activos
+        </button>
+        <button mat-button 
+                [color]="filtroEstado === 'inactivos' ? 'primary' : ''"
+                (click)="filtrarPorEstado('inactivos')">
+          Inactivos
+        </button>
+      </div>
+
+    </div>
+
+    <table mat-table [dataSource]="parametros" class="mat-elevation-z2">
+      <ng-container matColumnDef="codigoParametro">
+        <th mat-header-cell *matHeaderCellDef>Código</th>
+        <td mat-cell *matCellDef="let parametro"><strong>{{parametro.codigoParametro}}</strong></td>
+      </ng-container>
+
+      <ng-container matColumnDef="descripcionParametro">
+        <th mat-header-cell *matHeaderCellDef>Descripcion Parámetro</th>
+        <td mat-cell *matCellDef="let parametro">{{parametro.descripcionParametro}}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="valor">
+        <th mat-header-cell *matHeaderCellDef>valor</th>
+        <td mat-cell *matCellDef="let parametro">{{parametro.valor}}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="tipoParametro">
+        <th mat-header-cell *matHeaderCellDef>Tipo Parámetro</th>
+        <td mat-cell *matCellDef="let parametro">{{parametro.tipoParametro}}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="deEstado">
+        <th mat-header-cell *matHeaderCellDef>Estado</th>
+        <td mat-cell *matCellDef="let parametro">
+          <mat-chip [color]="getEstadoColor(parametro.deEstado)">
+            {{parametro.deEstado}}
+          </mat-chip>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="acciones">
+        <th mat-header-cell *matHeaderCellDef>Acciones</th>
+        <td mat-cell *matCellDef="let parametro">
+          <button mat-icon-button color="primary" (click)="editar(parametro)" matTooltip="Editar">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button color="warn" (click)="eliminar(parametro)" matTooltip="Eliminar">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+      <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell" [attr.colspan]="displayedColumns.length">
+          No hay parámetros registrados
+        </td>
+      </tr>
+    </table>
+  </mat-card-content>
+</mat-card>

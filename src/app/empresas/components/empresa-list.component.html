@@ -1,0 +1,101 @@
+<mat-card>
+  <mat-card-header>
+    <mat-card-title>
+      <h2>Empresas</h2>
+    </mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content>
+    <div class="toolbar">
+      <div class="actions">
+        <button mat-raised-button color="primary" (click)="crear()">
+          <mat-icon>add</mat-icon>
+          Nuevo Empresa
+        </button>
+      </div>
+
+      <div class="filters">
+        <button mat-button 
+                [color]="filtroEstado === 'todos' ? 'primary' : ''"
+                (click)="filtrarPorEstado('todos')">
+          Todos
+        </button>
+        <button mat-button 
+                [color]="filtroEstado === 'activos' ? 'primary' : ''"
+                (click)="filtrarPorEstado('activos')">
+          Activos
+        </button>
+        <button mat-button 
+                [color]="filtroEstado === 'inactivos' ? 'primary' : ''"
+                (click)="filtrarPorEstado('inactivos')">
+          Inactivos
+        </button>
+      </div>
+
+    </div>
+
+    
+
+    <table mat-table [dataSource]="empresas" class="mat-elevation-z2">
+      <ng-container matColumnDef="codigoEmpresa">
+        <th mat-header-cell *matHeaderCellDef>Código</th>
+        <td mat-cell *matCellDef="let empresa"><strong>{{empresa.codigoEmpresa}}</strong></td>
+      </ng-container>
+
+      <ng-container matColumnDef="ruc">
+        <th mat-header-cell *matHeaderCellDef>RUC</th>
+        <td mat-cell *matCellDef="let empresa">{{empresa.ruc}}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="deTipo">
+        <th mat-header-cell *matHeaderCellDef>Tipo</th>
+        <td mat-cell *matCellDef="let empresa">{{empresa.deTipo}}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="razonSocial">
+        <th mat-header-cell *matHeaderCellDef>Razon Social</th>
+        <td mat-cell *matCellDef="let empresa">{{empresa.razonSocial}}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="descripcion">
+        <th mat-header-cell *matHeaderCellDef>Descripción</th>
+        <td mat-cell *matCellDef="let empresa">{{empresa.descripcion}}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="region">
+        <th mat-header-cell *matHeaderCellDef>Región</th>
+        <td mat-cell *matCellDef="let empresa">{{empresa.region}}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="deEstado">
+        <th mat-header-cell *matHeaderCellDef>Estado</th>
+        <td mat-cell *matCellDef="let empresa">
+          <mat-chip [color]="getEstadoColor(empresa.deEstado)">
+            {{empresa.deEstado}}
+          </mat-chip>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="acciones">
+        <th mat-header-cell *matHeaderCellDef>Acciones</th>
+        <td mat-cell *matCellDef="let empresa">
+          <button mat-icon-button color="primary" (click)="editar(empresa)" matTooltip="Editar">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button color="warn" (click)="eliminar(empresa)" matTooltip="Eliminar">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+      <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell" [attr.colspan]="displayedColumns.length">
+          No hay empresas registrados
+        </td>
+      </tr>
+    </table>
+  </mat-card-content>
+</mat-card>
