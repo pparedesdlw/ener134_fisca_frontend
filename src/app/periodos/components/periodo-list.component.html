@@ -66,9 +66,9 @@
       <ng-container matColumnDef="diasRestantes">
         <th mat-header-cell *matHeaderCellDef>Días Restantes</th>
         <td mat-cell *matCellDef="let periodo">
-          <span [class.text-danger]="periodo.diasRestantes && periodo.diasRestantes < 0"
-                [class.text-warning]="periodo.diasRestantes && periodo.diasRestantes >= 0 && periodo.diasRestantes <= 30">
-            {{periodo.diasRestantes}}
+          <span [class.text-danger]="getDiasRestantes(periodo) === 0 && periodo.deEstado === 'Cerrado'"
+                [class.text-warning]="getDiasRestantes(periodo) > 0 && getDiasRestantes(periodo) <= 30">
+            {{getDiasRestantes(periodo)}}
           </span>
         </td>
       </ng-container>
@@ -83,13 +83,14 @@
                   color="accent"
                   (click)="ampliarVigencia(periodo)"
                   [disabled]="!puedeAmpliar(periodo)"
-                  matTooltip="Ampliar Vigencia (CUS007)">
+                  matTooltip="Ampliar Vigencia">
             <mat-icon>event</mat-icon>
           </button>
           <button mat-icon-button 
                   [color]="periodo.estadoActivo ? 'warn' : 'accent'" 
                   (click)="cambiarEstado(periodo)"
-                  [matTooltip]="periodo.estadoActivo ? 'Desactivar' : 'Activar'">
+                  [disabled]="!puedeCambiarEstado(periodo)"
+                  [matTooltip]="periodo.deEstado === 'Cerrado' ? 'No se puede cambiar estado de periodo cerrado' : (periodo.estadoActivo ? 'Desactivar' : 'Activar')">
             <mat-icon>{{periodo.estadoActivo ? 'toggle_on' : 'toggle_off'}}</mat-icon>
           </button>
           <button mat-icon-button color="warn" (click)="eliminar(periodo)" matTooltip="Eliminar">

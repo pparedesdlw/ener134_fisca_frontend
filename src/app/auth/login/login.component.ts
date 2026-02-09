@@ -42,7 +42,13 @@ export class LoginComponent {
 
   login(): void {
     if (this.form.invalid) return;
-    console.log(this.form.value);
-    this.router.navigate(['./home'])
+    
+    const { username, password } = this.form.value;
+    console.log('Login attempt:', username);
+    
+    sessionStorage.setItem('currentUser', username || 'admin');
+    sessionStorage.setItem('isAuthenticated', 'true');
+    
+    this.router.navigate(['/periodos']);
   }
 }

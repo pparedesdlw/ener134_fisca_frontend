@@ -17,15 +17,18 @@ export interface Periodo {
 
 export interface PeriodoCreateRequest {
   codigoPeriodo: string;
+  descripcion: string;
   fechaInicio: string;
   fechaFin: string;
   estadoActivo: boolean;
+  estadoEliminado: boolean;
   usuarioCreacion: string;
 }
 
 export interface PeriodoUpdateRequest {
   id: number;
   codigoPeriodo: string;
+  descripcion: string;
   fechaInicio: string;
   fechaFin: string;
   estadoActivo: boolean;

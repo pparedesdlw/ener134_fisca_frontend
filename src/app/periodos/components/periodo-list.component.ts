@@ -12,6 +12,7 @@ import { PeriodoService } from '../services/periodo.service';
 import { Periodo } from '../models/periodo.model';
 import { PeriodoFormComponent } from './periodo-form.component';
 import { AmpliarVigenciaDialogComponent } from './ampliar-vigencia-dialog.component';
+import { AuthService } from '../../auth/services/auth.service';
 
 @Component({
   selector: 'app-periodo-list',
@@ -45,6 +46,7 @@ export class PeriodoListComponent implements OnInit {
 
   constructor(
     private periodoService: PeriodoService,
+    private authService: AuthService,
     private dialog: MatDialog,
     private snackBar: MatSnackBar
   ) {}
@@ -101,7 +103,7 @@ export class PeriodoListComponent implements OnInit {
 
   cambiarEstado(periodo: Periodo): void {
     const nuevoEstado = !periodo.estadoActivo;
-    this.periodoService.cambiarEstado(periodo.id!, nuevoEstado, 'admin').subscribe({
+    this.periodoService.cambiarEstado(periodo.id!, nuevoEstado, this.authService.currentUsername).subscribe({
       next: () => {
         this.snackBar.open(
           `Periodo ${nuevoEstado ? 'activado' : 'desactivado'} correctamente`,
@@ -130,14 +132,14 @@ export class PeriodoListComponent implements OnInit {
   }
 
   eliminar(periodo: Periodo): void {
-    if (confirm(`¿Está seguro de eliminar el periodo ${periodo.codigoPeriodo}?`)) {
-      this.periodoService.eliminar(periodo.id!).subscribe({
+    if (confirm(`¿Está seguro de dar de baja el periodo ${periodo.codigoPeriodo}?`)) {
+      this.periodoService.cambiarEstado(periodo.id!, false, this.authService.currentUsername).subscribe({
         next: () => {
-          this.snackBar.open('Periodo eliminado correctamente', 'Cerrar', { duration: 3000 });
+          this.snackBar.open('Periodo dado de baja correctamente', 'Cerrar', { duration: 3000 });
           this.cargarPeriodos();
         },
         error: (error) => {
-          this.mostrarError('Error al eliminar periodo', error);
+          this.mostrarError('Error al dar de baja el periodo', error);
         }
       });
     }
@@ -160,5 +162,18 @@ export class PeriodoListComponent implements OnInit {
 
   puedeAmpliar(periodo: Periodo): boolean {
     return periodo.estadoActivo === true && periodo.deEstado === 'Activo';
+  }
+
+  puedeCambiarEstado(periodo: Periodo): boolean {
+    // Un periodo cerrado por tiempo no puede desactivarse
+    return periodo.deEstado !== 'Cerrado';
+  }
+
+  getDiasRestantes(periodo: Periodo): number {
+    // Los días restantes en periodos cerrados no deben ser negativos, solo 0
+    if (periodo.diasRestantes !== undefined && periodo.diasRestantes < 0) {
+      return 0;
+    }
+    return periodo.diasRestantes || 0;
   }
 }
