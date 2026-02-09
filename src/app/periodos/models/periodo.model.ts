@@ -21,6 +21,7 @@ export interface PeriodoCreateRequest {
   fechaInicio: string;
   fechaFin: string;
   estadoActivo: boolean;
+  estadoEliminado: boolean;
   usuarioCreacion: string;
 }
 

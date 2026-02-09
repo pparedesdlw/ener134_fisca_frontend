@@ -1,6 +1,6 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, AbstractControl, ValidationErrors } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -8,8 +8,10 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatIconModule } from '@angular/material/icon';
 import { PeriodoService } from '../services/periodo.service';
 import { Periodo } from '../models/periodo.model';
+import { AuthService } from '../../auth/services/auth.service';
 
 @Component({
   selector: 'app-ampliar-vigencia-dialog',
@@ -22,10 +24,11 @@ import { Periodo } from '../models/periodo.model';
     MatInputModule,
     MatButtonModule,
     MatDatepickerModule,
-    MatNativeDateModule
+    MatNativeDateModule,
+    MatIconModule
   ],
   template: `
-    <h2 mat-dialog-title>Ampliar Vigencia (CUS007) - {{data.periodo.codigoPeriodo}}</h2>
+    <h2 mat-dialog-title>Ampliar Vigencia - {{data.periodo.codigoPeriodo}}</h2>
 
     <mat-dialog-content>
       <div class="info-box">
@@ -44,6 +47,12 @@ import { Periodo } from '../models/periodo.model';
           <mat-error *ngIf="form.get('fechaAmpliacion')?.hasError('required')">
             La fecha de ampliación es requerida
           </mat-error>
+          <mat-error *ngIf="form.get('fechaAmpliacion')?.hasError('fechaPosterior')">
+            La nueva fecha debe ser posterior a la fecha fin actual
+          </mat-error>
+          <mat-error *ngIf="form.get('fechaAmpliacion')?.hasError('maxDias')">
+            No se permite ampliar más de 90 días (CUS007)
+          </mat-error>
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="full-width">
@@ -59,7 +68,7 @@ import { Periodo } from '../models/periodo.model';
             El sustento es requerido
           </mat-error>
           <mat-error *ngIf="form.get('sustentoAmpliacion')?.hasError('minlength')">
-            El sustento debe tener al menos 50 caracteres (CUS007)
+            El sustento debe tener al menos 50 caracteres
           </mat-error>
         </mat-form-field>
       </form>
@@ -91,24 +100,70 @@ import { Periodo } from '../models/periodo.model';
     }
   `]
 })
-export class AmpliarVigenciaDialogComponent {
+export class AmpliarVigenciaDialogComponent implements OnInit {
   form: FormGroup;
+  fechaFinActual: Date;
 
   constructor(
     private fb: FormBuilder,
     private periodoService: PeriodoService,
+    private authService: AuthService,
     private snackBar: MatSnackBar,
     public dialogRef: MatDialogRef<AmpliarVigenciaDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { periodo: Periodo }
   ) {
+    // Parsear la fecha fin actual del periodo
+    this.fechaFinActual = this.parsearFecha(data.periodo.fechaFin);
+
     this.form = this.fb.group({
-      fechaAmpliacion: ['', Validators.required],
+      fechaAmpliacion: ['', [Validators.required, this.validarFechaAmpliacion.bind(this)]],
       sustentoAmpliacion: ['', [Validators.required, Validators.minLength(50)]]
     });
   }
 
+  ngOnInit(): void {
+    // Verificar que el periodo esté activo
+    if (!this.data.periodo.estadoActivo) {
+      this.snackBar.open('No se puede ampliar un período cerrado', 'Cerrar', { duration: 5000 });
+      this.dialogRef.close();
+    }
+  }
+
+  private validarFechaAmpliacion(control: AbstractControl): ValidationErrors | null {
+    if (!control.value) {
+      return null;
+    }
+
+    const fechaSeleccionada = new Date(control.value);
+    
+    // Validar que la fecha sea posterior a la fecha fin actual
+    if (fechaSeleccionada <= this.fechaFinActual) {
+      return { fechaPosterior: true };
+    }
+
+    // Validar que no supere 90 días adicionales
+    const maxFecha = new Date(this.fechaFinActual);
+    maxFecha.setDate(maxFecha.getDate() + 90);
+    
+    if (fechaSeleccionada > maxFecha) {
+      return { maxDias: true };
+    }
+
+    return null;
+  }
+
+  private parsearFecha(fechaStr: string): Date {
+    // Formato esperado: dd/MM/yyyy
+    const partes = fechaStr.split('/');
+    return new Date(parseInt(partes[2]), parseInt(partes[1]) - 1, parseInt(partes[0]));
+  }
+
   ampliar(): void {
     if (this.form.invalid) {
+      // Marcar todos los campos como touched para mostrar errores
+      Object.keys(this.form.controls).forEach(key => {
+        this.form.get(key)?.markAsTouched();
+      });
       this.snackBar.open('Por favor complete todos los campos correctamente', 'Cerrar', { duration: 3000 });
       return;
     }
@@ -116,16 +171,23 @@ export class AmpliarVigenciaDialogComponent {
     const fechaAmpliacion = new Date(this.form.value.fechaAmpliacion);
     const fechaFormateada = this.formatearFecha(fechaAmpliacion);
 
+    // Obtener usuario actual del servicio de autenticación
+    const usuarioActual = this.authService.currentUsername;
+
     const request = {
       id: this.data.periodo.id!,
       nuevaFechaFin: fechaFormateada,
       sustentoAmpliacion: this.form.value.sustentoAmpliacion,
-      usuarioModificacion: 'admin'
+      usuarioModificacion: usuarioActual
     };
 
     this.periodoService.ampliarVigencia(request).subscribe({
       next: () => {
-        this.snackBar.open('Vigencia ampliada correctamente (CUS007)', 'Cerrar', { duration: 3000 });
+        this.snackBar.open(
+          'Vigencia ampliada correctamente hasta ' + fechaFormateada + '. Se notificará a los ERE-OR',
+          'Cerrar',
+          { duration: 5000 }
+        );
         this.dialogRef.close(true);
       },
       error: (error) => {
@@ -139,7 +201,7 @@ export class AmpliarVigenciaDialogComponent {
     const year = fecha.getFullYear();
     const month = String(fecha.getMonth() + 1).padStart(2, '0');
     const day = String(fecha.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
+    return year + '-' + month + '-' + day;
   }
 
   cancelar(): void {

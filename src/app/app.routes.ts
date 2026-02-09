@@ -10,7 +10,6 @@ import { RolListComponent } from './roles/components/rol-list.component';
 import { ParametroListComponent } from './parametros/components/parametro-list.component';
 import { MuestraListComponent } from './muestras/components/muestra-list.component';
 
-
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
   {

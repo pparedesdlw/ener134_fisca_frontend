@@ -12,6 +12,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { PeriodoService } from '../services/periodo.service';
 import { Periodo, PeriodoCreateRequest, PeriodoUpdateRequest } from '../models/periodo.model';
+import { AuthService } from '../../auth/services/auth.service';
 
 @Component({
   selector: 'app-periodo-form',
@@ -38,6 +39,7 @@ export class PeriodoFormComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private periodoService: PeriodoService,
+    private authService: AuthService,
     private snackBar: MatSnackBar,
     public dialogRef: MatDialogRef<PeriodoFormComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { mode: string; periodo?: Periodo }
@@ -95,7 +97,8 @@ export class PeriodoFormComponent implements OnInit {
       fechaInicio: this.formatearFecha(fechaInicio),
       fechaFin: this.formatearFecha(fechaFin),
       estadoActivo: this.form.value.estadoActivo,
-      usuarioCreacion: 'admin'
+      estadoEliminado: false,
+      usuarioCreacion: this.authService.currentUsername
     };
 
     this.periodoService.crear(request).subscribe({
@@ -121,7 +124,7 @@ export class PeriodoFormComponent implements OnInit {
       fechaInicio: this.formatearFecha(fechaInicio),
       fechaFin: this.formatearFecha(fechaFin),
       estadoActivo: this.form.value.estadoActivo,
-      usuarioModificacion: 'admin'
+      usuarioModificacion: this.authService.currentUsername
     };
 
     this.periodoService.editar(request).subscribe({
