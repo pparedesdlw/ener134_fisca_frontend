@@ -1,0 +1,59 @@
+<h2 mat-dialog-title>{{isEditMode ? 'Editar' : 'Nuevo'}} Responsable</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="form">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Código de Responsable</mat-label>
+      <input matInput formControlName="codigoResponsable" placeholder="Ej: 00001">
+      <mat-hint>Formato: 0000# (Ej: 00001)</mat-hint>
+      <mat-error *ngIf="form.get('codigoResponsable')?.hasError('required')">
+        El código es requerido
+      </mat-error>
+      <mat-error *ngIf="form.get('codigoResponsable')?.hasError('minlength')">
+        El código debe tener al menos 5 caracteres
+      </mat-error>
+      <mat-error *ngIf="form.get('nombreResponsable')?.hasError('pattern')">
+        Solo se permiten letras, números y espacios
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Código Empresa</mat-label>
+      <input matInput formControlName="codigoEmpresa" maxlength="20" placeholder="Código de Empresa">
+      <mat-hint>Ingrese el código de empresa (mínimo 4 caracteres)</mat-hint>
+      <mat-hint align="end">{{ form.get('codigoEmpresa')?.value?.length || 0 }}/20</mat-hint>
+      <mat-error *ngIf="form.get('codigoEmpresa')?.hasError('required')">
+        El código de empresa es requerido
+      </mat-error>
+      <mat-error *ngIf="form.get('codigoEmpresa')?.hasError('minlength')">
+        El código de empresa debe tener al menos 4 caracteres
+      </mat-error>
+      <mat-error *ngIf="form.get('codigoEmpresa')?.hasError('pattern')">
+        Solo se permiten letras y números
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Especialista Regional</mat-label>
+      <input matInput formControlName="nombreResponsable" maxlength="35" placeholder="Nombre del Especialista Regional">
+      <mat-hint>Ingrese el nombre del especialista regional (mínimo 1 caracter)</mat-hint>
+      <mat-hint align="end">{{ form.get('nombreResponsable')?.value?.length || 0 }}/35</mat-hint>
+      <mat-error *ngIf="form.get('nombreResponsable')?.hasError('required')">
+        El nombre del especialista regional es requerido
+      </mat-error>
+      <mat-error *ngIf="form.get('nombreResponsable')?.hasError('minlength')">
+        El nombre del especialista regional debe tener al menos 1 caracter
+      </mat-error>
+      <mat-error *ngIf="form.get('nombreResponsable')?.hasError('pattern')">
+        Solo se permiten letras, números y caracteres especiales como puntos, guiones, arroba y guiones bajos
+      </mat-error>
+    </mat-form-field>
+
+    <mat-checkbox formControlName="estado">Estado Activo</mat-checkbox>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="cancelar()">Cancelar</button>
+  <button mat-raised-button color="primary" (click)="guardar()" [disabled]="form.invalid">Guardar</button>
+</mat-dialog-actions>

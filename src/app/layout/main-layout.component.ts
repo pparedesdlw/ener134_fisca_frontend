@@ -31,8 +31,10 @@ export class MainLayoutComponent {
     { path: '/empresas', icon: 'business', label: 'Empresas' },
     { path: '/feriados', icon: 'event', label: 'Feriados' },
     { path: '/roles', icon: 'assessment', label: 'Roles' },
-    { path: '/parametros', icon: 'assessment', label: 'Parámetros' },
-    { path: '/muestras', icon: 'assessment', label: 'Muestras' }
+    { path: '/parametros', icon: 'tab', label: 'Parámetros' },
+    { path: '/muestras', icon: 'featured_play_list', label: 'Muestras' },
+    { path: '/responsables', icon: 'contact_mail', label: 'Responsables' },
+    { path: '/usuarios', icon: 'person', label: 'Usuarios' }
   ];
 
   constructor(private router: Router) {}

@@ -1,0 +1,47 @@
+.full-width {
+  width: 100%;
+  margin-bottom: 15px;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  min-width: 497px;
+  padding-top: 20px;
+}
+
+mat-dialog-content {
+  padding: 20px 24px;
+}
+
+mat-checkbox {
+  margin: 10px 0;
+}
+
+.error-message {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #f44336;
+  font-size: 14px;
+  margin-top: -10px;
+  margin-bottom: 15px;
+  padding: 8px 12px;
+  background: #ffebee;
+  border-radius: 4px;
+}
+
+.error-message mat-icon {
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+}
+
+mat-hint {
+  font-size: 12px;
+  color: #666;
+}
+
+mat-error {
+  font-size: 12px;
+}
