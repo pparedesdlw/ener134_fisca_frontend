@@ -1,0 +1,104 @@
+<mat-card>
+  <mat-card-header>
+    <mat-card-title>
+      <h2>Usuarios</h2>
+    </mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content>
+    <div class="toolbar">
+      <div class="actions">
+        <button mat-raised-button color="primary" (click)="crear()">
+          <mat-icon>add</mat-icon>
+          Nuevo Usuario
+        </button>
+      </div>
+
+      <div class="filters">
+        <button mat-button 
+                [color]="filtroEstado === 'todos' ? 'primary' : ''"
+                (click)="filtrarPorEstado('todos')">
+          Todos
+        </button>
+        <button mat-button 
+                [color]="filtroEstado === 'activos' ? 'primary' : ''"
+                (click)="filtrarPorEstado('activos')">
+          Activos
+        </button>
+        <button mat-button 
+                [color]="filtroEstado === 'inactivos' ? 'primary' : ''"
+                (click)="filtrarPorEstado('inactivos')">
+          Inactivos
+        </button>
+      </div>
+
+    </div>
+
+    <table mat-table [dataSource]="usuarios" class="mat-elevation-z2">
+      <ng-container matColumnDef="codigoUsuario">
+        <th mat-header-cell *matHeaderCellDef>Código</th>
+        <td mat-cell *matCellDef="let usuario"><strong>{{usuario.codigoUsuario}}</strong></td>
+      </ng-container>
+
+      <ng-container matColumnDef="nombreUsuario">
+        <th mat-header-cell *matHeaderCellDef>Usuario</th>
+        <td mat-cell *matCellDef="let usuario">{{usuario.nombreUsuario}}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="nombres">
+        <th mat-header-cell *matHeaderCellDef>Nombres</th>
+        <td mat-cell *matCellDef="let usuario">{{usuario.nombres}}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="apellidos">
+        <th mat-header-cell *matHeaderCellDef>Apellidos</th>
+        <td mat-cell *matCellDef="let usuario">{{usuario.apellidos}}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="email">
+        <th mat-header-cell *matHeaderCellDef>Email</th>
+        <td mat-cell *matCellDef="let usuario">{{usuario.email}}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="telefono">
+        <th mat-header-cell *matHeaderCellDef>Teléfono</th>
+        <td mat-cell *matCellDef="let usuario">{{usuario.telefono}}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="nombrePerfil">
+        <th mat-header-cell *matHeaderCellDef>Perfil</th>
+        <td mat-cell *matCellDef="let usuario">{{usuario.nombrePerfil}}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="deEstado">
+        <th mat-header-cell *matHeaderCellDef>Estado</th>
+        <td mat-cell *matCellDef="let usuario">
+          <mat-chip [color]="getEstadoColor(usuario.deEstado)">
+            {{usuario.deEstado}}
+          </mat-chip>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="acciones">
+        <th mat-header-cell *matHeaderCellDef>Acciones</th>
+        <td mat-cell *matCellDef="let usuario">
+          <button mat-icon-button color="primary" (click)="editar(usuario)" matTooltip="Editar">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button color="warn" (click)="eliminar(usuario)" matTooltip="Eliminar">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+      <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell" [attr.colspan]="displayedColumns.length">
+          No hay usuarios registrados
+        </td>
+      </tr>
+    </table>
+  </mat-card-content>
+</mat-card>

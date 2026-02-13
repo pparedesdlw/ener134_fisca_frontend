@@ -47,7 +47,7 @@ export class EmpresaFormComponent implements OnInit {
         this.isEditMode = data.mode === 'edit';
         this.form = this.fb.group({
           codigoEmpresa: ['', [Validators.required, Validators.minLength(6)]],
-          razonSocial: ['', [Validators.required, Validators.pattern('^[a-zA-Z0-9 ()/\&$]*$'), Validators.minLength(5)]],
+          razonSocial: ['', [Validators.required, Validators.pattern('^[a-zA-Z0-9 .()/\&$]*$'), Validators.minLength(5)]],
           ruc: ['', [Validators.required, Validators.pattern("^[0-9]*$"), Validators.maxLength(11)]],
           region: ['', [Validators.required]],
           tipo: ['', [Validators.required]],

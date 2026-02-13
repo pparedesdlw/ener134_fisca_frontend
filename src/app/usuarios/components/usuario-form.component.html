@@ -1,0 +1,102 @@
+<h2 mat-dialog-title>{{isEditMode ? 'Editar' : 'Nuevo'}} Usuario</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="form">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Código de Usuario</mat-label>
+      <input matInput formControlName="codigoUsuario" placeholder="Ej: 0001">
+      <mat-hint>Formato: 0000 (Ej: 0001)</mat-hint>
+      <mat-error *ngIf="form.get('codigoUsuario')?.hasError('required')">
+        El código es requerido
+      </mat-error>
+      <mat-error *ngIf="form.get('codigoUsuario')?.hasError('pattern')">
+        Formato inválido. Use 0000 (Ej: 0001)
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Nombre de Usuario</mat-label>
+      <input matInput formControlName="nombreUsuario" placeholder="Ingrese el nombre del usuario">
+      <mat-hint>Ingrese el nombre del usuario</mat-hint>
+      <mat-error *ngIf="form.get('nombreUsuario')?.hasError('required')">
+        El nombre de usuario es requerido
+      </mat-error>
+      <mat-error *ngIf="form.get('nombreUsuario')?.hasError('minlength')">
+        El nombre de usuario debe tener al menos 3 caracteres
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Nombres</mat-label>
+      <input matInput formControlName="nombres" placeholder="Ingrese los nombres del usuario">
+      <mat-hint>Ingrese los nombres del usuario (mínimo 5 caracteres)</mat-hint>
+      <mat-error *ngIf="form.get('nombres')?.hasError('required')">
+        Los nombres son requeridos
+      </mat-error>
+      <mat-error *ngIf="form.get('nombres')?.hasError('minlength')">
+        Los nombres deben tener al menos 5 caracteres
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Apellidos</mat-label>
+      <input matInput formControlName="apellidos" placeholder="Ingrese los apellidos del usuario">
+      <mat-hint>Ingrese los apellidos del usuario (mínimo 5 caracteres)</mat-hint>
+      <mat-error *ngIf="form.get('apellidos')?.hasError('required')">
+        Los apellidos son requeridos
+      </mat-error>
+      <mat-error *ngIf="form.get('apellidos')?.hasError('minlength')">
+        Los apellidos deben tener al menos 5 caracteres
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Email</mat-label>
+      <input matInput formControlName="email" placeholder="Ingrese el email del usuario">
+      <mat-hint>Ingrese el email del usuario</mat-hint>
+      <mat-error *ngIf="form.get('email')?.hasError('required')">
+        El email es requerido
+      </mat-error>
+      <mat-error *ngIf="form.get('email')?.hasError('email')">
+        El email no es válido
+      </mat-error>
+      <mat-error *ngIf="form.get('email')?.hasError('email')">
+        Por favor, introduce una dirección de correo electrónico válida
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Teléfono</mat-label>
+      <input matInput formControlName="telefono" maxlength="9" placeholder="Ingrese el teléfono del usuario">
+      <mat-hint>Ingrese el teléfono del usuario (mínimo 9 caracteres)</mat-hint>
+      <mat-hint align="end">{{ form.get('telefono')?.value?.length || 0 }}/9</mat-hint>
+      <mat-error *ngIf="form.get('telefono')?.hasError('required')">
+        El teléfono es requerido
+      </mat-error>
+      <mat-error *ngIf="form.get('telefono')?.hasError('minlength')">
+        El teléfono debe tener al menos 9 caracteres
+      </mat-error>
+      <mat-error *ngIf="form.get('telefono')?.hasError('pattern')">
+        Solo se permiten números
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Rol</mat-label>
+      <mat-select formControlName="perfil" required>
+        <mat-option *ngFor="let opt of optionsRol$ | async" [value]="opt.id">
+          {{ opt.descripcionRol }}
+        </mat-option>
+      </mat-select>
+      <mat-hint>Seleccione un Rol</mat-hint>      
+    </mat-form-field>
+
+
+    <mat-checkbox formControlName="estado">Estado Activo</mat-checkbox>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="cancelar()">Cancelar</button>
+  <button mat-raised-button color="primary" (click)="guardar()" [disabled]="form.invalid">Guardar</button>
+</mat-dialog-actions>

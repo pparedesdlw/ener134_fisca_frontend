@@ -9,6 +9,8 @@ import { FeriadoListComponent } from './feriados/components/feriado-list.compone
 import { RolListComponent } from './roles/components/rol-list.component';
 import { ParametroListComponent } from './parametros/components/parametro-list.component';
 import { MuestraListComponent } from './muestras/components/muestra-list.component';
+import { ResponsableListComponent } from './responsables/components/responsable-list.component';
+import { UsuarioListComponent } from './usuarios/components/usuario-list.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -24,6 +26,8 @@ export const routes: Routes = [
       { path: 'roles', component: RolListComponent },
       { path: 'parametros', component: ParametroListComponent },
       { path: 'muestras', component: MuestraListComponent },
+      { path: 'responsables', component: ResponsableListComponent },
+      { path: 'usuarios', component: UsuarioListComponent },
       { path: '', redirectTo: '/periodos', pathMatch: 'full' }
     ]
   },
