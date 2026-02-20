@@ -201,10 +201,10 @@ describe('PeriodoService', () => {
         usuarioModificacion: 'admin'
       };
 
-      const mockPeriodoAmpliado = { 
-        ...mockPeriodo, 
+      const mockPeriodoAmpliado = {
+        ...mockPeriodo,
         fechaFin: '30/04/2024',
-        sustentoAmpliacion: request.sustentoAmpliacion 
+        sustentoAmpliacion: request.sustentoAmpliacion
       };
 
       service.ampliarVigencia(request).subscribe(periodo => {

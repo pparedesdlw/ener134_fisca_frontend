@@ -13,19 +13,19 @@
           Nuevo Periodo
         </button>
       </div>
-      
+
       <div class="filters">
-        <button mat-button 
+        <button mat-button
                 [color]="filtroEstado === 'todos' ? 'primary' : ''"
                 (click)="filtrarPorEstado('todos')">
           Todos
         </button>
-        <button mat-button 
+        <button mat-button
                 [color]="filtroEstado === 'activos' ? 'primary' : ''"
                 (click)="filtrarPorEstado('activos')">
           Activos
         </button>
-        <button mat-button 
+        <button mat-button
                 [color]="filtroEstado === 'inactivos' ? 'primary' : ''"
                 (click)="filtrarPorEstado('inactivos')">
           Inactivos
@@ -79,15 +79,15 @@
           <button mat-icon-button color="primary" (click)="editar(periodo)" matTooltip="Editar">
             <mat-icon>edit</mat-icon>
           </button>
-          <button mat-icon-button 
+          <button mat-icon-button
                   color="accent"
                   (click)="ampliarVigencia(periodo)"
                   [disabled]="!puedeAmpliar(periodo)"
                   matTooltip="Ampliar Vigencia">
             <mat-icon>event</mat-icon>
           </button>
-          <button mat-icon-button 
-                  [color]="periodo.estadoActivo ? 'warn' : 'accent'" 
+          <button mat-icon-button
+                  [color]="periodo.estadoActivo ? 'warn' : 'accent'"
                   (click)="cambiarEstado(periodo)"
                   [disabled]="!puedeCambiarEstado(periodo)"
                   [matTooltip]="periodo.deEstado === 'Cerrado' ? 'No se puede cambiar estado de periodo cerrado' : (periodo.estadoActivo ? 'Desactivar' : 'Activar')">

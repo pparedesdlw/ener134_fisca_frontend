@@ -5,8 +5,8 @@
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>Código Periodo</mat-label>
       <mat-icon matIconPrefix>event_note</mat-icon>
-      <input matInput 
-             formControlName="codigoPeriodo" 
+      <input matInput
+             formControlName="codigoPeriodo"
              placeholder="Ejemplo: 2026-T1"
              style="font-size: 1.1em; font-weight: 500;">
       <mat-hint style="font-size: 0.95em; color: #1976d2;">
@@ -17,18 +17,6 @@
       </mat-error>
       <mat-error *ngIf="form.get('codigoPeriodo')?.hasError('pattern')">
         Formato inválido. Use YYYY-T[1-4] (Ejemplo: 2026-T1)
-      </mat-error>
-    </mat-form-field>
-
-    <mat-form-field appearance="outline" class="full-width">
-      <mat-label>Descripción</mat-label>
-      <textarea matInput formControlName="descripcion" placeholder="Descripción del periodo de fiscalización" rows="3"></textarea>
-      <mat-hint>Ingrese una descripción detallada (mínimo 10 caracteres)</mat-hint>
-      <mat-error *ngIf="form.get('descripcion')?.hasError('required')">
-        La descripción es requerida
-      </mat-error>
-      <mat-error *ngIf="form.get('descripcion')?.hasError('minlength')">
-        La descripción debe tener al menos 10 caracteres
       </mat-error>
     </mat-form-field>
 

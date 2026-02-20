@@ -1,0 +1,135 @@
+.filtros-container {
+  padding: 20px;
+
+  .filtros-row {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 8px;
+
+    mat-form-field {
+      flex: 1;
+    }
+  }
+}
+
+.button-container {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+
+  button {
+    mat-icon {
+      margin-right: 4px;
+    }
+  }
+}
+
+.mensaje {
+  padding: 12px 16px;
+  margin: 8px 0;
+  border-radius: 4px;
+  font-weight: 500;
+
+  &.success-msg {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+  }
+
+  &.error-msg {
+    background-color: #ffebee;
+    color: #c62828;
+  }
+}
+
+.spinner-container {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+
+  p {
+    margin: 0;
+    color: #666;
+  }
+}
+
+.resultado-container {
+  padding: 20px;
+
+  h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    font-size: 18px;
+  }
+}
+
+.tabla-resultado {
+  width: 100%;
+  margin-bottom: 24px;
+
+  .text-right {
+    text-align: right;
+    font-weight: 600;
+  }
+}
+
+.cit-resumen-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.cit-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  background: #fafafa;
+
+  .label {
+    font-size: 12px;
+    color: #666;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+
+  .valor {
+    font-size: 24px;
+    font-weight: 700;
+  }
+
+  .nrn {
+    color: #f57c00;
+  }
+
+  .cit-valor {
+    font-size: 32px;
+  }
+
+  .estado-valor {
+    font-size: 14px;
+    font-weight: 700;
+    text-align: center;
+  }
+
+  &.supera {
+    background: #ffebee;
+    border-color: #ef5350;
+
+    .valor {
+      color: #c62828;
+    }
+  }
+
+  &.no-supera {
+    background: #e3f2fd;
+    border-color: #42a5f5;
+
+    .valor {
+      color: #1565c0;
+    }
+  }
+}

@@ -36,7 +36,7 @@ import { Empresa, EmpresaCreateRequest, EmpresaUpdateRequest } from '../models/e
 export class EmpresaFormComponent implements OnInit {
       form: FormGroup;
       isEditMode: boolean;
-    
+
       constructor(
         private fb: FormBuilder,
         private empresaService: EmpresaService,
@@ -55,7 +55,7 @@ export class EmpresaFormComponent implements OnInit {
           estado: [true]
         });
       }
-    
+
       ngOnInit(): void {
         if (this.isEditMode && this.data.empresa) {
           this.form.patchValue({
@@ -69,22 +69,22 @@ export class EmpresaFormComponent implements OnInit {
           });
         }
       }
-    
+
       guardar(): void {
         if (this.form.invalid) {
           this.snackBar.open('Por favor complete todos los campos', 'Cerrar', { duration: 3000 });
           return;
         }
-    
+
         if (this.isEditMode) {
           this.actualizar();
         } else {
           this.crear();
         }
       }
-    
+
       crear(): void {
-        
+
         const request: EmpresaCreateRequest = {
           codigoEmpresa: this.form.value.codigoEmpresa,
           razonSocial: this.form.value.razonSocial,
@@ -95,7 +95,7 @@ export class EmpresaFormComponent implements OnInit {
           estado: this.form.value.estado === true ? '1' : '0',
           usuarioCreacion: 'admin'
         };
-    
+
         this.empresaService.crear(request).subscribe({
           next: () => {
             this.snackBar.open('Empresa creada correctamente', 'Cerrar', { duration: 3000 });
@@ -107,8 +107,8 @@ export class EmpresaFormComponent implements OnInit {
           }
         });
       }
-    
-      actualizar(): void {        
+
+      actualizar(): void {
         const request: EmpresaUpdateRequest = {
           id: this.data.empresa!.id!,
           codigoEmpresa: this.form.value.codigoEmpresa,
@@ -120,7 +120,7 @@ export class EmpresaFormComponent implements OnInit {
           estado: this.form.value.estado === true ? '1' : '0',
           usuarioModificacion: 'admin'
         };
-    
+
         this.empresaService.editar(request).subscribe({
           next: () => {
             this.snackBar.open('Empresa actualizada correctamente', 'Cerrar', { duration: 3000 });
@@ -132,21 +132,21 @@ export class EmpresaFormComponent implements OnInit {
           }
         });
       }
-    
+
       private formatearFecha(fecha: Date): string {
         const year = fecha.getFullYear();
         const month = String(fecha.getMonth() + 1).padStart(2, '0');
         const day = String(fecha.getDate()).padStart(2, '0');
         return `${year}-${month}-${day}`;
       }
-    
+
       cancelar(): void {
         this.dialogRef.close();
       }
-    
+
       get codigoInvalido(): boolean {
         const control = this.form.get('codigoEmpresa');
         return !!(control && control.invalid && control.touched);
       }
-    
+
 }

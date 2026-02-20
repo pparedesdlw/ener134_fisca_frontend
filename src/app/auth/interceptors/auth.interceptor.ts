@@ -7,7 +7,7 @@ export const authInterceptor: HttpInterceptorFn = (req: HttpRequest<any>, next: 
   const currentUser = authService.currentUserValue;
 
   if (currentUser) {
-    // Agregar usuario y rol en las cabeceras
+
     req = req.clone({
       setHeaders: {
         'X-Usuario': currentUser.username,

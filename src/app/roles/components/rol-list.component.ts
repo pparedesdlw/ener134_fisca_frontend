@@ -12,7 +12,6 @@ import { RolService } from '../services/rol.service';
 import { Rol } from '../models/rol.model';
 import { RolFormComponent } from './rol-form.component';
 
-
 @Component({
   selector: 'app-rol-list',
   standalone: true,
@@ -52,7 +51,7 @@ export class RolListComponent implements OnInit {
   }
 
   cargarRoles(): void {
-    const observable = this.filtroEstado === 'todos' 
+    const observable = this.filtroEstado === 'todos'
       ? this.rolService.listarTodos()
       : this.rolService.listarPorEstado(this.filtroEstado === 'activos' ? '1' : '0');
 

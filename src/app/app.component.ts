@@ -15,7 +15,7 @@ export class AppComponent implements OnInit {
   constructor(private authService: AuthService) {}
 
   ngOnInit(): void {
-    // Inicializar usuario por defecto si no existe
+
     if (!this.authService.currentUserValue) {
       this.authService.setUser({
         username: 'admin',

@@ -56,7 +56,7 @@ export class PeriodoListComponent implements OnInit {
   }
 
   cargarPeriodos(): void {
-    const observable = this.filtroEstado === 'todos' 
+    const observable = this.filtroEstado === 'todos'
       ? this.periodoService.listarTodos()
       : this.periodoService.listarPorEstado(this.filtroEstado === 'activos');
 
@@ -165,12 +165,12 @@ export class PeriodoListComponent implements OnInit {
   }
 
   puedeCambiarEstado(periodo: Periodo): boolean {
-    // Un periodo cerrado por tiempo no puede desactivarse
+
     return periodo.deEstado !== 'Cerrado';
   }
 
   getDiasRestantes(periodo: Periodo): number {
-    // Los días restantes en periodos cerrados no deben ser negativos, solo 0
+
     if (periodo.diasRestantes !== undefined && periodo.diasRestantes < 0) {
       return 0;
     }

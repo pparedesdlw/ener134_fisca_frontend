@@ -36,7 +36,7 @@ import { Feriado, FeriadoCreateRequest, FeriadoUpdateRequest } from '../models/f
 export class FeriadoFormComponent implements OnInit {
     form: FormGroup;
     isEditMode: boolean;
-    
+
       constructor(
         private fb: FormBuilder,
         private feriadoService: FeriadoService,
@@ -53,7 +53,7 @@ export class FeriadoFormComponent implements OnInit {
           estado: [true]
         });
       }
-    
+
       ngOnInit(): void {
         if (this.isEditMode && this.data.feriado) {
           const fechaFeriado = this.parsearFecha(this.data.feriado.fechaFeriado);
@@ -67,20 +67,20 @@ export class FeriadoFormComponent implements OnInit {
           });
         }
       }
-    
+
       guardar(): void {
         if (this.form.invalid) {
           this.snackBar.open('Por favor complete todos los campos', 'Cerrar', { duration: 3000 });
           return;
         }
-    
+
         if (this.isEditMode) {
           this.actualizar();
         } else {
           this.crear();
         }
       }
-    
+
       crear(): void {
         const fechaFeriado = new Date(this.form.value.fechaFeriado);
 
@@ -92,7 +92,7 @@ export class FeriadoFormComponent implements OnInit {
           estado: this.form.value.estado === true ? '1' : '0',
           usuarioCreacion: 'admin'
         };
-    
+
         this.feriadoService.crear(request).subscribe({
           next: () => {
             this.snackBar.open('Feriado creado correctamente', 'Cerrar', { duration: 3000 });
@@ -104,8 +104,8 @@ export class FeriadoFormComponent implements OnInit {
           }
         });
       }
-    
-      actualizar(): void {        
+
+      actualizar(): void {
         const fechaFeriado = new Date(this.form.value.fechaFeriado);
 
         const request: FeriadoUpdateRequest = {
@@ -117,7 +117,7 @@ export class FeriadoFormComponent implements OnInit {
           estado: this.form.value.estado === true ? '1' : '0',
           usuarioModificacion: 'admin'
         };
-    
+
         this.feriadoService.editar(request).subscribe({
           next: () => {
             this.snackBar.open('Feriado actualizado correctamente', 'Cerrar', { duration: 3000 });
@@ -139,18 +139,18 @@ export class FeriadoFormComponent implements OnInit {
           return new Date(parseInt(partes[2]), parseInt(partes[1]) - 1, parseInt(partes[0]));
         }
       }
-    
+
       private formatearFecha(fecha: Date): string {
         const year = fecha.getFullYear();
         const month = String(fecha.getMonth() + 1).padStart(2, '0');
         const day = String(fecha.getDate()).padStart(2, '0');
         return `${year}-${month}-${day}`;
       }
-    
+
       cancelar(): void {
         this.dialogRef.close();
       }
-    
+
       get codigoInvalido(): boolean {
         const control = this.form.get('codigoFeriado');
         return !!(control && control.invalid && control.touched);

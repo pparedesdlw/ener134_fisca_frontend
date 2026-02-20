@@ -1,0 +1,74 @@
+<div class="dashboard-container">
+  <h2>Dashboard de Resultados CIT</h2>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Periodo de Fiscalización</mat-label>
+    <mat-select [(ngModel)]="periodoSeleccionado" (selectionChange)="cargarResumen()">
+      <mat-option *ngFor="let periodo of periodos" [value]="periodo.codigoPeriodo">
+        {{ periodo.codigoPeriodo }} - {{ periodo.descripcion }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <div *ngIf="resumen" class="resumen-cards">
+    <mat-card class="kpi-card">
+      <mat-card-header>
+        <mat-card-title>Total Atenciones</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="kpi-value">{{ resumen.totalAtenciones }}</div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="kpi-card success">
+      <mat-card-header>
+        <mat-card-title>Atenciones Cumplen</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="kpi-value">{{ resumen.atencionesCumplen }}</div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="kpi-card warning">
+      <mat-card-header>
+        <mat-card-title>Atenciones No Cumplen</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="kpi-value">{{ resumen.atencionesNoCumplen }}</div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="kpi-card info">
+      <mat-card-header>
+        <mat-card-title>% Cumplimiento</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="kpi-value">{{ resumen.porcentajeCumplimiento | number:'1.2-2' }}%</div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <div *ngIf="resumen" class="distribucion-nrn">
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title>Distribución por NRN</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <table class="nrn-table">
+          <thead>
+            <tr>
+              <th>NRN</th>
+              <th>Cantidad</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let nrn of obtenerNrnKeys()">
+              <td>{{ nrn }}</td>
+              <td>{{ obtenerNrnValor(nrn) }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

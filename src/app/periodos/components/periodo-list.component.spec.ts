@@ -57,7 +57,7 @@ describe('PeriodoListComponent', () => {
       'ampliarVigencia'
     ]);
     const dialogSpy = jasmine.createSpyObj('MatDialog', ['open']);
-    // Configurar propiedades del diálogo
+
     Object.defineProperty(dialogSpy, '_openDialogs', { value: [], writable: true });
     Object.defineProperty(dialogSpy, '_getAfterAllClosed', { value: () => of(undefined) });
     const snackBarSpy = jasmine.createSpyObj('MatSnackBar', ['open']);
@@ -90,7 +90,7 @@ describe('PeriodoListComponent', () => {
     it('debería cargar todos los periodos al inicializar', () => {
       periodoService.listarTodos.and.returnValue(of(mockPeriodos));
 
-      fixture.detectChanges(); // Dispara ngOnInit
+      fixture.detectChanges();
 
       expect(periodoService.listarTodos).toHaveBeenCalled();
       expect(component.periodos).toEqual(mockPeriodos);
@@ -174,7 +174,7 @@ describe('PeriodoListComponent', () => {
 
       component.crear();
 
-      expect(periodoService.listarTodos).toHaveBeenCalledTimes(2); // 1 en ngOnInit, 1 después de crear
+      expect(periodoService.listarTodos).toHaveBeenCalledTimes(2);
     });
   });
 
@@ -215,13 +215,12 @@ describe('PeriodoListComponent', () => {
     });
 
     it('debería activar un periodo inactivo', (done) => {
-      const periodoInactivo = mockPeriodos[1]; // Estado: false
+      const periodoInactivo = mockPeriodos[1];
       const periodoActualizado = { ...periodoInactivo, estadoActivo: true };
       periodoService.cambiarEstado.and.returnValue(of(periodoActualizado));
 
       component.cambiarEstado(periodoInactivo);
 
-      // Esperar a que el observable se complete
       setTimeout(() => {
         expect(periodoService.cambiarEstado).toHaveBeenCalledWith(2, true, 'admin');
         expect(snackBar.open).toHaveBeenCalledWith('Periodo activado correctamente', 'Cerrar', { duration: 3000 });
@@ -230,13 +229,12 @@ describe('PeriodoListComponent', () => {
     });
 
     it('debería desactivar un periodo activo', (done) => {
-      const periodoActivo = mockPeriodos[0]; // Estado: true
+      const periodoActivo = mockPeriodos[0];
       const periodoActualizado = { ...periodoActivo, estadoActivo: false };
       periodoService.cambiarEstado.and.returnValue(of(periodoActualizado));
 
       component.cambiarEstado(periodoActivo);
 
-      // Esperar a que el observable se complete
       setTimeout(() => {
         expect(periodoService.cambiarEstado).toHaveBeenCalledWith(1, false, 'admin');
         expect(snackBar.open).toHaveBeenCalledWith('Periodo desactivado correctamente', 'Cerrar', { duration: 3000 });
@@ -251,7 +249,6 @@ describe('PeriodoListComponent', () => {
 
       component.cambiarEstado(mockPeriodos[0]);
 
-      // Esperar a que el observable se complete
       setTimeout(() => {
         expect(snackBar.open).toHaveBeenCalledWith('No se puede cambiar el estado', 'Cerrar', { duration: 5000 });
         expect(console.error).toHaveBeenCalled();
@@ -351,9 +348,9 @@ describe('PeriodoListComponent', () => {
     });
 
     it('debería permitir ampliar solo periodos activos con estado "Activo"', () => {
-      expect(component.puedeAmpliar(mockPeriodos[0])).toBeTrue(); // Activo, estado: Activo
-      expect(component.puedeAmpliar(mockPeriodos[1])).toBeFalse(); // Inactivo
-      expect(component.puedeAmpliar(mockPeriodos[2])).toBeFalse(); // Activo, estado: Futuro
+      expect(component.puedeAmpliar(mockPeriodos[0])).toBeTrue();
+      expect(component.puedeAmpliar(mockPeriodos[1])).toBeFalse();
+      expect(component.puedeAmpliar(mockPeriodos[2])).toBeFalse();
     });
 
     it('debería mostrar columnas correctas en la tabla', () => {

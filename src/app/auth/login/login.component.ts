@@ -28,7 +28,7 @@ import { Router } from '@angular/router';
 })
 export class LoginComponent {
   hidePassword = true;
-  
+
   private fb = inject(FormBuilder);
 
   constructor(    public router: Router
@@ -42,13 +42,13 @@ export class LoginComponent {
 
   login(): void {
     if (this.form.invalid) return;
-    
+
     const { username, password } = this.form.value;
     console.log('Login attempt:', username);
-    
+
     sessionStorage.setItem('currentUser', username || 'admin');
     sessionStorage.setItem('isAuthenticated', 'true');
-    
+
     this.router.navigate(['/periodos']);
   }
 }
