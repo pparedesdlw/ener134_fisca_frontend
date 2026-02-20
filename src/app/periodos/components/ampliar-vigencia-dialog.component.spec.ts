@@ -76,7 +76,7 @@ describe('AmpliarVigenciaDialogComponent', () => {
 
     it('debería requerir sustento con mínimo 50 caracteres', () => {
       const sustentoControl = component.form.get('sustentoAmpliacion');
-      
+
       expect(sustentoControl?.hasError('required')).toBeTrue();
 
       sustentoControl?.setValue('Corto');
@@ -92,7 +92,7 @@ describe('AmpliarVigenciaDialogComponent', () => {
     it('debería ampliar la vigencia exitosamente', () => {
       const nuevaFechaFin = new Date('2024-04-30T12:00:00');
       const sustentoValido = 'Ampliación necesaria debido a retrasos en el procesamiento de información por causas de fuerza mayor';
-      
+
       const mockPeriodoAmpliado: Periodo = {
         ...mockPeriodo,
         fechaFin: '30/04/2024',
@@ -109,7 +109,7 @@ describe('AmpliarVigenciaDialogComponent', () => {
       component.ampliar();
 
       expect(periodoService.ampliarVigencia).toHaveBeenCalled();
-      
+
       const request = periodoService.ampliarVigencia.calls.mostRecent().args[0] as AmpliacionVigenciaRequest;
       expect(request.id).toBe(1);
       expect(request.nuevaFechaFin).toBe('2024-04-30');
@@ -135,7 +135,7 @@ describe('AmpliarVigenciaDialogComponent', () => {
 
     it('no debería ampliar si falta la fecha', () => {
       const sustentoValido = 'Este es un sustento válido con más de cincuenta caracteres necesarios';
-      
+
       component.form.patchValue({
         fechaAmpliacion: '',
         sustentoAmpliacion: sustentoValido
@@ -160,10 +160,10 @@ describe('AmpliarVigenciaDialogComponent', () => {
     });
 
     it('debería manejar errores al ampliar vigencia', () => {
-      const errorResponse = { 
-        error: { 
-          message: 'No se puede ampliar más de 90 días desde la fecha fin actual' 
-        } 
+      const errorResponse = {
+        error: {
+          message: 'No se puede ampliar más de 90 días desde la fecha fin actual'
+        }
       };
       periodoService.ampliarVigencia.and.returnValue(throwError(() => errorResponse));
 
@@ -176,8 +176,8 @@ describe('AmpliarVigenciaDialogComponent', () => {
       component.ampliar();
 
       expect(snackBar.open).toHaveBeenCalledWith(
-        'No se puede ampliar más de 90 días desde la fecha fin actual', 
-        'Cerrar', 
+        'No se puede ampliar más de 90 días desde la fecha fin actual',
+        'Cerrar',
         { duration: 5000 }
       );
       expect(dialogRef.close).not.toHaveBeenCalled();
@@ -201,7 +201,7 @@ describe('AmpliarVigenciaDialogComponent', () => {
   describe('Formateo de fecha', () => {
     it('debería formatear correctamente la fecha a YYYY-MM-DD', () => {
       const sustentoValido = 'Sustento válido con más de cincuenta caracteres para cumplir con validación';
-      
+
       component.form.patchValue({
         fechaAmpliacion: new Date('2024-12-15T12:00:00'),
         sustentoAmpliacion: sustentoValido
@@ -216,7 +216,7 @@ describe('AmpliarVigenciaDialogComponent', () => {
 
     it('debería agregar ceros a la izquierda en meses y días', () => {
       const sustentoValido = 'Sustento válido con más de cincuenta caracteres para cumplir con validación';
-      
+
       component.form.patchValue({
         fechaAmpliacion: new Date('2024-01-05T12:00:00'),
         sustentoAmpliacion: sustentoValido
@@ -249,7 +249,7 @@ describe('AmpliarVigenciaDialogComponent', () => {
 
     it('el formulario debería ser válido con datos correctos', () => {
       const sustentoValido = 'Este es un sustento completamente válido con más de 50 caracteres requeridos';
-      
+
       component.form.patchValue({
         fechaAmpliacion: new Date('2024-04-30T12:00:00'),
         sustentoAmpliacion: sustentoValido
@@ -260,16 +260,16 @@ describe('AmpliarVigenciaDialogComponent', () => {
 
     it('debería validar que el sustento tenga exactamente 50 caracteres', () => {
       const sustentoControl = component.form.get('sustentoAmpliacion');
-      const sustento50 = 'A'.repeat(50); // Exactamente 50 caracteres
-      
+      const sustento50 = 'A'.repeat(50);
+
       sustentoControl?.setValue(sustento50);
       expect(sustentoControl?.valid).toBeTrue();
     });
 
     it('debería rechazar sustento con 49 caracteres', () => {
       const sustentoControl = component.form.get('sustentoAmpliacion');
-      const sustento49 = 'A'.repeat(49); // 49 caracteres
-      
+      const sustento49 = 'A'.repeat(49);
+
       sustentoControl?.setValue(sustento49);
       expect(sustentoControl?.hasError('minlength')).toBeTrue();
     });
@@ -278,7 +278,7 @@ describe('AmpliarVigenciaDialogComponent', () => {
   describe('Información del periodo', () => {
     it('debería mostrar la información del periodo en el template', () => {
       const compiled = fixture.nativeElement;
-      
+
       expect(component.data.periodo.codigoPeriodo).toBe('2024-T1');
       expect(component.data.periodo.descripcion).toBe('Primer trimestre 2024');
       expect(component.data.periodo.fechaFin).toBe('31/03/2024');

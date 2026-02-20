@@ -36,7 +36,7 @@ import { Rol, RolCreateRequest, RolUpdateRequest } from '../models/rol.model';
 export class RolFormComponent implements OnInit {
     form: FormGroup;
     isEditMode: boolean;
-    
+
       constructor(
         private fb: FormBuilder,
         private rolService: RolService,
@@ -52,7 +52,7 @@ export class RolFormComponent implements OnInit {
           estado: [true]
         });
       }
-    
+
       ngOnInit(): void {
         if (this.isEditMode && this.data.rol) {
           this.form.patchValue({
@@ -63,20 +63,20 @@ export class RolFormComponent implements OnInit {
           });
         }
       }
-    
+
       guardar(): void {
         if (this.form.invalid) {
           this.snackBar.open('Por favor complete todos los campos', 'Cerrar', { duration: 3000 });
           return;
         }
-    
+
         if (this.isEditMode) {
           this.actualizar();
         } else {
           this.crear();
         }
       }
-    
+
       crear(): void {
         const request: RolCreateRequest = {
           codigoRol: this.form.value.codigoRol,
@@ -85,7 +85,7 @@ export class RolFormComponent implements OnInit {
           estado: this.form.value.estado === true ? '1' : '0',
           usuarioCreacion: 'admin'
         };
-    
+
         this.rolService.crear(request).subscribe({
           next: () => {
             this.snackBar.open('Rol creado correctamente', 'Cerrar', { duration: 3000 });
@@ -97,8 +97,8 @@ export class RolFormComponent implements OnInit {
           }
         });
       }
-    
-      actualizar(): void {        
+
+      actualizar(): void {
         const fechaFeriado = new Date(this.form.value.fechaFeriado);
 
         const request: RolUpdateRequest = {
@@ -109,7 +109,7 @@ export class RolFormComponent implements OnInit {
           estado: this.form.value.estado === true ? '1' : '0',
           usuarioModificacion: 'admin'
         };
-    
+
         this.rolService.editar(request).subscribe({
           next: () => {
             this.snackBar.open('Rol actualizado correctamente', 'Cerrar', { duration: 3000 });
@@ -125,7 +125,7 @@ export class RolFormComponent implements OnInit {
       cancelar(): void {
         this.dialogRef.close();
       }
-    
+
       get codigoInvalido(): boolean {
         const control = this.form.get('codigoFeriado');
         return !!(control && control.invalid && control.touched);

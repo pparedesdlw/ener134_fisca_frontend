@@ -1,0 +1,70 @@
+<div class="resultados-container">
+  <h2>Resultados CIT por Atención</h2>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Periodo de Fiscalización</mat-label>
+    <mat-select [(ngModel)]="periodoSeleccionado" (selectionChange)="cargarIndicadores()">
+      <mat-option *ngFor="let periodo of periodos" [value]="periodo.codigoPeriodo">
+        {{ periodo.codigoPeriodo }} - {{ periodo.descripcion }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-card *ngIf="indicadores.length > 0">
+    <mat-card-content>
+      <table mat-table [dataSource]="indicadores" class="mat-elevation-z8">
+
+        <ng-container matColumnDef="codigoEmpresa">
+          <th mat-header-cell *matHeaderCellDef>Código Empresa</th>
+          <td mat-cell *matCellDef="let indicador">{{ indicador.codigoEmpresa }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="codigoAtencion">
+          <th mat-header-cell *matHeaderCellDef>Código Atención</th>
+          <td mat-cell *matCellDef="let indicador">{{ indicador.codigoAtencion }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="cumpleItem1">
+          <th mat-header-cell *matHeaderCellDef>Item 1</th>
+          <td mat-cell *matCellDef="let indicador">
+            <span [class]="indicador.cumpleItem1 === 'S' ? 'badge-success' : 'badge-error'">
+              {{ indicador.cumpleItem1 === 'S' ? 'Cumple' : 'No Cumple' }}
+            </span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="cumpleItem3">
+          <th mat-header-cell *matHeaderCellDef>Item 3</th>
+          <td mat-cell *matCellDef="let indicador">
+            <span [class]="indicador.cumpleItem3 === 'S' ? 'badge-success' : 'badge-error'">
+              {{ indicador.cumpleItem3 === 'S' ? 'Cumple' : 'No Cumple' }}
+            </span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="cumpleItem4">
+          <th mat-header-cell *matHeaderCellDef>Item 4</th>
+          <td mat-cell *matCellDef="let indicador">
+            <span [class]="indicador.cumpleItem4 === 'S' ? 'badge-success' : 'badge-error'">
+              {{ indicador.cumpleItem4 === 'S' ? 'Cumple' : 'No Cumple' }}
+            </span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="numeroNrn">
+          <th mat-header-cell *matHeaderCellDef>NRN</th>
+          <td mat-cell *matCellDef="let indicador">
+            <span class="nrn-badge">{{ indicador.numeroNrn }}</span>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+    </mat-card-content>
+  </mat-card>
+
+  <div *ngIf="!cargando && indicadores.length === 0 && periodoSeleccionado" class="no-data">
+    No hay resultados CIT para el periodo seleccionado.
+  </div>
+</div>

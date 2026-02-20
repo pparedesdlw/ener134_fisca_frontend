@@ -36,7 +36,7 @@ import { Parametro, ParametroCreateRequest, ParametroUpdateRequest } from '../mo
 export class ParametroFormComponent implements OnInit {
     form: FormGroup;
     isEditMode: boolean;
-    
+
       constructor(
         private fb: FormBuilder,
         private parametroService: ParametroService,
@@ -53,7 +53,7 @@ export class ParametroFormComponent implements OnInit {
           estado: [true]
         });
       }
-    
+
       ngOnInit(): void {
         if (this.isEditMode && this.data.parametro) {
           this.form.patchValue({
@@ -65,20 +65,20 @@ export class ParametroFormComponent implements OnInit {
           });
         }
       }
-    
+
       guardar(): void {
         if (this.form.invalid) {
           this.snackBar.open('Por favor complete todos los campos', 'Cerrar', { duration: 3000 });
           return;
         }
-    
+
         if (this.isEditMode) {
           this.actualizar();
         } else {
           this.crear();
         }
       }
-    
+
       crear(): void {
         const request: ParametroCreateRequest = {
           codigoParametro: this.form.value.codigoParametro,
@@ -88,7 +88,7 @@ export class ParametroFormComponent implements OnInit {
           estado: this.form.value.estado === true ? '1' : '0',
           usuarioCreacion: 'admin'
         };
-    
+
         this.parametroService.crear(request).subscribe({
           next: () => {
             this.snackBar.open('Parámetro creado correctamente', 'Cerrar', { duration: 3000 });
@@ -100,8 +100,8 @@ export class ParametroFormComponent implements OnInit {
           }
         });
       }
-    
-      actualizar(): void {        
+
+      actualizar(): void {
         const fechaFeriado = new Date(this.form.value.fechaFeriado);
 
         const request: ParametroUpdateRequest = {
@@ -113,7 +113,7 @@ export class ParametroFormComponent implements OnInit {
           estado: this.form.value.estado === true ? '1' : '0',
           usuarioModificacion: 'admin'
         };
-    
+
         this.parametroService.editar(request).subscribe({
           next: () => {
             this.snackBar.open('Parámetro actualizado correctamente', 'Cerrar', { duration: 3000 });
@@ -129,7 +129,7 @@ export class ParametroFormComponent implements OnInit {
       cancelar(): void {
         this.dialogRef.close();
       }
-    
+
       get codigoInvalido(): boolean {
         const control = this.form.get('codigoParametro');
         return !!(control && control.invalid && control.touched);

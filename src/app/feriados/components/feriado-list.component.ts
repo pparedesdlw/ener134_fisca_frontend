@@ -12,7 +12,6 @@ import { FeriadoService } from '../services/feriado.service';
 import { Feriado } from '../models/feriado.model';
 import { FeriadoFormComponent } from './feriado-form.component';
 
-
 @Component({
   selector: 'app-feriado-list',
   standalone: true,
@@ -53,7 +52,7 @@ export class FeriadoListComponent implements OnInit {
   }
 
   cargarFeriados(): void {
-    const observable = this.filtroEstado === 'todos' 
+    const observable = this.filtroEstado === 'todos'
       ? this.feriadoService.listarTodos()
       : this.feriadoService.listarPorEstado(this.filtroEstado === 'activos' ? '1' : '0');
 

@@ -12,7 +12,6 @@ import { MuestraService } from '../services/muestra.service';
 import { Muestra } from '../models/muestra.model';
 import { MuestraFormComponent } from './muestra-form.component';
 
-
 @Component({
   selector: 'app-muestra-list',
   standalone: true,
@@ -53,7 +52,7 @@ export class MuestraListComponent implements OnInit {
   }
 
   cargarMuestras(): void {
-    const observable = this.filtroEstado === 'todos' 
+    const observable = this.filtroEstado === 'todos'
       ? this.muestraService.listarTodos()
       : this.muestraService.listarPorEstado(this.filtroEstado === 'activos' ? '1' : '0');
 

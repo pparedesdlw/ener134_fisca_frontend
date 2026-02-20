@@ -36,7 +36,7 @@ import { Muestra, MuestraCreateRequest, MuestraUpdateRequest } from '../models/m
 export class MuestraFormComponent implements OnInit {
     form: FormGroup;
     isEditMode: boolean;
-    
+
       constructor(
         private fb: FormBuilder,
         private muestraService: MuestraService,
@@ -53,7 +53,7 @@ export class MuestraFormComponent implements OnInit {
           estado: [true]
         });
       }
-    
+
       ngOnInit(): void {
         if (this.isEditMode && this.data.muestra) {
           this.form.patchValue({
@@ -65,20 +65,20 @@ export class MuestraFormComponent implements OnInit {
           });
         }
       }
-    
+
       guardar(): void {
         if (this.form.invalid) {
           this.snackBar.open('Por favor complete todos los campos', 'Cerrar', { duration: 3000 });
           return;
         }
-    
+
         if (this.isEditMode) {
           this.actualizar();
         } else {
           this.crear();
         }
       }
-    
+
       crear(): void {
         const request: MuestraCreateRequest = {
           codigoMuestra: this.form.value.codigoMuestra,
@@ -88,7 +88,7 @@ export class MuestraFormComponent implements OnInit {
           estado: this.form.value.estado === true ? '1' : '0',
           usuarioCreacion: 'admin'
         };
-    
+
         this.muestraService.crear(request).subscribe({
           next: () => {
             this.snackBar.open('Muestra creada correctamente', 'Cerrar', { duration: 3000 });
@@ -100,8 +100,8 @@ export class MuestraFormComponent implements OnInit {
           }
         });
       }
-    
-      actualizar(): void {        
+
+      actualizar(): void {
         const fechaFeriado = new Date(this.form.value.fechaFeriado);
 
         const request: MuestraUpdateRequest = {
@@ -113,7 +113,7 @@ export class MuestraFormComponent implements OnInit {
           estado: this.form.value.estado === true ? '1' : '0',
           usuarioModificacion: 'admin'
         };
-    
+
         this.muestraService.editar(request).subscribe({
           next: () => {
             this.snackBar.open('Muestra actualizada correctamente', 'Cerrar', { duration: 3000 });
@@ -129,7 +129,7 @@ export class MuestraFormComponent implements OnInit {
       cancelar(): void {
         this.dialogRef.close();
       }
-    
+
       get codigoInvalido(): boolean {
         const control = this.form.get('codigoMuestra');
         return !!(control && control.invalid && control.touched);

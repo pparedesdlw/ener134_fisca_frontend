@@ -11,6 +11,9 @@ import { ParametroListComponent } from './parametros/components/parametro-list.c
 import { MuestraListComponent } from './muestras/components/muestra-list.component';
 import { ResponsableListComponent } from './responsables/components/responsable-list.component';
 import { UsuarioListComponent } from './usuarios/components/usuario-list.component';
+import { CalculoCitFormComponent } from './cit/components/calculo-cit-form/calculo-cit-form.component';
+import { CitResumenDashboardComponent } from './cit/components/cit-resumen-dashboard/cit-resumen-dashboard.component';
+import { CitResultadosListComponent } from './cit/components/cit-resultados-list/cit-resultados-list.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -28,6 +31,9 @@ export const routes: Routes = [
       { path: 'muestras', component: MuestraListComponent },
       { path: 'responsables', component: ResponsableListComponent },
       { path: 'usuarios', component: UsuarioListComponent },
+      { path: 'cit/calculo', component: CalculoCitFormComponent },
+      { path: 'cit/resumen', component: CitResumenDashboardComponent },
+      { path: 'cit/resultados', component: CitResultadosListComponent },
       { path: '', redirectTo: '/periodos', pathMatch: 'full' }
     ]
   },

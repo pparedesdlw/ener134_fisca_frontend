@@ -58,7 +58,7 @@ export class PeriodoFormComponent implements OnInit {
     if (this.isEditMode && this.data.periodo) {
       const fechaInicio = this.parsearFecha(this.data.periodo.fechaInicio);
       const fechaFin = this.parsearFecha(this.data.periodo.fechaFin);
-      
+
       this.form.patchValue({
         codigoPeriodo: this.data.periodo.codigoPeriodo,
         descripcion: this.data.periodo.descripcion || '',
@@ -90,7 +90,7 @@ export class PeriodoFormComponent implements OnInit {
   crear(): void {
     const fechaInicio = new Date(this.form.value.fechaInicio);
     const fechaFin = new Date(this.form.value.fechaFin);
-    
+
     const request: PeriodoCreateRequest = {
       codigoPeriodo: this.form.value.codigoPeriodo,
       descripcion: this.form.value.descripcion,
@@ -116,7 +116,7 @@ export class PeriodoFormComponent implements OnInit {
   actualizar(): void {
     const fechaInicio = new Date(this.form.value.fechaInicio);
     const fechaFin = new Date(this.form.value.fechaFin);
-    
+
     const request: PeriodoUpdateRequest = {
       id: this.data.periodo!.id!,
       codigoPeriodo: this.form.value.codigoPeriodo,
@@ -153,11 +153,11 @@ export class PeriodoFormComponent implements OnInit {
   private fechasValidValidator(group: FormGroup): {[key: string]: any} | null {
     const fechaInicio = group.get('fechaInicio')?.value;
     const fechaFin = group.get('fechaFin')?.value;
-    
+
     if (fechaInicio && fechaFin) {
       const inicio = new Date(fechaInicio);
       const fin = new Date(fechaFin);
-      
+
       if (fin < inicio) {
         return { 'fechasInvalidas': true };
       }

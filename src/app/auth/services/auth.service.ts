@@ -34,16 +34,16 @@ export class AuthService {
   }
 
   login(username: string, password: string): Observable<any> {
-    // Simulación de login - en producción esto debe llamar al backend
+
     const mockUser: Usuario = {
       username: username,
       rol: 'ADMIN',
       nombre: 'Administrador'
     };
-    
+
     localStorage.setItem('currentUser', JSON.stringify(mockUser));
     this.currentUserSubject.next(mockUser);
-    
+
     return new Observable(observer => {
       observer.next(mockUser);
       observer.complete();

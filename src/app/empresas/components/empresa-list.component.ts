@@ -12,7 +12,6 @@ import { EmpresaService } from '../services/empresa.service';
 import { Empresa } from '../models/empresa.model';
 import { EmpresaFormComponent } from './empresa-form.component';
 
-
 @Component({
   selector: 'app-empresa-list',
   standalone: true,
@@ -55,7 +54,7 @@ export class EmpresaListComponent implements OnInit {
   }
 
   cargarEmpresas(): void {
-    const observable = this.filtroEstado === 'todos' 
+    const observable = this.filtroEstado === 'todos'
       ? this.empresaService.listarTodos()
       : this.empresaService.listarPorEstado(this.filtroEstado === 'activos' ? '1' : '0');
 

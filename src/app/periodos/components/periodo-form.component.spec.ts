@@ -65,7 +65,7 @@ describe('PeriodoFormComponent', () => {
 
     it('debería validar el formato del código de periodo', () => {
       const codigoControl = component.form.get('codigoPeriodo');
-      
+
       codigoControl?.setValue('2024-T1');
       expect(codigoControl?.valid).toBeTrue();
 
@@ -81,7 +81,7 @@ describe('PeriodoFormComponent', () => {
 
     it('debería validar que la descripción tenga al menos 10 caracteres', () => {
       const descripcionControl = component.form.get('descripcion');
-      
+
       descripcionControl?.setValue('Corto');
       expect(descripcionControl?.hasError('minlength')).toBeTrue();
 
@@ -159,7 +159,7 @@ describe('PeriodoFormComponent', () => {
   describe('Modo edición', () => {
     beforeEach(() => {
       TestBed.resetTestingModule();
-      
+
       const periodoServiceSpy = jasmine.createSpyObj('PeriodoService', ['crear', 'editar']);
       const dialogRefSpy = jasmine.createSpyObj('MatDialogRef', ['close']);
       const snackBarSpy = jasmine.createSpyObj('MatSnackBar', ['open']);
@@ -201,14 +201,14 @@ describe('PeriodoFormComponent', () => {
       expect(fechaInicio).toBeInstanceOf(Date);
       expect(fechaFin).toBeInstanceOf(Date);
       expect(fechaInicio.getFullYear()).toBe(2024);
-      expect(fechaInicio.getMonth()).toBe(0); // Enero
+      expect(fechaInicio.getMonth()).toBe(0);
       expect(fechaInicio.getDate()).toBe(1);
     });
 
     it('debería actualizar un periodo exitosamente', () => {
-      const mockResponse: Periodo = { 
-        ...mockPeriodo, 
-        descripcion: 'Descripción actualizada' 
+      const mockResponse: Periodo = {
+        ...mockPeriodo,
+        descripcion: 'Descripción actualizada'
       };
       periodoService.editar.and.returnValue(of(mockResponse));
 

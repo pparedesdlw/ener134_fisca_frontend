@@ -1,0 +1,48 @@
+.resultados-container {
+  padding: 20px;
+
+  h2 {
+    margin-bottom: 20px;
+  }
+
+  mat-form-field {
+    width: 100%;
+    max-width: 400px;
+    margin-bottom: 30px;
+  }
+}
+
+.mat-elevation-z8 {
+  width: 100%;
+}
+
+.badge-success {
+  padding: 4px 8px;
+  border-radius: 4px;
+  background-color: #c8e6c9;
+  color: #2e7d32;
+  font-weight: 500;
+}
+
+.badge-error {
+  padding: 4px 8px;
+  border-radius: 4px;
+  background-color: #ffcdd2;
+  color: #c62828;
+  font-weight: 500;
+}
+
+.nrn-badge {
+  padding: 4px 12px;
+  border-radius: 50%;
+  background-color: #e3f2fd;
+  color: #1976d2;
+  font-weight: bold;
+}
+
+.no-data {
+  text-align: center;
+  padding: 40px;
+  color: #666;
+  font-style: italic;
+}

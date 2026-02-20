@@ -12,7 +12,6 @@ import { ParametroService } from '../services/parametro.service';
 import { Parametro } from '../models/parametro.model';
 import { ParametroFormComponent } from './parametro-form.component';
 
-
 @Component({
   selector: 'app-parametro-list',
   standalone: true,
@@ -53,7 +52,7 @@ export class ParametroListComponent implements OnInit {
   }
 
   cargarParametros(): void {
-    const observable = this.filtroEstado === 'todos' 
+    const observable = this.filtroEstado === 'todos'
       ? this.parametroService.listarTodos()
       : this.parametroService.listarPorEstado(this.filtroEstado === 'activos' ? '1' : '0');
 

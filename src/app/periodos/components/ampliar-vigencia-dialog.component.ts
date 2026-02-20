@@ -36,7 +36,7 @@ import { AuthService } from '../../auth/services/auth.service';
         <p><strong>Fecha Fin Actual:</strong> {{data.periodo.fechaFin}}</p>
         <p><strong>Días Restantes:</strong> {{data.periodo.diasRestantes}}</p>
       </div>
-      
+
       <form [formGroup]="form">
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Nueva Fecha Fin</mat-label>
@@ -57,8 +57,8 @@ import { AuthService } from '../../auth/services/auth.service';
 
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Sustento de Ampliación</mat-label>
-          <textarea matInput 
-                    formControlName="sustentoAmpliacion" 
+          <textarea matInput
+                    formControlName="sustentoAmpliacion"
                     rows="5"
                     placeholder="Ingrese el motivo detallado de la ampliación (mínimo 50 caracteres)"></textarea>
           <mat-hint align="end">
@@ -112,7 +112,7 @@ export class AmpliarVigenciaDialogComponent implements OnInit {
     public dialogRef: MatDialogRef<AmpliarVigenciaDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { periodo: Periodo }
   ) {
-    // Parsear la fecha fin actual del periodo
+
     this.fechaFinActual = this.parsearFecha(data.periodo.fechaFin);
 
     this.form = this.fb.group({
@@ -122,7 +122,7 @@ export class AmpliarVigenciaDialogComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // Verificar que el periodo esté activo
+
     if (!this.data.periodo.estadoActivo) {
       this.snackBar.open('No se puede ampliar un período cerrado', 'Cerrar', { duration: 5000 });
       this.dialogRef.close();
@@ -135,16 +135,14 @@ export class AmpliarVigenciaDialogComponent implements OnInit {
     }
 
     const fechaSeleccionada = new Date(control.value);
-    
-    // Validar que la fecha sea posterior a la fecha fin actual
+
     if (fechaSeleccionada <= this.fechaFinActual) {
       return { fechaPosterior: true };
     }
 
-    // Validar que no supere 90 días adicionales
     const maxFecha = new Date(this.fechaFinActual);
     maxFecha.setDate(maxFecha.getDate() + 90);
-    
+
     if (fechaSeleccionada > maxFecha) {
       return { maxDias: true };
     }
@@ -153,14 +151,14 @@ export class AmpliarVigenciaDialogComponent implements OnInit {
   }
 
   private parsearFecha(fechaStr: string): Date {
-    // Formato esperado: dd/MM/yyyy
+
     const partes = fechaStr.split('/');
     return new Date(parseInt(partes[2]), parseInt(partes[1]) - 1, parseInt(partes[0]));
   }
 
   ampliar(): void {
     if (this.form.invalid) {
-      // Marcar todos los campos como touched para mostrar errores
+
       Object.keys(this.form.controls).forEach(key => {
         this.form.get(key)?.markAsTouched();
       });
@@ -171,7 +169,6 @@ export class AmpliarVigenciaDialogComponent implements OnInit {
     const fechaAmpliacion = new Date(this.form.value.fechaAmpliacion);
     const fechaFormateada = this.formatearFecha(fechaAmpliacion);
 
-    // Obtener usuario actual del servicio de autenticación
     const usuarioActual = this.authService.currentUsername;
 
     const request = {
