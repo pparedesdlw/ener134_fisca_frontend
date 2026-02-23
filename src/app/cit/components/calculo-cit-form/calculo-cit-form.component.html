@@ -27,7 +27,7 @@
         <mat-form-field appearance="outline">
           <mat-label>Empresa *</mat-label>
           <mat-select [(ngModel)]="empresaSeleccionada" [disabled]="calculando">
-            <mat-option *ngFor="let empresa of empresas" [value]="empresa.id">
+            <mat-option *ngFor="let empresa of empresas" [value]="empresa.codigoEmpresa">
               {{ empresa.codigoEmpresa }} - {{ empresa.razonSocial }}
             </mat-option>
           </mat-select>
@@ -115,6 +115,81 @@
           </span>
         </div>
       </div>
+    </div>
+
+    <!-- Detalle de Atenciones (RF08) -->
+    <div *ngIf="atenciones.length > 0" class="atenciones-container">
+      <h3>Detalle de Atenciones</h3>
+      <table mat-table [dataSource]="atenciones" multiTemplateDataRows class="tabla-atenciones">
+
+        <ng-container matColumnDef="codigoAtencion">
+          <th mat-header-cell *matHeaderCellDef>Cód. Atención</th>
+          <td mat-cell *matCellDef="let row">{{ row.codigoAtencion }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="codigoAsunto">
+          <th mat-header-cell *matHeaderCellDef>Cód. Asunto</th>
+          <td mat-cell *matCellDef="let row">{{ row.codigoAsunto }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="descripcionAsunto">
+          <th mat-header-cell *matHeaderCellDef>Asunto</th>
+          <td mat-cell *matCellDef="let row">{{ row.descripcionAsunto }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="estadoAtencion">
+          <th mat-header-cell *matHeaderCellDef>Estado</th>
+          <td mat-cell *matCellDef="let row">
+            <span class="badge-estado" [class.cerrado]="row.estadoAtencion === 'CERRADO'">
+              {{ row.estadoAtencion }}
+            </span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="tieneCierre">
+          <th mat-header-cell *matHeaderCellDef>Info Técnica</th>
+          <td mat-cell *matCellDef="let row">
+            <span *ngIf="row.tieneCierre" class="badge-success">
+              <mat-icon>check_circle</mat-icon> Sí
+            </span>
+            <span *ngIf="!row.tieneCierre && row.estadoAtencion === 'CERRADO'" class="badge-error">
+              <mat-icon>warning</mat-icon> No
+            </span>
+            <span *ngIf="!row.tieneCierre && row.estadoAtencion !== 'CERRADO'" class="badge-na">—</span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="expandir">
+          <th mat-header-cell *matHeaderCellDef></th>
+          <td mat-cell *matCellDef="let row">
+            <button mat-icon-button (click)="toggleAtencion(row); $event.stopPropagation()">
+              <mat-icon>{{ expandedAtencion === row ? 'expand_less' : 'expand_more' }}</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <!-- Expanded Content Column -->
+        <ng-container matColumnDef="expandedDetail">
+          <td mat-cell *matCellDef="let row" [attr.colspan]="atencionesColumns.length">
+            <div class="detail-row" [@detailExpand]="row === expandedAtencion ? 'expanded' : 'collapsed'">
+              <div class="detail-content" *ngIf="row === expandedAtencion">
+                <app-acciones-atencion
+                  [codigoEmpresa]="row.codigoEmpresa"
+                  [codigoAtencion]="row.codigoAtencion">
+                </app-acciones-atencion>
+              </div>
+            </div>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="atencionesColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: atencionesColumns;"
+            class="atencion-row"
+            [class.expanded-row]="expandedAtencion === row"
+            (click)="toggleAtencion(row)">
+        </tr>
+        <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="detail-row-def"></tr>
+      </table>
     </div>
   </mat-card-content>
 </mat-card>

@@ -14,7 +14,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { CitService } from '../../services/cit.service';
 import { EmpresaService } from '../../../empresas/services/empresa.service';
 import { Empresa } from '../../../empresas/models/empresa.model';
-import { CitResultadoResponse, TmAsunto } from '../../models/cit.model';
+import { CitResultadoResponse, TmAsunto, AtencionResponse } from '../../models/cit.model';
+import { AccionesAtencionComponent } from '../acciones-atencion/acciones-atencion.component';
+import { animate, state, style, transition, trigger } from '@angular/animations';
 
 @Component({
   selector: 'app-calculo-cit-form',
@@ -31,10 +33,18 @@ import { CitResultadoResponse, TmAsunto } from '../../models/cit.model';
     MatNativeDateModule,
     MatTableModule,
     MatProgressSpinnerModule,
-    MatIconModule
+    MatIconModule,
+    AccionesAtencionComponent
   ],
   templateUrl: './calculo-cit-form.component.html',
-  styleUrls: ['./calculo-cit-form.component.scss']
+  styleUrls: ['./calculo-cit-form.component.scss'],
+  animations: [
+    trigger('detailExpand', [
+      state('collapsed,void', style({ height: '0px', minHeight: '0' })),
+      state('expanded', style({ height: '*' })),
+      transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
+    ]),
+  ],
 })
 export class CalculoCitFormComponent implements OnInit {
   empresas: Empresa[] = [];
@@ -49,6 +59,11 @@ export class CalculoCitFormComponent implements OnInit {
   error = '';
 
   displayedColumns = ['concepto', 'cantidad'];
+
+  // Atenciones (RF07)
+  atenciones: AtencionResponse[] = [];
+  atencionesColumns = ['codigoAtencion', 'codigoAsunto', 'descripcionAsunto', 'estadoAtencion', 'tieneCierre', 'expandir'];
+  expandedAtencion: AtencionResponse | null = null;
 
   constructor(
     private citService: CitService,
@@ -110,6 +125,7 @@ export class CalculoCitFormComponent implements OnInit {
         this.resultado = resultado;
         this.calculando = false;
         this.mensaje = 'Cálculo CIT realizado exitosamente';
+        this.cargarAtenciones();
       },
       error: (error) => {
         console.error('Error calculando CIT', error);
@@ -141,5 +157,29 @@ export class CalculoCitFormComponent implements OnInit {
       { concepto: '   d.5) Sin detalle en TH_7', cantidad: r.detalleItem4.sinDetalleTh7.toString() },
       { concepto: '   d.6) Sin detalle en TH_8', cantidad: r.detalleItem4.sinDetalleTh8.toString() },
     ];
+  }
+
+  cargarAtenciones(): void {
+    if (!this.empresaSeleccionada || !this.fechaInicio || !this.fechaFin) return;
+    this.atenciones = [];
+    this.expandedAtencion = null;
+
+    this.citService.listarAtenciones(
+      this.empresaSeleccionada,
+      this.formatDate(this.fechaInicio),
+      this.formatDate(this.fechaFin),
+      this.asuntoSeleccionado || undefined
+    ).subscribe({
+      next: (atenciones) => {
+        this.atenciones = atenciones;
+      },
+      error: (error) => {
+        console.error('Error cargando atenciones', error);
+      }
+    });
+  }
+
+  toggleAtencion(atencion: AtencionResponse): void {
+    this.expandedAtencion = this.expandedAtencion === atencion ? null : atencion;
   }
 }

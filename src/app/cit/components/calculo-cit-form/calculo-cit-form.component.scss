@@ -133,3 +133,89 @@
     }
   }
 }
+
+// Atenciones table (RF08)
+.atenciones-container {
+  margin-top: 24px;
+  padding: 0 20px 20px;
+
+  h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    font-size: 18px;
+  }
+}
+
+.tabla-atenciones {
+  width: 100%;
+
+  .badge-estado {
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+    background: #f5f5f5;
+    color: #757575;
+
+    &.cerrado {
+      background: #e8f5e9;
+      color: #2e7d32;
+    }
+  }
+
+  .badge-success {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    color: #2e7d32;
+    font-size: 13px;
+
+    mat-icon {
+      font-size: 16px;
+      width: 16px;
+      height: 16px;
+    }
+  }
+
+  .badge-error {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    color: #c62828;
+    font-size: 13px;
+
+    mat-icon {
+      font-size: 16px;
+      width: 16px;
+      height: 16px;
+    }
+  }
+
+  .badge-na {
+    color: #999;
+  }
+}
+
+.atencion-row {
+  cursor: pointer;
+
+  &:hover {
+    background: #f5f5f5;
+  }
+
+  &.expanded-row {
+    background: #e8eaf6;
+  }
+}
+
+.detail-row-def {
+  height: 0;
+}
+
+.detail-row {
+  overflow: hidden;
+}
+
+.detail-content {
+  padding: 12px 16px;
+}

@@ -10,7 +10,10 @@ import {
   ResumenCit,
   ResumenCitEmpresa,
   IndisponibilidadSistema,
-  TmAsunto
+  TmAsunto,
+  InfoTecnicaCierreResponse,
+  AtencionResponse,
+  AccionResponse
 } from '../models/cit.model';
 
 @Injectable({
@@ -55,5 +58,21 @@ export class CitService {
 
   desactivarIndisponibilidad(id: string): Observable<IndisponibilidadSistema> {
     return this.http.put<IndisponibilidadSistema>(`${this.apiUrl}/indisponibilidad/${id}/desactivar`, null);
+  }
+
+  obtenerInfoTecnica(codigoEmpresa: string, codigoAtencion: string): Observable<InfoTecnicaCierreResponse> {
+    return this.http.get<InfoTecnicaCierreResponse>(`${this.apiUrl}/info-tecnica/${codigoEmpresa}/${codigoAtencion}`);
+  }
+
+  listarAtenciones(codigoEmpresa: string, fechaInicio: string, fechaFin: string, codigoAsunto?: string): Observable<AtencionResponse[]> {
+    let params = `codigoEmpresa=${codigoEmpresa}&fechaInicio=${fechaInicio}&fechaFin=${fechaFin}`;
+    if (codigoAsunto) {
+      params += `&codigoAsunto=${codigoAsunto}`;
+    }
+    return this.http.get<AtencionResponse[]>(`${this.apiUrl}/info-tecnica/atenciones?${params}`);
+  }
+
+  listarAcciones(codigoEmpresa: string, codigoAtencion: string): Observable<AccionResponse[]> {
+    return this.http.get<AccionResponse[]>(`${this.apiUrl}/info-tecnica/${codigoEmpresa}/${codigoAtencion}/acciones`);
   }
 }
