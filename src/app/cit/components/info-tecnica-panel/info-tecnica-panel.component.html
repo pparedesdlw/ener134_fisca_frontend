@@ -1,0 +1,364 @@
+<div class="info-tecnica-container" *ngIf="data">
+  <!-- Header -->
+  <div class="info-header">
+    <span class="info-title">Información Técnica de Cierre — {{ data.nombreTabla }}</span>
+    <span class="badge-asunto">Asunto: {{ data.codigoAsunto }} - {{ data.descripcionAsunto }}</span>
+    <span *ngIf="!data.existeRegistro && data.estadoCerrado" class="badge-incumplimiento">
+      <mat-icon>warning</mat-icon> Incumplimiento
+    </span>
+    <span *ngIf="data.existeRegistro && data.estadoCerrado" class="badge-cumplimiento">
+      <mat-icon>check_circle</mat-icon> Registro encontrado
+    </span>
+    <span *ngIf="!data.estadoCerrado" class="badge-no-aplica">No aplica (no cerrado)</span>
+  </div>
+
+  <mat-divider></mat-divider>
+
+  <!-- TH3: Interrupción Eléctrica -->
+  <ng-container *ngIf="data.tipoTh === 3 && data.datosTh3 && data.datosTh3.length > 0">
+    <div *ngFor="let item of data.datosTh3; let i = index" class="th-section">
+      <h4 *ngIf="data.datosTh3.length > 1">Registro {{ i + 1 }}</h4>
+      <div class="fields-grid">
+        <div class="field">
+          <label>Código Interrupción</label>
+          <span>{{ item.codigoInterrupcionElectrica }}</span>
+        </div>
+        <div class="field">
+          <label>Fecha Inicio Interrupción</label>
+          <span>{{ item.fechaInterrupcionInicio }}</span>
+        </div>
+        <div class="field">
+          <label>Fecha Fin Interrupción</label>
+          <span>{{ item.fechaInterrupcionFin }}</span>
+        </div>
+        <div class="field">
+          <label>Suministros Afectados</label>
+          <span>{{ item.numeroSuministrosAfectados }}</span>
+        </div>
+        <div class="field">
+          <label>Fase Interrupción</label>
+          <span>{{ item.codigoFaseInterrupcion }}</span>
+        </div>
+        <div class="field">
+          <label>Potencia Interrumpida (kW)</label>
+          <span>{{ item.numeroPotenciaInterrumpida }}</span>
+        </div>
+        <div class="field">
+          <label>Energía No Suministrada (kWh)</label>
+          <span>{{ item.numeroEnergiaNoSuministrada }}</span>
+        </div>
+        <div class="field">
+          <label>Motivo de Falla</label>
+          <span>{{ item.numeroMotivoFalla }}</span>
+        </div>
+        <div class="field field-wide">
+          <label>Descripción Motivo Falla</label>
+          <span>{{ item.descripcionMotivoFalla }}</span>
+        </div>
+        <div class="field field-wide">
+          <label>Localización de Falla</label>
+          <span>{{ item.descripcionLocalizacionFalla }}</span>
+        </div>
+        <div class="field field-wide">
+          <label>Sustentación Técnica A</label>
+          <span>{{ item.descripcionSustentacionTecnicaA }}</span>
+        </div>
+        <div class="field field-wide">
+          <label>Sustentación Técnica B</label>
+          <span>{{ item.descripcionSustentacionTecnicaB }}</span>
+        </div>
+        <div class="field field-wide">
+          <label>Sustentación Técnica C</label>
+          <span>{{ item.descripcionSustentacionTecnicaC }}</span>
+        </div>
+        <div class="field field-wide">
+          <label>Acción Interrupción Subestación</label>
+          <span>{{ item.descripcionAccionInterrupcionSubestacion }}</span>
+        </div>
+        <div class="field field-wide">
+          <label>Características Punto Operación</label>
+          <span>{{ item.descripcionCaracteristicasPuntoOperacion }}</span>
+        </div>
+        <div class="field">
+          <label>Código Acta Inspección</label>
+          <span>{{ item.codigoActaInspeccion }}</span>
+        </div>
+        <div class="field">
+          <label>Atenciones últimos 12 meses</label>
+          <span>{{ item.numeroAtenciones12Meses }}</span>
+        </div>
+      </div>
+      <mat-divider *ngIf="i < data.datosTh3.length - 1"></mat-divider>
+    </div>
+  </ng-container>
+
+  <!-- TH4: Tensión -->
+  <ng-container *ngIf="data.tipoTh === 4 && data.datosTh4 && data.datosTh4.length > 0">
+    <div *ngFor="let item of data.datosTh4; let i = index" class="th-section">
+      <h4 *ngIf="data.datosTh4.length > 1">Registro {{ i + 1 }}</h4>
+      <div class="fields-grid">
+        <div class="field">
+          <label>Código Alimentador</label>
+          <span>{{ item.codigoAlimentador }}</span>
+        </div>
+        <div class="field">
+          <label>Código SED</label>
+          <span>{{ item.codigoSed }}</span>
+        </div>
+        <div class="field">
+          <label>Tipo Conexión</label>
+          <span>{{ item.numeroTipoConexion }}</span>
+        </div>
+        <div class="field">
+          <label>Usuarios Afectados</label>
+          <span>{{ item.numeroUsuariosAfectados }}</span>
+        </div>
+        <div class="field field-wide">
+          <label>Suministros Afectados por Tensión</label>
+          <span>{{ item.descripcionSuministrosAfectadosTension }}</span>
+        </div>
+        <div class="field">
+          <label>Causa Tensión</label>
+          <span>{{ item.numeroCausaTension }}</span>
+        </div>
+        <div class="field field-wide">
+          <label>Sustentación Técnica de la Causa</label>
+          <span>{{ item.descripcionSustentacionTecnicaCausa }}</span>
+        </div>
+        <div class="field">
+          <label>Medida Atención</label>
+          <span>{{ item.numeroMedidaAtencion }}</span>
+        </div>
+        <div class="field">
+          <label>Fecha Última Medida Atención</label>
+          <span>{{ item.fechaUltimaMedidaAtencion }}</span>
+        </div>
+        <div class="field field-wide">
+          <label>Sustentación Técnica No Sobrepasar</label>
+          <span>{{ item.descripcionSustentacionTecnicaNoSobrepasar }}</span>
+        </div>
+        <div class="field">
+          <label>UTM X</label>
+          <span>{{ item.numeroUtmX }}</span>
+        </div>
+        <div class="field">
+          <label>UTM Y</label>
+          <span>{{ item.numeroUtmY }}</span>
+        </div>
+        <div class="field">
+          <label>Atenciones últimos 12 meses</label>
+          <span>{{ item.numeroAtenciones12Meses }}</span>
+        </div>
+      </div>
+      <mat-divider *ngIf="i < data.datosTh4.length - 1"></mat-divider>
+    </div>
+  </ng-container>
+
+  <!-- TH5: Irregularidad / Facturación -->
+  <ng-container *ngIf="data.tipoTh === 5 && data.datosTh5 && data.datosTh5.length > 0">
+    <div *ngFor="let item of data.datosTh5; let i = index" class="th-section">
+      <h4 *ngIf="data.datosTh5.length > 1">Registro {{ i + 1 }}</h4>
+      <div class="fields-grid">
+        <div class="field">
+          <label>Código SED</label>
+          <span>{{ item.codigoSed }}</span>
+        </div>
+        <div class="field">
+          <label>Irregularidad</label>
+          <span>{{ item.numeroIrregularidad }}</span>
+        </div>
+        <div class="field">
+          <label>Zona Facturación</label>
+          <span>{{ item.numeroZonaFacturacion }}</span>
+        </div>
+        <div class="field">
+          <label>Suministros Afectados</label>
+          <span>{{ item.numeroSuministrosAfectadosIrregularidad }}</span>
+        </div>
+        <div class="field">
+          <label>Mes Facturación</label>
+          <span>{{ item.codigoMesFacturacion }}</span>
+        </div>
+        <div class="field field-wide">
+          <label>Medida Correctiva</label>
+          <span>{{ item.descripcionMedidaCorrectiva }}</span>
+        </div>
+        <div class="field field-wide">
+          <label>Sustentación Facturación No Irregular</label>
+          <span>{{ item.descripcionSustentacionFacturacionNoIrregular }}</span>
+        </div>
+        <div class="field">
+          <label>Atenciones 12 meses (Irregularidad)</label>
+          <span>{{ item.numeroAtenciones12MesesIrregularidad }}</span>
+        </div>
+      </div>
+      <mat-divider *ngIf="i < data.datosTh5.length - 1"></mat-divider>
+    </div>
+  </ng-container>
+
+  <!-- TH6: Deficiencia / Sistema Eléctrico -->
+  <ng-container *ngIf="data.tipoTh === 6 && data.datosTh6 && data.datosTh6.length > 0">
+    <div *ngFor="let item of data.datosTh6; let i = index" class="th-section">
+      <h4 *ngIf="data.datosTh6.length > 1">Registro {{ i + 1 }}</h4>
+      <div class="fields-grid">
+        <div class="field">
+          <label>Código Sistema Eléctrico</label>
+          <span>{{ item.codigoSistemaElectrico }}</span>
+        </div>
+        <div class="field">
+          <label>Código SED</label>
+          <span>{{ item.codigoSed }}</span>
+        </div>
+        <div class="field">
+          <label>Sector Distribución</label>
+          <span>{{ item.numeroSectorDistribucion }}</span>
+        </div>
+        <div class="field">
+          <label>Fecha Verificación Campo</label>
+          <span>{{ item.fechaVerificacionCampo }}</span>
+        </div>
+        <div class="field">
+          <label>Deficiencia Típica</label>
+          <span>{{ item.numeroDeficienciaTipica }}</span>
+        </div>
+        <div class="field">
+          <label>Código UAP</label>
+          <span>{{ item.codigoUap }}</span>
+        </div>
+        <div class="field">
+          <label>Fecha Subsanación Deficiencia</label>
+          <span>{{ item.fechaSubsanacionDeficiencia }}</span>
+        </div>
+        <div class="field">
+          <label>Código Orden Trabajo</label>
+          <span>{{ item.codigoOrdenTrabajo }}</span>
+        </div>
+        <div class="field">
+          <label>Fecha Solicitud Ampliación</label>
+          <span>{{ item.fechaSolicitudAmpliacion }}</span>
+        </div>
+        <div class="field">
+          <label>Atenciones últimos 12 meses</label>
+          <span>{{ item.numeroAtenciones12Meses }}</span>
+        </div>
+      </div>
+      <mat-divider *ngIf="i < data.datosTh6.length - 1"></mat-divider>
+    </div>
+  </ng-container>
+
+  <!-- TH7: Riesgo Eléctrico -->
+  <ng-container *ngIf="data.tipoTh === 7 && data.datosTh7 && data.datosTh7.length > 0">
+    <div *ngFor="let item of data.datosTh7; let i = index" class="th-section">
+      <h4 *ngIf="data.datosTh7.length > 1">Registro {{ i + 1 }}</h4>
+      <div class="fields-grid">
+        <div class="field">
+          <label>Código Sistema Eléctrico</label>
+          <span>{{ item.codigoSistemaElectrico }}</span>
+        </div>
+        <div class="field">
+          <label>Código Alimentador</label>
+          <span>{{ item.codigoAlimentador }}</span>
+        </div>
+        <div class="field">
+          <label>Código SED</label>
+          <span>{{ item.codigoSed }}</span>
+        </div>
+        <div class="field">
+          <label>Tipo Riesgo</label>
+          <span>{{ item.numeroTipoRiesgo }}</span>
+        </div>
+        <div class="field">
+          <label>Código Elemento Riesgo</label>
+          <span>{{ item.codigoElementoRiesgo }}</span>
+        </div>
+        <div class="field field-wide">
+          <label>Evaluación de Riesgo</label>
+          <span>{{ item.descripcionEvaluacionRiesgo }}</span>
+        </div>
+        <div class="field field-wide">
+          <label>Causa del Riesgo</label>
+          <span>{{ item.descripcionCausaRiesgo }}</span>
+        </div>
+        <div class="field field-wide">
+          <label>Medidas de Riesgo</label>
+          <span>{{ item.descripcionMedidasRiesgo }}</span>
+        </div>
+        <div class="field">
+          <label>Cumplimiento Subsanación</label>
+          <span>{{ item.numeroCumplimientoSubsanacion }}</span>
+        </div>
+        <div class="field field-wide">
+          <label>Causa No Subsanación</label>
+          <span>{{ item.descripcionCausaNoSubsanacion }}</span>
+        </div>
+        <div class="field">
+          <label>UTM X</label>
+          <span>{{ item.numeroUtmX }}</span>
+        </div>
+        <div class="field">
+          <label>UTM Y</label>
+          <span>{{ item.numeroUtmY }}</span>
+        </div>
+        <div class="field">
+          <label>Atenciones últimos 12 meses</label>
+          <span>{{ item.numeroAtenciones12Meses }}</span>
+        </div>
+      </div>
+      <mat-divider *ngIf="i < data.datosTh7.length - 1"></mat-divider>
+    </div>
+  </ng-container>
+
+  <!-- TH8: Conexión / Tarifa -->
+  <ng-container *ngIf="data.tipoTh === 8 && data.datosTh8 && data.datosTh8.length > 0">
+    <div *ngFor="let item of data.datosTh8; let i = index" class="th-section">
+      <h4 *ngIf="data.datosTh8.length > 1">Registro {{ i + 1 }}</h4>
+      <div class="fields-grid">
+        <div class="field">
+          <label>Centro Atención</label>
+          <span>{{ item.codigoCentroAtencion }}</span>
+        </div>
+        <div class="field">
+          <label>Código Presupuesto</label>
+          <span>{{ item.codigoPresupuesto }}</span>
+        </div>
+        <div class="field">
+          <label>Tipo Conexión</label>
+          <span>{{ item.descripcionTipoConexion }}</span>
+        </div>
+        <div class="field">
+          <label>Tipo Acometida</label>
+          <span>{{ item.descripcionTipoAcometida }}</span>
+        </div>
+        <div class="field">
+          <label>Opción Tarifa Inicio</label>
+          <span>{{ item.numeroOpcionTarifaInicio }}</span>
+        </div>
+        <div class="field">
+          <label>Opción Tarifa Fin</label>
+          <span>{{ item.numeroOpcionTarifaFin }}</span>
+        </div>
+        <div class="field">
+          <label>Potencia (kW)</label>
+          <span>{{ item.numeroPotenciaKw }}</span>
+        </div>
+      </div>
+      <mat-divider *ngIf="i < data.datosTh8.length - 1"></mat-divider>
+    </div>
+  </ng-container>
+
+  <!-- Sin datos -->
+  <div *ngIf="data.existeRegistro === false && data.estadoCerrado" class="no-data-warning">
+    <mat-icon>error_outline</mat-icon>
+    <span>No se encontró registro en {{ data.nombreTabla }} para esta atención cerrada. Esto constituye un <strong>incumplimiento</strong>.</span>
+  </div>
+
+  <div *ngIf="!data.estadoCerrado" class="no-data-info">
+    <mat-icon>info</mat-icon>
+    <span>La atención no se encuentra en estado cerrado. La información técnica de cierre no aplica.</span>
+  </div>
+
+  <div *ngIf="data.tipoTh === 0" class="no-data-info">
+    <mat-icon>info</mat-icon>
+    <span>El asunto comercial {{ data.codigoAsunto }} no tiene tabla TH asociada.</span>
+  </div>
+</div>
