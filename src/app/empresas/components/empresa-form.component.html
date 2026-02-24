@@ -1,11 +1,11 @@
-<h2 mat-dialog-title>{{isEditMode ? 'Editar' : 'Nuevo'}} Empresa</h2>
+<h2 mat-dialog-title>{{isEditMode ? 'Editar' : 'Nueva'}} Empresa</h2>
 
 <mat-dialog-content>
   <form [formGroup]="form">
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>Código de Empresa</mat-label>
-      <input matInput formControlName="codigoEmpresa" placeholder="Ej: C00001">
-      <mat-hint>Formato: C00000 (Ej: C00001)</mat-hint>
+      <input matInput formControlName="codigoEmpresa" placeholder="Ej: ELSE">
+      <mat-hint>Formato: [A-Z] (Ej: ESLE)</mat-hint>
       <mat-error *ngIf="form.get('codigoEmpresa')?.hasError('required')">
         El código es requerido
       </mat-error>
