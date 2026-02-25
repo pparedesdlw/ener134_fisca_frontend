@@ -28,6 +28,7 @@ export interface EmpresaUpdateRequest {
   id: number;
   codigoEmpresa: string;
   razonSocial: string;
+  razonSocialAnt: string;
   descripcion: string;
   tipo: string;
   ruc: string;

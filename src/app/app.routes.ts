@@ -14,6 +14,7 @@ import { UsuarioListComponent } from './usuarios/components/usuario-list.compone
 import { CalculoCitFormComponent } from './cit/components/calculo-cit-form/calculo-cit-form.component';
 import { CitResumenDashboardComponent } from './cit/components/cit-resumen-dashboard/cit-resumen-dashboard.component';
 import { CitResultadosListComponent } from './cit/components/cit-resultados-list/cit-resultados-list.component';
+import { AtencionComercialListComponent } from './atencionesComerciales/components/atencionComercial-list.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -34,6 +35,7 @@ export const routes: Routes = [
       { path: 'cit/calculo', component: CalculoCitFormComponent },
       { path: 'cit/resumen', component: CitResumenDashboardComponent },
       { path: 'cit/resultados', component: CitResultadosListComponent },
+      { path: 'atencionesComerciales', component: AtencionComercialListComponent },
       { path: '', redirectTo: '/periodos', pathMatch: 'full' }
     ]
   },

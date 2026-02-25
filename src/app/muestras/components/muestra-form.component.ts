@@ -46,7 +46,7 @@ export class MuestraFormComponent implements OnInit {
       ) {
         this.isEditMode = data.mode === 'edit';
         this.form = this.fb.group({
-          codigoMuestra: ['', [Validators.required, Validators.minLength(1)]],
+          codigoMuestra: ['', [Validators.required, Validators.pattern("^[0-9]*$"), Validators.maxLength(4)]],
           muestra: ['', [Validators.required, Validators.pattern("^[0-9]*$"), Validators.minLength(1)]],
           confianza: ['', [Validators.required, Validators.pattern("^[0-9]*$"), Validators.minLength(1)]],
           error: ['', [Validators.required, Validators.pattern("^[0-9]*$"), Validators.minLength(1)]],
@@ -56,6 +56,8 @@ export class MuestraFormComponent implements OnInit {
 
       ngOnInit(): void {
         if (this.isEditMode && this.data.muestra) {
+          this.form.get('codigoMuestra')?.disable();
+          this.form.get('muestra')?.disable();
           this.form.patchValue({
             codigoMuestra: this.data.muestra.codigoMuestra,
             muestra: this.data.muestra.muestra,
@@ -106,8 +108,8 @@ export class MuestraFormComponent implements OnInit {
 
         const request: MuestraUpdateRequest = {
           id: this.data.muestra!.id!,
-          codigoMuestra: this.form.value.codigoMuestra,
-          muestra: this.form.value.muestra,
+          codigoMuestra: this.form.get('codigoMuestra')?.value,
+          muestra: this.form.get('muestra')?.value,
           confianza: this.form.value.confianza,
           error: this.form.value.error,
           estado: this.form.value.estado === true ? '1' : '0',

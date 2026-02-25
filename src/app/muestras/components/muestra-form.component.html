@@ -4,13 +4,17 @@
   <form [formGroup]="form">
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>Código de Muestra</mat-label>
-      <input matInput formControlName="codigoMuestra" placeholder="Ej: 00001">
-      <mat-hint>Formato: 0000# (Ej: 00001)</mat-hint>
+      <input matInput pattern="[0-9]*" maxlength="4" formControlName="codigoMuestra" placeholder="Ej: 0001">
+      <mat-hint align="end">{{ form.get('codigoMuestra')?.value?.length || 0 }}/4</mat-hint>
+      <mat-hint>Formato: 000# (Ej: 0001)</mat-hint>
       <mat-error *ngIf="form.get('codigoMuestra')?.hasError('required')">
         El código es requerido
       </mat-error>
-      <mat-error *ngIf="form.get('codigoMuestra')?.hasError('minlength')">
-        El código debe tener al menos 5 caracteres
+      <mat-error *ngIf="form.get('codigoMuestra')?.hasError('maxlength')">
+        El código debe tener 4 caracteres
+      </mat-error>
+      <mat-error *ngIf="form.get('codigoMuestra')?.hasError('pattern')">
+        Solo se permiten números
       </mat-error>
     </mat-form-field>
 

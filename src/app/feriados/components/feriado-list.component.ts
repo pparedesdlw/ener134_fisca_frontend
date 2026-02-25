@@ -32,7 +32,8 @@ import { FeriadoFormComponent } from './feriado-form.component';
 export class FeriadoListComponent implements OnInit {
   feriados: Feriado[] = [];
   displayedColumns: string[] = [
-    'fechaFeriado',
+    'fechaFeriadoIni',
+    'fechaFeriadoFin',
     'codigoRegion',
     'descripcionFeriado',
     'tipoFeriado',

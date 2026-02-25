@@ -2,25 +2,36 @@
 
 <mat-dialog-content>
   <form [formGroup]="form">
+
     <mat-form-field appearance="outline" class="full-width">
-      <mat-label>Fecha </mat-label>
-      <input matInput [matDatepicker]="pickerInicio" formControlName="fechaFeriado">
-      <mat-datepicker-toggle matIconSuffix [for]="pickerInicio"></mat-datepicker-toggle>
-      <mat-datepicker #pickerInicio></mat-datepicker>
-      <mat-error *ngIf="form.get('fechaFeriado')?.hasError('required')">
-        La fecha del feriado es requerida
+      <mat-label>Rango fechas</mat-label>
+      <mat-date-range-input [formGroup]="rango" [rangePicker]="picker" required >
+        <input matStartDate formControlName="fechaFeriadoIni" placeholder="Fecha inicio" required >
+        <input matEndDate formControlName="fechaFeriadoFin"  placeholder="Fecha fin" required >
+      </mat-date-range-input>
+      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-date-range-picker #picker></mat-date-range-picker>
+      <mat-error *ngIf="rango.controls.fechaFeriadoIni.hasError('required')">
+        La fecha de inicio es obligatoria
+      </mat-error>
+      <mat-error *ngIf="rango.controls.fechaFeriadoFin.hasError('required')">
+        La fecha de fin es obligatoria
       </mat-error>
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>Ubigeo</mat-label>
-      <input matInput formControlName="codigoRegion" placeholder="Ingrese el ubigeo del feriado">
+      <input matInput pattern="[0-9]*" maxlength="6" formControlName="codigoRegion" placeholder="Ingrese el ubigeo del feriado">
+      <mat-hint align="end">{{ form.get('codigoRegion')?.value?.length || 0 }}/6</mat-hint>
       <mat-hint>Ingrese el ubigeo del feriado</mat-hint>
       <mat-error *ngIf="form.get('codigoRegion')?.hasError('required')">
         El ubigeo es requerido
       </mat-error>
-      <mat-error *ngIf="form.get('codigoRegion')?.hasError('minlength')">
-        El ubigeo debe tener al menos 3 caracteres
+      <mat-error *ngIf="form.get('codigoRegion')?.hasError('maxlength')">
+        El ubigeo debe tener 6 caracteres
+      </mat-error>
+      <mat-error *ngIf="form.get('codigoRegion')?.hasError('pattern')">
+        Solo se permiten números
       </mat-error>
     </mat-form-field>
 
@@ -40,7 +51,7 @@
       <mat-label>Tipo</mat-label>
       <mat-select formControlName="tipoFeriado">
         <mat-option value="NACIONAL">NACIONAL</mat-option>
-        <mat-option value="INTERNACIONAL">INTERNACIONAL</mat-option>
+        <mat-option value="REGIONAL">REGIONAL</mat-option>
       </mat-select>
       <mat-hint>Seleccione un Tipo de Feriado</mat-hint>
       <mat-error *ngIf="form.get('tipoFeriado')?.hasError('required')">

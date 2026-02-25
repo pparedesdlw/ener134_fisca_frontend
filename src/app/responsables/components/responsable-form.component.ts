@@ -46,7 +46,7 @@ export class ResponsableFormComponent implements OnInit {
       ) {
         this.isEditMode = data.mode === 'edit';
         this.form = this.fb.group({
-          codigoResponsable: ['', [Validators.required, Validators.minLength(1)]],
+          codigoResponsable: ['', [Validators.required, Validators.maxLength(4)]],
           nombreResponsable: ['', [Validators.required, Validators.pattern('[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}'), Validators.minLength(1)]],
           codigoEmpresa: ['', [Validators.required, Validators.pattern("^[a-zA-Z0-9-ZáéíóúÁÉÍÓÚñÑ@.\\s]*$"), Validators.minLength(4)]],
           estado: [true]
@@ -55,6 +55,8 @@ export class ResponsableFormComponent implements OnInit {
     
       ngOnInit(): void {
         if (this.isEditMode && this.data.responsable) {
+          this.form.get('codigoResponsable')?.disable();
+          this.form.get('nombreResponsable')?.disable();
           this.form.patchValue({
             codigoResponsable: this.data.responsable.codigoResponsable,
             nombreResponsable: this.data.responsable.nombreResponsable,
@@ -103,8 +105,8 @@ export class ResponsableFormComponent implements OnInit {
 
         const request: ResponsableUpdateRequest = {
           id: this.data.responsable!.id!,
-          codigoResponsable: this.form.value.codigoResponsable,
-          nombreResponsable: this.form.value.nombreResponsable,
+          codigoResponsable: this.form.get('codigoResponsable')?.value,
+          nombreResponsable: this.form.get('nombreResponsable')?.value,
           codigoEmpresa: this.form.value.codigoEmpresa,
           estado: this.form.value.estado === true ? '1' : '0',
           usuarioModificacion: 'admin'
