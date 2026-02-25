@@ -46,7 +46,7 @@ export class ParametroFormComponent implements OnInit {
       ) {
         this.isEditMode = data.mode === 'edit';
         this.form = this.fb.group({
-          codigoParametro: ['', [Validators.required, Validators.minLength(4)]],
+          codigoParametro: ['', [Validators.required, Validators.pattern("^[0-9]*$"), Validators.maxLength(4)]],
           descripcionParametro: ['', [Validators.required, Validators.minLength(5)]],
           valor: ['', [Validators.required, Validators.minLength(1)]],
           tipoParametro: ['', [Validators.required]],
@@ -56,6 +56,8 @@ export class ParametroFormComponent implements OnInit {
 
       ngOnInit(): void {
         if (this.isEditMode && this.data.parametro) {
+          this.form.get('codigoParametro')?.disable();
+          this.form.get('descripcionParametro')?.disable();
           this.form.patchValue({
             codigoParametro: this.data.parametro.codigoParametro,
             descripcionParametro: this.data.parametro.descripcionParametro,
@@ -106,8 +108,8 @@ export class ParametroFormComponent implements OnInit {
 
         const request: ParametroUpdateRequest = {
           id: this.data.parametro!.id!,
-          codigoParametro: this.form.value.codigoParametro,
-          descripcionParametro: this.form.value.descripcionParametro,
+          codigoParametro: this.form.get('codigoParametro')?.value,
+          descripcionParametro: this.form.get('descripcionParametro')?.value,
           valor: this.form.value.valor,
           tipoParametro: this.form.value.tipoParametro,
           estado: this.form.value.estado === true ? '1' : '0',

@@ -46,24 +46,27 @@ export class EmpresaFormComponent implements OnInit {
       ) {
         this.isEditMode = data.mode === 'edit';
         this.form = this.fb.group({
-          codigoEmpresa: ['', [Validators.required, Validators.minLength(6)]],
+          codigoEmpresa: ['', [Validators.required, Validators.pattern("^[a-zA-Z]*$"), Validators.maxLength(4)]],
           razonSocial: ['', [Validators.required, Validators.pattern('^[a-zA-Z0-9 .()/\&$]*$'), Validators.minLength(5)]],
           ruc: ['', [Validators.required, Validators.pattern("^[0-9]*$"), Validators.maxLength(11)]],
-          region: ['', [Validators.required]],
           tipo: ['', [Validators.required]],
-          descripcion: [''],
+          descripcion: ['', [Validators.pattern('^[a-zA-Z0-9 .()/\&$]*$')]],
           estado: [true]
         });
       }
 
+      sRazonSocialAnt: string = '';
+
       ngOnInit(): void {
         if (this.isEditMode && this.data.empresa) {
+          this.form.get('codigoEmpresa')?.disable();
+          this.form.get('ruc')?.disable();
+          this.sRazonSocialAnt = this.data.empresa.razonSocial!;
           this.form.patchValue({
             codigoEmpresa: this.data.empresa.codigoEmpresa,
             razonSocial: this.data.empresa.razonSocial || '',
             descripcion: this.data.empresa.descripcion || '',
             ruc: this.data.empresa.ruc || '',
-            region: this.data.empresa.region || '',
             tipo: this.data.empresa.tipo || '',
             estado: this.data.empresa.estado === '1' ? true : false
           });
@@ -84,14 +87,12 @@ export class EmpresaFormComponent implements OnInit {
       }
 
       crear(): void {
-
         const request: EmpresaCreateRequest = {
           codigoEmpresa: this.form.value.codigoEmpresa,
           razonSocial: this.form.value.razonSocial,
           descripcion: this.form.value.descripcion,
           tipo: this.form.value.tipo,
           ruc: this.form.value.ruc,
-          region: this.form.value.region,
           estado: this.form.value.estado === true ? '1' : '0',
           usuarioCreacion: 'admin'
         };
@@ -109,18 +110,19 @@ export class EmpresaFormComponent implements OnInit {
       }
 
       actualizar(): void {
+        
         const request: EmpresaUpdateRequest = {
           id: this.data.empresa!.id!,
-          codigoEmpresa: this.form.value.codigoEmpresa,
+          codigoEmpresa: this.form.get('codigoEmpresa')?.value,
           razonSocial: this.form.value.razonSocial,
+          razonSocialAnt: this.sRazonSocialAnt,
           descripcion: this.form.value.descripcion,
           tipo: this.form.value.tipo,
-          ruc: this.form.value.ruc,
-          region: this.form.value.region,
+          ruc: this.form.get('ruc')?.value,
           estado: this.form.value.estado === true ? '1' : '0',
           usuarioModificacion: 'admin'
         };
-
+        
         this.empresaService.editar(request).subscribe({
           next: () => {
             this.snackBar.open('Empresa actualizada correctamente', 'Cerrar', { duration: 3000 });
@@ -131,6 +133,7 @@ export class EmpresaFormComponent implements OnInit {
             this.snackBar.open(mensaje, 'Cerrar', { duration: 5000 });
           }
         });
+        
       }
 
       private formatearFecha(fecha: Date): string {

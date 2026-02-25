@@ -1,6 +1,7 @@
 export interface Feriado {
   id?: number;
-  fechaFeriado: string;
+  fechaFeriadoIni: string;
+  fechaFeriadoFin: string;
   codigoRegion?: string;
   descripcionFeriado?: string;
   tipoFeriado?: string;
@@ -13,7 +14,8 @@ export interface Feriado {
 }
 
 export interface FeriadoCreateRequest {
-  fechaFeriado: string;
+  fechaFeriadoIni: string;
+  fechaFeriadoFin: string;
   codigoRegion: string;
   descripcionFeriado: string;
   tipoFeriado: string;
@@ -23,7 +25,8 @@ export interface FeriadoCreateRequest {
 
 export interface FeriadoUpdateRequest {
   id: number;
-  fechaFeriado: string;
+  fechaFeriadoIni: string;
+  fechaFeriadoFin: string;
   codigoRegion: string;
   descripcionFeriado: string;
   tipoFeriado: string;

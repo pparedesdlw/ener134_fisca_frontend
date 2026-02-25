@@ -1,6 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -37,6 +37,11 @@ export class FeriadoFormComponent implements OnInit {
     form: FormGroup;
     isEditMode: boolean;
 
+      rango = new FormGroup({
+        fechaFeriadoIni: new FormControl<Date | null>(null), 
+        fechaFeriadoFin: new FormControl<Date | null>(null)
+      });
+
       constructor(
         private fb: FormBuilder,
         private feriadoService: FeriadoService,
@@ -45,9 +50,13 @@ export class FeriadoFormComponent implements OnInit {
         @Inject(MAT_DIALOG_DATA) public data: { mode: string; feriado?: Feriado }
       ) {
         this.isEditMode = data.mode === 'edit';
+
         this.form = this.fb.group({
-          fechaFeriado: ['', [Validators.required, Validators.minLength(6)]],
-          codigoRegion: ['', [Validators.required, Validators.minLength(3)]],
+          rango: this.fb.group({
+            fechaFeriadoIni: [null], 
+            fechaFeriadoFin: [null]
+          }),
+          codigoRegion: ['', [Validators.required, Validators.pattern("^[0-9]*$"), Validators.maxLength(6)]],
           descripcionFeriado: ['', [Validators.required, Validators.minLength(5)]],
           tipoFeriado: ['', [Validators.required]],
           estado: [true]
@@ -56,14 +65,23 @@ export class FeriadoFormComponent implements OnInit {
 
       ngOnInit(): void {
         if (this.isEditMode && this.data.feriado) {
-          const fechaFeriado = this.parsearFecha(this.data.feriado.fechaFeriado);
+          
+          this.rango.disable();
+          this.form.get('codigoRegion')?.disable();
 
           this.form.patchValue({
-            fechaFeriado: fechaFeriado,
             codigoRegion: this.data.feriado.codigoRegion || '',
             descripcionFeriado: this.data.feriado.descripcionFeriado || '',
             tipoFeriado: this.data.feriado.tipoFeriado || '',
             estado: this.data.feriado.estado === '1' ? true : false
+          });
+
+          const fechaIni = this.parsearFecha(this.data.feriado.fechaFeriadoIni);
+          const fechaFin = this.parsearFecha(this.data.feriado.fechaFeriadoFin);
+
+          this.rango.patchValue({
+            fechaFeriadoIni: fechaIni,
+            fechaFeriadoFin: fechaFin
           });
         }
       }
@@ -82,10 +100,17 @@ export class FeriadoFormComponent implements OnInit {
       }
 
       crear(): void {
-        const fechaFeriado = new Date(this.form.value.fechaFeriado);
+
+        let fechaFeriadoIni;
+        let fechaFeriadoFin;
+        if (this.rango.valid) {
+          fechaFeriadoIni = new Date(this.rango.value.fechaFeriadoIni!);
+          fechaFeriadoFin = new Date(this.rango.value.fechaFeriadoFin!);
+        }
 
         const request: FeriadoCreateRequest = {
-          fechaFeriado: this.formatearFecha(fechaFeriado),
+          fechaFeriadoIni: this.formatearFecha(fechaFeriadoIni!),
+          fechaFeriadoFin: this.formatearFecha(fechaFeriadoFin!),
           codigoRegion: this.form.value.codigoRegion,
           descripcionFeriado: this.form.value.descripcionFeriado,
           tipoFeriado: this.form.value.tipoFeriado,
@@ -106,18 +131,24 @@ export class FeriadoFormComponent implements OnInit {
       }
 
       actualizar(): void {
-        const fechaFeriado = new Date(this.form.value.fechaFeriado);
-
+        let fechaFeriadoIni;
+        let fechaFeriadoFin;
+        this.rango.enable();
+        if (this.rango.valid) {
+          fechaFeriadoIni = new Date(this.rango.value.fechaFeriadoIni!);
+          fechaFeriadoFin = new Date(this.rango.value.fechaFeriadoFin!);
+        }
         const request: FeriadoUpdateRequest = {
           id: this.data.feriado!.id!,
-          fechaFeriado: this.formatearFecha(fechaFeriado),
-          codigoRegion: this.form.value.codigoRegion,
+          fechaFeriadoIni: this.formatearFecha(fechaFeriadoIni!),
+          fechaFeriadoFin: this.formatearFecha(fechaFeriadoFin!),
+          codigoRegion: this.form.get('codigoRegion')?.value,
           descripcionFeriado: this.form.value.descripcionFeriado,
           tipoFeriado: this.form.value.tipoFeriado,
           estado: this.form.value.estado === true ? '1' : '0',
           usuarioModificacion: 'admin'
         };
-
+        this.rango.disable();
         this.feriadoService.editar(request).subscribe({
           next: () => {
             this.snackBar.open('Feriado actualizado correctamente', 'Cerrar', { duration: 3000 });

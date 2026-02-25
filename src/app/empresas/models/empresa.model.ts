@@ -6,7 +6,6 @@ export interface Empresa {
   tipo?: string;
   deTipo?: string;
   ruc?: string;
-  region?: string;
   estado?: string;
   deEstado?: string;
   usuarioCreacion?: string;
@@ -21,7 +20,6 @@ export interface EmpresaCreateRequest {
   descripcion: string;
   tipo: string;
   ruc: string;
-  region: string;
   estado: string;
   usuarioCreacion: string;
 }
@@ -30,10 +28,10 @@ export interface EmpresaUpdateRequest {
   id: number;
   codigoEmpresa: string;
   razonSocial: string;
+  razonSocialAnt: string;
   descripcion: string;
   tipo: string;
   ruc: string;
-  region: string;
   estado: string;
   usuarioModificacion: string;
 }

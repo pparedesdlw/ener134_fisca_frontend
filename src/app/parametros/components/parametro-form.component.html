@@ -4,13 +4,17 @@
   <form [formGroup]="form">
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>Código de Parámetro</mat-label>
-      <input matInput formControlName="codigoParametro" placeholder="Ej: XXXXX_ITEM_1">
-      <mat-hint>Formato: XXXXX_ITEM_1 (Ej: UMBRAL_ITEM_1)</mat-hint>
+      <input matInput pattern="[0-9]*" maxlength="4" formControlName="codigoParametro" placeholder="Ej: 0001">
+      <mat-hint align="end">{{ form.get('ruc')?.value?.length || 0 }}/4</mat-hint>
+      <mat-hint>Formato: #### (Ej: 0001)</mat-hint>
       <mat-error *ngIf="form.get('codigoParametro')?.hasError('required')">
         El código es requerido
       </mat-error>
-      <mat-error *ngIf="form.get('codigoParametro')?.hasError('minlength')">
-        El código debe tener al menos 4 caracteres
+      <mat-error *ngIf="form.get('codigoParametro')?.hasError('maxlength')">
+        El código debe tener al maximo 4 caracteres
+      </mat-error>
+      <mat-error *ngIf="form.get('codigoParametro')?.hasError('pattern')">
+        Solo se permiten números
       </mat-error>
     </mat-form-field>
 
@@ -42,7 +46,7 @@
       <mat-label>Tipo</mat-label>
       <mat-select formControlName="tipoParametro">
         <mat-option value="UMBRAL">Umbral</mat-option>
-        <mat-option value="CUMPLE">Cumple</mat-option>
+        <mat-option value="CUMPLIMIENTO">Cumplimiento</mat-option>
       </mat-select>
       <mat-hint>Seleccione un Tipo de Parámetro</mat-hint>
       <mat-error *ngIf="form.get('tipoParametro')?.hasError('required')">

@@ -35,9 +35,15 @@
     </div>
 
     <table mat-table [dataSource]="feriados" class="mat-elevation-z2">
-      <ng-container matColumnDef="fechaFeriado">
-        <th mat-header-cell *matHeaderCellDef>Fecha</th>
-        <td mat-cell *matCellDef="let feriado"><strong>{{feriado.fechaFeriado}}</strong></td>
+
+      <ng-container matColumnDef="fechaFeriadoIni">
+        <th mat-header-cell *matHeaderCellDef>Fecha Inicial</th>
+        <td mat-cell *matCellDef="let feriado"><strong>{{feriado.fechaFeriadoIni}}</strong></td>
+      </ng-container>
+
+      <ng-container matColumnDef="fechaFeriadoFin">
+        <th mat-header-cell *matHeaderCellDef>Fecha Final</th>
+        <td mat-cell *matCellDef="let feriado"><strong>{{feriado.fechaFeriadoFin}}</strong></td>
       </ng-container>
 
       <ng-container matColumnDef="codigoRegion">
