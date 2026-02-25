@@ -37,7 +37,6 @@ export class EmpresaListComponent implements OnInit {
     'deTipo',
     'razonSocial',
     'descripcion',
-    'region',
     'deEstado',
     'acciones'
   ];
