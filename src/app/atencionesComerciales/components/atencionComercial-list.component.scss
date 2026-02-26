@@ -183,3 +183,19 @@ mat-chip {
   max-width: 360px;
   text-align: center;
 }
+
+.filter-field {
+  width: 100%;
+  padding: 8px 12px 0;
+  box-sizing: border-box;
+}
+
+.estado-cerrado {
+  --mdc-chip-elevated-container-color: #4caf50;
+  --mdc-chip-label-text-color: #fff;
+}
+
+.estado-abierto {
+  --mdc-chip-elevated-container-color: #ff9800;
+  --mdc-chip-label-text-color: #fff;
+}

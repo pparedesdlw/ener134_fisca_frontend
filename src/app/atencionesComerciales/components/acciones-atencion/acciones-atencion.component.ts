@@ -5,8 +5,8 @@ import { MatPaginatorModule, MatPaginator } from '@angular/material/paginator';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDividerModule } from '@angular/material/divider';
-import { CitService } from '../../services/cit.service';
-import { AccionResponse, InfoTecnicaCierreResponse } from '../../models/cit.model';
+import { AtencionComercialService } from '../../services/atencionComercial.service';
+import { AccionResponse, InfoTecnicaCierreResponse } from '../../models/atencionComercial.model';
 import { InfoTecnicaPanelComponent } from '../info-tecnica-panel/info-tecnica-panel.component';
 
 @Component({
@@ -48,7 +48,7 @@ export class AccionesAtencionComponent implements OnInit, AfterViewInit {
   cargandoInfoTecnica = false;
   tieneAccionCerrada = false;
 
-  constructor(private citService: CitService) {}
+  constructor(private atencionComercialService: AtencionComercialService) {}
 
   ngOnInit(): void {
     this.cargarAcciones();
@@ -60,7 +60,7 @@ export class AccionesAtencionComponent implements OnInit, AfterViewInit {
 
   cargarAcciones(): void {
     this.cargando = true;
-    this.citService.listarAcciones(this.codigoEmpresa, this.codigoAtencion).subscribe({
+    this.atencionComercialService.listarAcciones(this.codigoEmpresa, this.codigoAtencion).subscribe({
       next: (acciones) => {
         this.dataSource.data = acciones;
         this.totalRegistros = acciones.length;
@@ -80,7 +80,7 @@ export class AccionesAtencionComponent implements OnInit, AfterViewInit {
 
   private cargarInfoTecnica(): void {
     this.cargandoInfoTecnica = true;
-    this.citService.obtenerInfoTecnica(this.codigoEmpresa, this.codigoAtencion).subscribe({
+    this.atencionComercialService.obtenerInfoTecnica(this.codigoEmpresa, this.codigoAtencion).subscribe({
       next: (info) => {
         this.infoTecnica = info;
         this.cargandoInfoTecnica = false;

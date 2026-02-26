@@ -79,6 +79,7 @@ export class AtencionComercialListComponent implements OnInit, AfterViewInit {
     'numeroSuministro',
     'razonSocial',
     'descripcionAsunto',
+    'estadoAtencion',
     'fechaMaxima',
     'observacion',
     'acciones'
@@ -101,7 +102,6 @@ export class AtencionComercialListComponent implements OnInit, AfterViewInit {
     end: new FormControl<Date | null>(null),
   });
 
-  //textSuministro = new FormControl('');
   textNombreApellido = new FormControl('');
 
   dateIniLocal: string = '';
@@ -173,8 +173,9 @@ export class AtencionComercialListComponent implements OnInit, AfterViewInit {
     observable.subscribe({
       next: (data) => {
         this.atencionesComerciales = data;
-        this.dataSource.data = this.atencionesComerciales
+        this.dataSource.data = this.atencionesComerciales;
         this.dataSource.paginator = this.paginator;
+        this.dataSource.sort = this.sort;
         this.isLoadingResults = false;
         this.isRateLimitReached = data === null;
       },
@@ -188,7 +189,17 @@ export class AtencionComercialListComponent implements OnInit, AfterViewInit {
   isRateLimitReached = false;
 
   ngAfterViewInit() {
+    this.dataSource.sort = this.sort;
     this.cargarAtencionesComerciales();
+  }
+
+  applyFilter(event: Event): void {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = filterValue.trim().toLowerCase();
+
+    if (this.dataSource.paginator) {
+      this.dataSource.paginator.firstPage();
+    }
   }
 
   announceSortChange(sortState: Sort) {
@@ -204,10 +215,10 @@ export class AtencionComercialListComponent implements OnInit, AfterViewInit {
     this.isLoadingResults = true;
 
     let sEmpresa = this.validateString(this.selectedEmpresaOption);
-    let sPerido = this.validateString(this.selectedPeriodoOption);
+    let sPeriodo = this.validateString(this.selectedPeriodoOption);
     let sAsunto = this.validateString(this.selectedAsunto);
 
-    console.log('periodos:', sPerido);
+    console.log('periodos:', sPeriodo);
     console.log('groupEmpresas:', sEmpresa);
     console.log('Inicio:', this.rango.value.start?.toString());
     console.log('Fin:', this.rango.value.end?.toString());
@@ -227,8 +238,9 @@ export class AtencionComercialListComponent implements OnInit, AfterViewInit {
     observable.subscribe({
       next: (data) => {        
           this.atencionesComerciales = data;
-          this.dataSource.data = this.atencionesComerciales
+          this.dataSource.data = this.atencionesComerciales;
           this.dataSource.paginator = this.paginator;
+          this.dataSource.sort = this.sort;
           this.isLoadingResults = false;
           this.isRateLimitReached = data === null;
       },
@@ -244,9 +256,9 @@ export class AtencionComercialListComponent implements OnInit, AfterViewInit {
       this.selectedRow = row;
     }
     const dialogRef = this.dialog.open(AtencionComercialDetailsFormComponent, {
-      width: '50%',
+      width: '80%',
       maxWidth: '100vw',
-      maxHeight: '80vh',
+      maxHeight: '85vh',
       data: { mode: 'details', atencionComercial }
     });
 
@@ -265,7 +277,7 @@ export class AtencionComercialListComponent implements OnInit, AfterViewInit {
     } else {
       sText = sTextValue;
     }
-    return `${sText}`; // Using template literals
+    return `${sText}`;
   }
 
   private mostrarError(mensaje: string, error: any): void {
