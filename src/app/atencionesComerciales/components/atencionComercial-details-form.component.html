@@ -1,27 +1,20 @@
-<h2 mat-dialog-title>{{isDetailMode ? 'Detalle' : 'Nuevo'}} Acciones</h2>
+<h2 mat-dialog-title>Detalle Atención: {{ codigoAtencion }}</h2>
 
 <mat-dialog-content>
-    <form [formGroup]="form">
 
       <mat-tab-group>
         <mat-tab label="Acciones (TH_2)"> 
 
-          <div class="contenido-tab">
-            En Desarrollo
+          <div class="contenido-tab" *ngIf="codigoEmpresa && codigoAtencion">
+            <app-acciones-atencion
+              [codigoEmpresa]="codigoEmpresa"
+              [codigoAtencion]="codigoAtencion">
+            </app-acciones-atencion>
           </div>
 
         </mat-tab>
-        <mat-tab label="Informacion Tecnica de cierre">
-
-            <div class="contenido-tab">
-              No Aplica
-            </div>
-            
-        </mat-tab>
-        
       </mat-tab-group>
 
-    </form>
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">

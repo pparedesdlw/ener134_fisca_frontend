@@ -5,7 +5,6 @@
   </mat-card-header>
 
   <mat-card-content>
-    <!-- Filtros -->
     <div class="filtros-container">
       <div class="filtros-row">
         <mat-form-field appearance="outline">
@@ -54,21 +53,17 @@
       </div>
     </div>
 
-    <!-- Mensajes -->
     <div *ngIf="error" class="mensaje error-msg">{{ error }}</div>
     <div *ngIf="mensaje" class="mensaje success-msg">{{ mensaje }}</div>
 
-    <!-- Spinner -->
     <div *ngIf="calculando" class="spinner-container">
       <mat-spinner diameter="40"></mat-spinner>
       <p>Calculando CIT...</p>
     </div>
 
-    <!-- Resultados -->
     <div *ngIf="resultado" class="resultado-container">
       <h3>Resultado del Cálculo</h3>
 
-      <!-- Tabla de incumplimientos -->
       <table mat-table [dataSource]="tablaResultados" class="tabla-resultado">
         <ng-container matColumnDef="concepto">
           <th mat-header-cell *matHeaderCellDef>Condición</th>
@@ -82,7 +77,6 @@
         <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
       </table>
 
-      <!-- Resumen CIT -->
       <div class="cit-resumen-cards">
         <div class="cit-card">
           <span class="label">Total Registros (NMD)</span>
@@ -117,7 +111,6 @@
       </div>
     </div>
 
-    <!-- Detalle de Atenciones (RF08) -->
     <div *ngIf="atenciones.length > 0" class="atenciones-container">
       <h3>Detalle de Atenciones</h3>
       <table mat-table [dataSource]="atenciones" multiTemplateDataRows class="tabla-atenciones">
@@ -168,7 +161,6 @@
           </td>
         </ng-container>
 
-        <!-- Expanded Content Column -->
         <ng-container matColumnDef="expandedDetail">
           <td mat-cell *matCellDef="let row" [attr.colspan]="atencionesColumns.length">
             <div class="detail-row" [@detailExpand]="row === expandedAtencion ? 'expanded' : 'collapsed'">

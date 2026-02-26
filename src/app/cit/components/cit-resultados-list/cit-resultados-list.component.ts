@@ -47,7 +47,6 @@ export class CitResultadosListComponent implements OnInit {
   displayedColumns: string[] = ['codigoEmpresa', 'codigoAtencion', 'cumpleItem1', 'cumpleItem3', 'cumpleItem4', 'numeroNrn', 'expandir'];
   cargando = false;
 
-  // Acciones de atención (RF07)
   expandedIndicador: IndicadorCit | null = null;
 
   constructor(

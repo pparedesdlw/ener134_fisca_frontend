@@ -34,9 +34,7 @@ export class MainLayoutComponent {
     { path: '/muestras', icon: 'featured_play_list', label: 'Muestras' },
     { path: '/responsables', icon: 'contact_mail', label: 'Responsables' },
     { path: '/cit/calculo', icon: 'calculate', label: 'CIT - Cálculo' },
-    { path: '/cit/resumen', icon: 'dashboard', label: 'CIT - Resumen' },
-    { path: '/cit/resultados', icon: 'list_alt', label: 'CIT - Resultados' },
-    { path: '/atencionesComerciales', icon: 'list', label: 'Atenciones Comercial' }
+    { path: '/atencionesComerciales', icon: 'list', label: 'Atenciones Comerciales' }
   ];
 
   constructor(private router: Router) {}

@@ -23,12 +23,12 @@
       </ng-container>
 
       <ng-container matColumnDef="codigoPeriodo">
-        <th mat-header-cell *matHeaderCellDef>Periodo remisión</th>
+        <th mat-header-cell *matHeaderCellDef>Período de remisión</th>
         <td mat-cell *matCellDef="let row">{{ row.codigoPeriodo }}</td>
       </ng-container>
 
       <ng-container matColumnDef="fechaRegistroAccion">
-        <th mat-header-cell *matHeaderCellDef>Fecha registro acciones</th>
+        <th mat-header-cell *matHeaderCellDef>Fecha de registro de acciones</th>
         <td mat-cell *matCellDef="let row">{{ row.fechaRegistroAccion }}</td>
       </ng-container>
 
@@ -38,7 +38,7 @@
       </ng-container>
 
       <ng-container matColumnDef="descripcionEstadoAtencion">
-        <th mat-header-cell *matHeaderCellDef>Código Estado de atención</th>
+        <th mat-header-cell *matHeaderCellDef>Estado de atención</th>
         <td mat-cell *matCellDef="let row">
           <span class="badge-estado" [class.cerrado]="row.esCerrado">
             {{ row.descripcionEstadoAtencion }}

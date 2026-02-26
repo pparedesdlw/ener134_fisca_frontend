@@ -67,7 +67,6 @@
           </td>
         </ng-container>
 
-        <!-- Expanded Content Column -->
         <ng-container matColumnDef="expandedDetail">
           <td mat-cell *matCellDef="let indicador" [attr.colspan]="displayedColumns.length">
             <div class="detail-row" [@detailExpand]="indicador === expandedIndicador ? 'expanded' : 'collapsed'">

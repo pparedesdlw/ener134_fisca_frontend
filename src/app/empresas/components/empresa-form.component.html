@@ -10,7 +10,7 @@
         El código es requerido
       </mat-error>
       <mat-error *ngIf="form.get('codigoEmpresa')?.hasError('minlength')">
-        El Código debe minimo 3 dígitos
+        El código debe tener mínimo 3 dígitos
       </mat-error>
       <mat-error *ngIf="form.get('codigoEmpresa')?.hasError('pattern')">
         Solo se permiten letras
@@ -34,7 +34,7 @@
 
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>Razón Social</mat-label>
-      <input matInput formControlName="razonSocial" placeholder="Razon social de la empresa">
+      <input matInput formControlName="razonSocial" placeholder="Razón social de la empresa">
       <mat-hint>Ingrese una descripción detallada (mínimo 5 caracteres)</mat-hint>
       <mat-error *ngIf="form.get('razonSocial')?.hasError('required')">
         La razón social es requerida

@@ -14,6 +14,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { AtencionComercialService } from '../services/atencionComercial.service';
 import { AtencionComercial } from '../models/atencionComercial.model';
+import { AccionesAtencionComponent } from './acciones-atencion/acciones-atencion.component';
 
 @Component({
   selector: 'app-atencionComercial-details-form',
@@ -30,7 +31,8 @@ import { AtencionComercial } from '../models/atencionComercial.model';
     MatDatepickerModule,
     MatNativeDateModule,
     MatIconModule,
-    MatTabsModule
+    MatTabsModule,
+    AccionesAtencionComponent
   ],
   templateUrl: './atencionComercial-details-form.component.html',
   styleUrl: './atencionComercial-details-form.component.scss'
@@ -38,6 +40,8 @@ import { AtencionComercial } from '../models/atencionComercial.model';
 export class AtencionComercialDetailsFormComponent implements OnInit {
       form: FormGroup;
       isDetailMode: boolean;
+      codigoEmpresa: string = '';
+      codigoAtencion: string = '';
     
       constructor(
         private fb: FormBuilder,
@@ -56,10 +60,10 @@ export class AtencionComercialDetailsFormComponent implements OnInit {
     
       ngOnInit(): void {
         if (this.isDetailMode && this.data.atencionComercial) {
+          this.codigoEmpresa = this.data.atencionComercial.codigoEmpresa || '';
+          this.codigoAtencion = this.data.atencionComercial.codigoAtencion || '';
           this.form.patchValue({
-            
-            codigoAtencion: this.data.atencionComercial.codigoAtencion || ''
-            
+            codigoAtencion: this.codigoAtencion
           });
         }
       }

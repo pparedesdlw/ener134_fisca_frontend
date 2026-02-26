@@ -15,7 +15,7 @@ import { CitService } from '../../services/cit.service';
 import { EmpresaService } from '../../../empresas/services/empresa.service';
 import { Empresa } from '../../../empresas/models/empresa.model';
 import { CitResultadoResponse, TmAsunto, AtencionResponse } from '../../models/cit.model';
-import { AccionesAtencionComponent } from '../acciones-atencion/acciones-atencion.component';
+import { AccionesAtencionComponent } from '../../../atencionesComerciales/components/acciones-atencion/acciones-atencion.component';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 
 @Component({
@@ -60,7 +60,6 @@ export class CalculoCitFormComponent implements OnInit {
 
   displayedColumns = ['concepto', 'cantidad'];
 
-  // Atenciones (RF07)
   atenciones: AtencionResponse[] = [];
   atencionesColumns = ['codigoAtencion', 'codigoAsunto', 'descripcionAsunto', 'estadoAtencion', 'tieneCierre', 'expandir'];
   expandedAtencion: AtencionResponse | null = null;

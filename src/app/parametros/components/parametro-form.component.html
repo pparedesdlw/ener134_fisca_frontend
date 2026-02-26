@@ -5,13 +5,13 @@
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>Código de Parámetro</mat-label>
       <input matInput pattern="[0-9]*" maxlength="4" formControlName="codigoParametro" placeholder="Ej: 0001">
-      <mat-hint align="end">{{ form.get('ruc')?.value?.length || 0 }}/4</mat-hint>
+      <mat-hint align="end">{{ form.get('codigoParametro')?.value?.length || 0 }}/4</mat-hint>
       <mat-hint>Formato: #### (Ej: 0001)</mat-hint>
       <mat-error *ngIf="form.get('codigoParametro')?.hasError('required')">
         El código es requerido
       </mat-error>
       <mat-error *ngIf="form.get('codigoParametro')?.hasError('maxlength')">
-        El código debe tener al maximo 4 caracteres
+        El código debe tener máximo 4 caracteres
       </mat-error>
       <mat-error *ngIf="form.get('codigoParametro')?.hasError('pattern')">
         Solo se permiten números
@@ -31,7 +31,7 @@
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="full-width">
-      <mat-label>valor</mat-label>
+      <mat-label>Valor</mat-label>
       <input matInput formControlName="valor" placeholder="Ingrese el valor">
       <mat-hint>Ingrese el valor del parámetro</mat-hint>
       <mat-error *ngIf="form.get('valor')?.hasError('required')">

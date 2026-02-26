@@ -5,7 +5,7 @@
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>Código de Responsable</mat-label>
       <input matInput pattern="[0-9]*" maxlength="4" formControlName="codigoResponsable" placeholder="Ej: 0001">
-      <mat-hint align="end">{{ form.get('codigoMuestra')?.value?.length || 0 }}/4</mat-hint>
+      <mat-hint align="end">{{ form.get('codigoResponsable')?.value?.length || 0 }}/4</mat-hint>
       <mat-hint>Formato: 000# (Ej: 0001)</mat-hint>
       <mat-error *ngIf="form.get('codigoResponsable')?.hasError('required')">
         El código es requerido
@@ -13,7 +13,7 @@
       <mat-error *ngIf="form.get('codigoResponsable')?.hasError('maxlength')">
         El código debe tener al menos 4 caracteres
       </mat-error>
-      <mat-error *ngIf="form.get('codigoMuestra')?.hasError('pattern')">
+      <mat-error *ngIf="form.get('codigoResponsable')?.hasError('pattern')">
         Solo se permiten números
       </mat-error>
     </mat-form-field>
@@ -40,7 +40,7 @@
       <mat-hint>Ingrese la oficina regional (mínimo 4 caracteres)</mat-hint>
       <mat-hint align="end">{{ form.get('codigoEmpresa')?.value?.length || 0 }}/25</mat-hint>
       <mat-error *ngIf="form.get('codigoEmpresa')?.hasError('required')">
-        la oficina regional es requerido
+        La oficina regional es requerida
       </mat-error>
       <mat-error *ngIf="form.get('codigoEmpresa')?.hasError('minlength')">
         La oficina regional debe tener al menos 4 caracteres

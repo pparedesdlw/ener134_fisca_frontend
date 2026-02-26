@@ -106,7 +106,7 @@ export class FeriadoListComponent implements OnInit {
           this.cargarFeriados();
         },
         error: (error) => {
-          this.mostrarError('Error al dar de baja la empresa', error);
+          this.mostrarError('Error al dar de baja el feriado', error);
         }
       });
     }
