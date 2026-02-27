@@ -190,7 +190,8 @@ export class AtencionComercialListComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit() {
     this.dataSource.sort = this.sort;
-    this.cargarAtencionesComerciales();
+    this.isLoadingResults = false;
+    //this.cargarAtencionesComerciales();
   }
 
   applyFilter(event: Event): void {
@@ -231,6 +232,18 @@ export class AtencionComercialListComponent implements OnInit, AfterViewInit {
     let fechaFinal = this.datePipe.transform(this.rango.value.end, 'yyyy-MM-dd');
     this.dateFinLocal = fechaFinal!;
     
+    if (fechaFinal === null || fechaFinal === undefined){
+      this.isLoadingResults = false;
+      this.mostrarInfo("Elegir un rango de fecha Periodo FIscalizacion");
+      return;
+    }
+
+    if (fechaInicial === null || fechaInicial === undefined){
+      this.isLoadingResults = false;
+      this.mostrarInfo("Elegir un rango de fecha Periodo FIscalizacion");
+      return;
+    }
+
     const observable = this.atencionComercialService.listarPage(
                             this.dateIniLocal, this.dateFinLocal, sAsunto,
                             this.textNombreApellido.value!, sEmpresa
@@ -284,6 +297,11 @@ export class AtencionComercialListComponent implements OnInit, AfterViewInit {
     const errorMsg = error.error?.message || error.message || mensaje;
     this.snackBar.open(errorMsg, 'Cerrar', { duration: 5000 });
     console.error(error);
+  }
+
+  private mostrarInfo(mensaje: string): void {
+    const infoMsg = mensaje;
+    this.snackBar.open(infoMsg, 'Cerrar', { duration: 3000 });
   }
 
   getEstadoColor(estado?: string): string {

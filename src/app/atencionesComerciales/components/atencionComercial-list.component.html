@@ -21,7 +21,7 @@
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Rango fechas recepción</mat-label>
+          <mat-label>Rango fechas Periodo Fiscalizacion </mat-label>
           <mat-date-range-input [formGroup]="rango" [rangePicker]="picker" required>
             <input matStartDate formControlName="start" placeholder="Fecha inicio" required>
             <input matEndDate formControlName="end"  placeholder="Fecha fin" required>
@@ -35,7 +35,7 @@
           <mat-select [(ngModel)]="selectedEmpresaOption">
             <mat-option [value]="">-- Ninguno Seleccionado --</mat-option>
             <mat-option *ngFor="let opt of optionsEmpresa$ | async" [value]="opt.codigoEmpresa">
-              {{ opt.razonSocial }}
+              {{ opt.codigoEmpresa + ' - ' + opt.razonSocial }}
             </mat-option>
           </mat-select>
         </mat-form-field>
@@ -45,7 +45,7 @@
           <mat-select [(ngModel)]="selectedAsunto">
             <mat-option [value]="">-- Ninguno Seleccionado --</mat-option>
             <mat-option *ngFor="let opt of optionsAsunto$ | async" [value]="opt.codigoAsunto">
-              {{ opt.descripcion }}
+              {{ opt.codigoAsunto + ' - ' + opt.descripcion }}
             </mat-option>
           </mat-select>
         </mat-form-field>
