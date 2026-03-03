@@ -13,6 +13,7 @@ import { ResponsableListComponent } from './responsables/components/responsable-
 import { UsuarioListComponent } from './usuarios/components/usuario-list.component';
 import { CalculoCitFormComponent } from './cit/components/calculo-cit-form/calculo-cit-form.component';
 import { AtencionComercialListComponent } from './atencionesComerciales/components/atencionComercial-list.component';
+import { IndisponibilidadListComponent } from './cit/components/indisponibilidad-list/indisponibilidad-list.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -32,6 +33,7 @@ export const routes: Routes = [
       { path: 'usuarios', component: UsuarioListComponent },
       { path: 'cit/calculo', component: CalculoCitFormComponent },
       { path: 'atencionesComerciales', component: AtencionComercialListComponent },
+      { path: 'indisponibilidades', component: IndisponibilidadListComponent },
       { path: '', redirectTo: '/periodos', pathMatch: 'full' }
     ]
   },

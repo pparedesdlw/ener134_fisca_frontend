@@ -21,6 +21,7 @@ import {
 })
 export class CitService {
   private apiUrl = `${environment.apiUrl}/cit`;
+  private indispUrl = `${environment.apiUrl}/indisponibilidad`;
 
   constructor(private http: HttpClient) { }
 
@@ -45,19 +46,19 @@ export class CitService {
   }
 
   listarIndisponibilidades(): Observable<IndisponibilidadSistema[]> {
-    return this.http.get<IndisponibilidadSistema[]>(`${this.apiUrl}/indisponibilidad/listar`);
+    return this.http.get<IndisponibilidadSistema[]>(`${this.indispUrl}/listar`);
   }
 
   listarIndisponibilidadesActivas(): Observable<IndisponibilidadSistema[]> {
-    return this.http.get<IndisponibilidadSistema[]>(`${this.apiUrl}/indisponibilidad/activas`);
+    return this.http.get<IndisponibilidadSistema[]>(`${this.indispUrl}/activas`);
   }
 
   registrarIndisponibilidad(indisponibilidad: Partial<IndisponibilidadSistema>): Observable<IndisponibilidadSistema> {
-    return this.http.post<IndisponibilidadSistema>(`${this.apiUrl}/indisponibilidad/registrar`, indisponibilidad);
+    return this.http.post<IndisponibilidadSistema>(`${this.indispUrl}/registrar`, indisponibilidad);
   }
 
   desactivarIndisponibilidad(id: string): Observable<IndisponibilidadSistema> {
-    return this.http.put<IndisponibilidadSistema>(`${this.apiUrl}/indisponibilidad/${id}/desactivar`, null);
+    return this.http.put<IndisponibilidadSistema>(`${this.indispUrl}/${id}/desactivar`, null);
   }
 
   obtenerInfoTecnica(codigoEmpresa: string, codigoAtencion: string): Observable<InfoTecnicaCierreResponse> {
