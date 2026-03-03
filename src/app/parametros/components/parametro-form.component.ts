@@ -46,7 +46,7 @@ export class ParametroFormComponent implements OnInit {
       ) {
         this.isEditMode = data.mode === 'edit';
         this.form = this.fb.group({
-          codigoParametro: ['', [Validators.required, Validators.pattern("^[0-9]*$"), Validators.maxLength(4)]],
+          codigoParametro: ['', [Validators.required, Validators.pattern("^[a-zA-Z0-9!@#\$%\^\&*\)\(+=._-]+$")]],
           descripcionParametro: ['', [Validators.required, Validators.minLength(5)]],
           valor: ['', [Validators.required, Validators.minLength(1)]],
           tipoParametro: ['', [Validators.required]],

@@ -98,16 +98,20 @@ export class MuestraListComponent implements OnInit {
   }
 
   eliminar(muestra: Muestra): void {
-    if (confirm(`¿Está seguro de dar de baja la muestra ${muestra.codigoMuestra}?`)) {
-      this.muestraService.eliminar(muestra.id!).subscribe({
-        next: () => {
-          this.snackBar.open('Muestra dada de baja correctamente', 'Cerrar', { duration: 3000 });
-          this.cargarMuestras();
-        },
-        error: (error) => {
-          this.mostrarError('Error al dar de baja la muestra', error);
-        }
-      });
+    if (muestra.estado === "1"){
+      if (confirm(`¿Está seguro de dar de baja la muestra ${muestra.codigoMuestra}?`)) {
+        this.muestraService.eliminar(muestra.id!).subscribe({
+          next: () => {
+            this.snackBar.open('Muestra dada de baja correctamente', 'Cerrar', { duration: 3000 });
+            this.cargarMuestras();
+          },
+          error: (error) => {
+            this.mostrarError('Error al dar de baja la muestra', error);
+          }
+        });
+      }
+    } else {
+      this.mostrarInfo(`la muestra de código: ${muestra.codigoMuestra} - se encuentra Inactivo`);
     }
   }
 
@@ -115,6 +119,11 @@ export class MuestraListComponent implements OnInit {
     const errorMsg = error.error?.message || error.message || mensaje;
     this.snackBar.open(errorMsg, 'Cerrar', { duration: 5000 });
     console.error(error);
+  }
+
+  private mostrarInfo(mensaje: string): void {
+    const errorMsg = mensaje;
+    this.snackBar.open(errorMsg, 'Cerrar', { duration: 4000 });
   }
 
   getEstadoColor(estado?: string): string {

@@ -20,31 +20,48 @@
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="full-width">
-      <mat-label>Ubigeo</mat-label>
-      <input matInput pattern="[0-9]*" maxlength="6" formControlName="codigoRegion" placeholder="Ingrese el ubigeo del feriado">
-      <mat-hint align="end">{{ form.get('codigoRegion')?.value?.length || 0 }}/6</mat-hint>
-      <mat-hint>Ingrese el ubigeo del feriado</mat-hint>
-      <mat-error *ngIf="form.get('codigoRegion')?.hasError('required')">
-        El ubigeo es requerido
-      </mat-error>
-      <mat-error *ngIf="form.get('codigoRegion')?.hasError('maxlength')">
-        El ubigeo debe tener 6 caracteres
-      </mat-error>
-      <mat-error *ngIf="form.get('codigoRegion')?.hasError('pattern')">
-        Solo se permiten números
-      </mat-error>
+      <mat-label>Departamento</mat-label>
+      <mat-select formControlName="departamento" (selectionChange)="onItemChangeDepartamento($event)" [(ngModel)]="selectedDepartamentoOption" required>
+        <mat-option [value]="">-- Ninguno Seleccionado --</mat-option>
+        <mat-option *ngFor="let opt of optionsDepartamento$ | async" [value]="opt.codigoDepartamento">
+          {{ opt.descripcionDepartamento }}
+        </mat-option>
+      </mat-select>
+      <mat-hint>Seleccione un Departamento</mat-hint>      
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Provincia</mat-label>
+      <mat-select formControlName="provincia" (selectionChange)="onItemChangeProvincia($event)" [(ngModel)]="selectedProvinciaOption">
+        <mat-option [value]="">-- Ninguno Seleccionado --</mat-option>
+        <mat-option *ngFor="let opt of optionsProvincia$ | async" [value]="opt.codigoProvincia">
+          {{ opt.descripcionProvincia }}
+        </mat-option>
+      </mat-select>
+      <mat-hint>Seleccione una Provincia</mat-hint>      
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Distrito</mat-label>
+      <mat-select formControlName="distrito" (selectionChange)="onItemChangeDistrito($event)" [(ngModel)]="selectedDistritoOption">
+        <mat-option [value]="">-- Ninguno Seleccionado --</mat-option>
+        <mat-option *ngFor="let opt of optionsDistrito$ | async" [value]="opt.codigoDistrito">
+          {{ opt.descripcionDistrito }}
+        </mat-option>
+      </mat-select>
+      <mat-hint>Seleccione un Distrito</mat-hint>
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>Descripción del Feriado</mat-label>
-      <input matInput formControlName="descripcionFeriado" placeholder="Descripción del feriado">
+      <input matInput maxlength="100" formControlName="descripcionFeriado" placeholder="Descripción del feriado">
       <mat-hint>Ingrese una descripción detallada (mínimo 5 caracteres)</mat-hint>
       <mat-error *ngIf="form.get('descripcionFeriado')?.hasError('required')">
         La descripción del feriado es requerida
       </mat-error>
       <mat-error *ngIf="form.get('descripcionFeriado')?.hasError('minlength')">
         La descripción del feriado debe tener al menos 5 caracteres
-      </mat-error>
+      </mat-error>      
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="full-width">

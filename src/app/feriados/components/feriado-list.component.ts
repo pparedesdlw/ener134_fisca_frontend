@@ -34,7 +34,7 @@ export class FeriadoListComponent implements OnInit {
   displayedColumns: string[] = [
     'fechaFeriadoIni',
     'fechaFeriadoFin',
-    'codigoRegion',
+    'descripcionRegion',
     'descripcionFeriado',
     'tipoFeriado',
     'deEstado',
@@ -99,16 +99,20 @@ export class FeriadoListComponent implements OnInit {
   }
 
   eliminar(feriado: Feriado): void {
-    if (confirm(`¿Está seguro de dar de baja el feriado ${feriado.descripcionFeriado}?`)) {
-      this.feriadoService.eliminar(feriado.id!).subscribe({
-        next: () => {
-          this.snackBar.open('Feriado dado de baja correctamente', 'Cerrar', { duration: 3000 });
-          this.cargarFeriados();
-        },
-        error: (error) => {
-          this.mostrarError('Error al dar de baja el feriado', error);
-        }
-      });
+    if (feriado.estado === "1"){
+      if (confirm(`¿Está seguro de dar de baja el feriado: ${feriado.descripcionFeriado}?`)) {
+        this.feriadoService.eliminar(feriado.id!).subscribe({
+          next: () => {
+            this.snackBar.open('Feriado dado de baja correctamente', 'Cerrar', { duration: 3000 });
+            this.cargarFeriados();
+          },
+          error: (error) => {
+            this.mostrarError('Error al dar de baja el feriado', error);
+          }
+        });
+      }
+    } else {
+      this.mostrarInfo(`El feriado: ${feriado.descripcionFeriado} - se encuentra Inactivo`);
     }
   }
 
@@ -116,6 +120,11 @@ export class FeriadoListComponent implements OnInit {
     const errorMsg = error.error?.message || error.message || mensaje;
     this.snackBar.open(errorMsg, 'Cerrar', { duration: 5000 });
     console.error(error);
+  }
+
+  private mostrarInfo(mensaje: string): void {
+    const errorMsg = mensaje;
+    this.snackBar.open(errorMsg, 'Cerrar', { duration: 4000 });
   }
 
   getEstadoColor(estado?: string): string {

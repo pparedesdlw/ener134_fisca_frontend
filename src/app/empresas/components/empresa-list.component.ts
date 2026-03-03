@@ -99,23 +99,33 @@ export class EmpresaListComponent implements OnInit {
   }
 
   eliminar(empresa: Empresa): void {
-    if (confirm(`¿Está seguro de dar de baja la empresa ${empresa.codigoEmpresa}?`)) {
+    if (empresa.estado === "1"){
+      if (confirm(`¿Está seguro de dar de baja la empresa ${empresa.codigoEmpresa}?`)) {
       this.empresaService.eliminar(empresa.id!).subscribe({
-        next: () => {
-          this.snackBar.open('Empresa dada de baja correctamente', 'Cerrar', { duration: 3000 });
-          this.cargarEmpresas();
-        },
-        error: (error) => {
-          this.mostrarError('Error al dar de baja la empresa', error);
-        }
-      });
+          next: () => {
+            this.snackBar.open('Empresa dada de baja correctamente', 'Cerrar', { duration: 3000 });
+            this.cargarEmpresas();
+          },
+          error: (error) => {
+            this.mostrarError('Error al dar de baja la empresa', error);
+          }
+        });
+      }
+    } else {
+      this.mostrarInfo(`la empresa: ${empresa.codigoEmpresa} - se encuentra Inactivo`);
     }
+    
   }
 
   private mostrarError(mensaje: string, error: any): void {
     const errorMsg = error.error?.message || error.message || mensaje;
     this.snackBar.open(errorMsg, 'Cerrar', { duration: 5000 });
     console.error(error);
+  }
+
+  private mostrarInfo(mensaje: string): void {
+    const errorMsg = mensaje;
+    this.snackBar.open(errorMsg, 'Cerrar', { duration: 4000 });
   }
 
   getEstadoColor(estado?: string): string {

@@ -1,6 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormControl, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, FormBuilder, FormControl, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -12,7 +12,16 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { FeriadoService } from '../services/feriado.service';
+import { Observable } from 'rxjs';
+import { MatSelectChange } from '@angular/material/select';
 import { Feriado, FeriadoCreateRequest, FeriadoUpdateRequest } from '../models/feriado.model';
+import { Departamento } from '../../ubigeos/models/departamento.model';
+import { DepartamentoService } from '../../ubigeos/services/departamento.service';
+import { Provincia } from '../../ubigeos/models/provincia.model';
+import { ProvinciaService } from '../../ubigeos/services/provincia.service';
+import { Distrito } from '../../ubigeos/models/distrito.model';
+import { DistritoService } from '../../ubigeos/services/distrito.service';
+import { AnyCatcher } from 'rxjs/internal/AnyCatcher';
 
 @Component({
   selector: 'app-feriado-form',
@@ -20,6 +29,7 @@ import { Feriado, FeriadoCreateRequest, FeriadoUpdateRequest } from '../models/f
   imports: [
     CommonModule,
     ReactiveFormsModule,
+    FormsModule,
     MatDialogModule,
     MatFormFieldModule,
     MatInputModule,
@@ -37,12 +47,24 @@ export class FeriadoFormComponent implements OnInit {
     form: FormGroup;
     isEditMode: boolean;
 
+      optionsDepartamento$!: Observable<Departamento[]>;
+      selectedDepartamentoOption: string = '';
+
+      optionsProvincia$!: Observable<Provincia[]>;
+      selectedProvinciaOption: string = '';
+
+      optionsDistrito$!: Observable<Distrito[]>;
+      selectedDistritoOption: string = '';
+
       rango = new FormGroup({
         fechaFeriadoIni: new FormControl<Date | null>(null), 
         fechaFeriadoFin: new FormControl<Date | null>(null)
       });
 
       constructor(
+        private departamentoService: DepartamentoService,
+        private provinciaService: ProvinciaService,
+        private distritoService: DistritoService,
         private fb: FormBuilder,
         private feriadoService: FeriadoService,
         private snackBar: MatSnackBar,
@@ -56,7 +78,9 @@ export class FeriadoFormComponent implements OnInit {
             fechaFeriadoIni: [null], 
             fechaFeriadoFin: [null]
           }),
-          codigoRegion: ['', [Validators.required, Validators.pattern("^[0-9]*$"), Validators.maxLength(6)]],
+          departamento: [''],
+          provincia: [''],
+          distrito: [''],
           descripcionFeriado: ['', [Validators.required, Validators.minLength(5)]],
           tipoFeriado: ['', [Validators.required]],
           estado: [true]
@@ -64,18 +88,35 @@ export class FeriadoFormComponent implements OnInit {
       }
 
       ngOnInit(): void {
+        this.optionsDepartamento$ = this.departamentoService.listarTodos();
+
         if (this.isEditMode && this.data.feriado) {
           
           this.rango.disable();
-          this.form.get('codigoRegion')?.disable();
 
+          let sCodRegion = this.data.feriado.codigoRegion;
+
+          let sCodDepart = "";
+          let sCodProvin = "";
+          let sCodDistri = "";
+          if (sCodRegion!.length <= 6){
+              sCodDepart = sCodRegion?.substring(0,2)!;
+              sCodProvin = sCodRegion?.substring(2,4)!;
+              sCodDistri = sCodRegion?.slice(-2)!;
+              this.onItemChangeDepartamento({value: sCodDepart});
+              this.onItemChangeProvincia({value: sCodProvin});
+              this.onItemChangeDistrito({value: sCodDistri});
+          }
+          
           this.form.patchValue({
-            codigoRegion: this.data.feriado.codigoRegion || '',
+            departamento: sCodDepart!,
+            provincia: sCodProvin!,
+            distrito: sCodDistri!,
             descripcionFeriado: this.data.feriado.descripcionFeriado || '',
             tipoFeriado: this.data.feriado.tipoFeriado || '',
             estado: this.data.feriado.estado === '1' ? true : false
           });
-
+              
           const fechaIni = this.parsearFecha(this.data.feriado.fechaFeriadoIni);
           const fechaFin = this.parsearFecha(this.data.feriado.fechaFeriadoFin);
 
@@ -83,6 +124,7 @@ export class FeriadoFormComponent implements OnInit {
             fechaFeriadoIni: fechaIni,
             fechaFeriadoFin: fechaFin
           });
+
         }
       }
 
@@ -99,6 +141,35 @@ export class FeriadoFormComponent implements OnInit {
         }
       }
 
+      onItemChangeDepartamento(event: any) {
+        let sDepartamento = this.validateString(this.validateString(event.value));
+        this.selectedDepartamentoOption = sDepartamento;
+        console.log('Valor seleccionado:', sDepartamento);
+        if (sDepartamento !== ''){
+          this.optionsProvincia$ = this.provinciaService.listarTodos(sDepartamento);
+          this.selectedProvinciaOption = "";
+          this.selectedDistritoOption = "";
+        }
+      }
+
+      onItemChangeProvincia(event: any) {
+        let sDepartamento = this.validateString(this.selectedDepartamentoOption);
+        let sProvincia = this.validateString(event.value);
+        this.selectedProvinciaOption = sProvincia;
+        console.log('Valor seleccionado sDepartamento:', sDepartamento);
+        console.log('Valor seleccionado sProvincia:', sProvincia);
+        if (sProvincia !== '' && sDepartamento !== ''){
+          this.optionsDistrito$ = this.distritoService.listarTodos(sDepartamento, sProvincia);
+          this.selectedDistritoOption = "";
+        }
+      }
+
+      onItemChangeDistrito(event: any) {
+        let sDistrito = this.validateString(event.value);
+        this.selectedDistritoOption = sDistrito;
+      }
+
+
       crear(): void {
 
         let fechaFeriadoIni;
@@ -108,10 +179,17 @@ export class FeriadoFormComponent implements OnInit {
           fechaFeriadoFin = new Date(this.rango.value.fechaFeriadoFin!);
         }
 
+        let sDept = this.validateString(this.selectedDepartamentoOption)
+        let sProv = this.validateString(this.selectedProvinciaOption)
+        let sDist = this.validateString(this.selectedDistritoOption)
+        let sCodigoRegion = ((sDept != '') ? sDept : '00') + 
+                            ((sProv != '') ? sProv : '00')  + 
+                            ((sDist != '') ? sDist : '00');
+
         const request: FeriadoCreateRequest = {
           fechaFeriadoIni: this.formatearFecha(fechaFeriadoIni!),
           fechaFeriadoFin: this.formatearFecha(fechaFeriadoFin!),
-          codigoRegion: this.form.value.codigoRegion,
+          codigoRegion: sCodigoRegion,
           descripcionFeriado: this.form.value.descripcionFeriado,
           tipoFeriado: this.form.value.tipoFeriado,
           estado: this.form.value.estado === true ? '1' : '0',
@@ -138,11 +216,19 @@ export class FeriadoFormComponent implements OnInit {
           fechaFeriadoIni = new Date(this.rango.value.fechaFeriadoIni!);
           fechaFeriadoFin = new Date(this.rango.value.fechaFeriadoFin!);
         }
+
+        let sDept = this.validateString(this.selectedDepartamentoOption)
+        let sProv = this.validateString(this.selectedProvinciaOption)
+        let sDist = this.validateString(this.selectedDistritoOption)
+        let sCodigoRegion = ((sDept != '') ? sDept : '00') + 
+                            ((sProv != '') ? sProv : '00')  + 
+                            ((sDist != '') ? sDist : '00');
+        
         const request: FeriadoUpdateRequest = {
           id: this.data.feriado!.id!,
           fechaFeriadoIni: this.formatearFecha(fechaFeriadoIni!),
           fechaFeriadoFin: this.formatearFecha(fechaFeriadoFin!),
-          codigoRegion: this.form.get('codigoRegion')?.value,
+          codigoRegion: sCodigoRegion,
           descripcionFeriado: this.form.value.descripcionFeriado,
           tipoFeriado: this.form.value.tipoFeriado,
           estado: this.form.value.estado === true ? '1' : '0',
@@ -176,6 +262,17 @@ export class FeriadoFormComponent implements OnInit {
         const month = String(fecha.getMonth() + 1).padStart(2, '0');
         const day = String(fecha.getDate()).padStart(2, '0');
         return `${year}-${month}-${day}`;
+      }
+
+      public validateString(sTextValue: string): string {
+        let sText = "";
+        if (sTextValue === undefined) {
+        } else if (sTextValue === null) {
+        } else if (sTextValue === "") {
+        } else {
+          sText = sTextValue;
+        }
+        return `${sText}`;
       }
 
       cancelar(): void {
