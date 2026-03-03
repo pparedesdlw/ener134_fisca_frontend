@@ -126,6 +126,11 @@
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Dirección</th>
             <td mat-cell *matCellDef="let atencionComercial">{{atencionComercial.direccion}}</td>
           </ng-container>
+
+          <ng-container matColumnDef="descripcionUbigeo">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Ubigeo</th>
+            <td mat-cell *matCellDef="let atencionComercial">{{atencionComercial.descripcionUbigeo}}</td>
+          </ng-container>
           
           <ng-container matColumnDef="numeroSuministro">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Número Suministro</th>

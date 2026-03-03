@@ -76,6 +76,7 @@ export class AtencionComercialListComponent implements OnInit, AfterViewInit {
     'correoElectronico',
     'telefonoContacto',
     'direccion',
+    'descripcionUbigeo',
     'numeroSuministro',
     'razonSocial',
     'descripcionAsunto',

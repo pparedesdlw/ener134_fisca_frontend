@@ -98,23 +98,33 @@ export class ResponsableListComponent implements OnInit {
   }
 
   eliminar(responsable: Responsable): void {
-    if (confirm(`¿Está seguro de dar de baja el responsable ${responsable.nombreResponsable}?`)) {
-      this.responsableService.eliminar(responsable.id!).subscribe({
-        next: () => {
-          this.snackBar.open('Responsable dado de baja correctamente', 'Cerrar', { duration: 3000 });
-          this.cargarResponsables();
-        },
-        error: (error) => {
-          this.mostrarError('Error al dar de baja el responsable', error);
-        }
-      });
+    if (responsable.estado === "1"){
+      if (confirm(`¿Está seguro de dar de baja el responsable ${responsable.nombreResponsable}?`)) {
+        this.responsableService.eliminar(responsable.id!).subscribe({
+          next: () => {
+            this.snackBar.open('Responsable dado de baja correctamente', 'Cerrar', { duration: 3000 });
+            this.cargarResponsables();
+          },
+          error: (error) => {
+            this.mostrarError('Error al dar de baja el responsable', error);
+          }
+        });
+      }
+    } else {
+      this.mostrarInfo(`el responsable: ${responsable.nombreResponsable} - se encuentra Inactivo`);
     }
+    
   }
 
   private mostrarError(mensaje: string, error: any): void {
     const errorMsg = error.error?.message || error.message || mensaje;
     this.snackBar.open(errorMsg, 'Cerrar', { duration: 5000 });
     console.error(error);
+  }
+
+  private mostrarInfo(mensaje: string): void {
+    const errorMsg = mensaje;
+    this.snackBar.open(errorMsg, 'Cerrar', { duration: 4000 });
   }
 
   getEstadoColor(estado?: string): string {

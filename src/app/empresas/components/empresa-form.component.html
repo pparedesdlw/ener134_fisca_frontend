@@ -34,7 +34,7 @@
 
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>Razón Social</mat-label>
-      <input matInput formControlName="razonSocial" placeholder="Razón social de la empresa">
+      <input matInput formControlName="razonSocial" maxlength="100" placeholder="Razón social de la empresa">
       <mat-hint>Ingrese una descripción detallada (mínimo 5 caracteres)</mat-hint>
       <mat-error *ngIf="form.get('razonSocial')?.hasError('required')">
         La razón social es requerida
@@ -49,7 +49,7 @@
 
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>Descripción</mat-label>
-      <textarea matInput formControlName="descripcion" placeholder="Descripción de la empresa" rows="3"></textarea>
+      <textarea matInput formControlName="descripcion" maxlength="250" placeholder="Descripción de la empresa" rows="3"></textarea>
       <mat-hint>Ingrese una descripción detallada</mat-hint>
       <mat-error *ngIf="form.get('razonSocial')?.hasError('pattern')">
         Solo se permiten letras y números

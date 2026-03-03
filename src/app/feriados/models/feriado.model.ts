@@ -3,6 +3,7 @@ export interface Feriado {
   fechaFeriadoIni: string;
   fechaFeriadoFin: string;
   codigoRegion?: string;
+  descripcionRegion?: string;
   descripcionFeriado?: string;
   tipoFeriado?: string;
   estado?: string;

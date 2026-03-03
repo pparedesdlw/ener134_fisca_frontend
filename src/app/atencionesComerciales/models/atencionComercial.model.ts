@@ -15,6 +15,7 @@ export interface AtencionComercial {
   telefonoContacto: string;
   direccion: string;
   ubigeo: string;
+  descripcionUbigeo: string;
   fechaMaxima: Date;
   observacion: string;
   descripcionAsunto: string;

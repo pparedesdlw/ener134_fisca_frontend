@@ -38,17 +38,17 @@
 
       <ng-container matColumnDef="fechaFeriadoIni">
         <th mat-header-cell *matHeaderCellDef>Fecha Inicial</th>
-        <td mat-cell *matCellDef="let feriado"><strong>{{feriado.fechaFeriadoIni}}</strong></td>
+        <td mat-cell *matCellDef="let feriado"><strong>{{feriado.fechaFeriadoIni | date: 'dd/MM/yyyy'}}</strong></td>
       </ng-container>
 
       <ng-container matColumnDef="fechaFeriadoFin">
         <th mat-header-cell *matHeaderCellDef>Fecha Final</th>
-        <td mat-cell *matCellDef="let feriado"><strong>{{feriado.fechaFeriadoFin}}</strong></td>
+        <td mat-cell *matCellDef="let feriado"><strong>{{feriado.fechaFeriadoFin | date: 'dd/MM/yyyy'}}</strong></td>
       </ng-container>
 
-      <ng-container matColumnDef="codigoRegion">
+      <ng-container matColumnDef="descripcionRegion">
         <th mat-header-cell *matHeaderCellDef>Ubigeo</th>
-        <td mat-cell *matCellDef="let feriado">{{feriado.codigoRegion}}</td>
+        <td mat-cell *matCellDef="let feriado">{{feriado.descripcionRegion}}</td>
       </ng-container>
 
       <ng-container matColumnDef="descripcionFeriado">

@@ -98,16 +98,20 @@ export class ParametroListComponent implements OnInit {
   }
 
   eliminar(parametro: Parametro): void {
-    if (confirm(`¿Está seguro de dar de baja el parámetro ${parametro.codigoParametro}?`)) {
-      this.parametroService.eliminar(parametro.id!).subscribe({
-        next: () => {
-          this.snackBar.open('Parámetro dado de baja correctamente', 'Cerrar', { duration: 3000 });
-          this.cargarParametros();
-        },
-        error: (error) => {
-          this.mostrarError('Error al dar de baja el parámetro', error);
-        }
-      });
+    if (parametro.estado === "1"){
+      if (confirm(`¿Está seguro de dar de baja el parámetro ${parametro.codigoParametro}?`)) {
+        this.parametroService.eliminar(parametro.id!).subscribe({
+          next: () => {
+            this.snackBar.open('Parámetro dado de baja correctamente', 'Cerrar', { duration: 3000 });
+            this.cargarParametros();
+          },
+          error: (error) => {
+            this.mostrarError('Error al dar de baja el parámetro', error);
+          }
+        });
+      }
+    } else {
+      this.mostrarInfo(`El parámetro de código: ${parametro.codigoParametro} - se encuentra Inactivo`);
     }
   }
 
@@ -115,6 +119,11 @@ export class ParametroListComponent implements OnInit {
     const errorMsg = error.error?.message || error.message || mensaje;
     this.snackBar.open(errorMsg, 'Cerrar', { duration: 5000 });
     console.error(error);
+  }
+
+  private mostrarInfo(mensaje: string): void {
+    const errorMsg = mensaje;
+    this.snackBar.open(errorMsg, 'Cerrar', { duration: 4000 });
   }
 
   getEstadoColor(estado?: string): string {
