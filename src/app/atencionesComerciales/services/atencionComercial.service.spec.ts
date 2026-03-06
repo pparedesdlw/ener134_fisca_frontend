@@ -151,7 +151,7 @@ describe('AtencionComercialService', () => {
     it('debería listar acciones por empresa y atención', () => {
       const mockAcciones: AccionResponse[] = [{
         codigoAccion: 'ACC001',
-        codigoPeriodo: '2024-T1',
+        codigoPeriodo: '2024T1',
         fechaRegistroAccion: '2024-01-15',
         descripcionAccionRealizada: 'Revisión técnica',
         codigoEstadoAtencion: 1,

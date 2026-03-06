@@ -7,16 +7,16 @@
       <mat-icon matIconPrefix>event_note</mat-icon>
       <input matInput
              formControlName="codigoPeriodo"
-             placeholder="Ejemplo: 2026-T1"
+             placeholder="Ejemplo: 2026T1"
              style="font-size: 1.1em; font-weight: 500;">
       <mat-hint style="font-size: 0.95em; color: #1976d2;">
-        <strong>Formato:</strong> YYYY-T[1-4] → Año + "T" + Trimestre (1, 2, 3 o 4)
+        <strong>Formato:</strong> YYYYXX → Año + 2 alfanuméricos (T1-T4, S1-S2, 01-12)
       </mat-hint>
       <mat-error *ngIf="form.get('codigoPeriodo')?.hasError('required')">
         El código es requerido
       </mat-error>
       <mat-error *ngIf="form.get('codigoPeriodo')?.hasError('pattern')">
-        Formato inválido. Use YYYY-T[1-4] (Ejemplo: 2026-T1)
+        Formato inválido. Use YYYYXX (Ejemplo: 2026T1, 2025S1, 202501)
       </mat-error>
     </mat-form-field>
 

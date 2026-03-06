@@ -19,7 +19,7 @@ describe('PeriodoListComponent', () => {
   const mockPeriodos: Periodo[] = [
     {
       id: 1,
-      codigoPeriodo: '2024-T1',
+      codigoPeriodo: '2024T1',
       descripcion: 'Primer trimestre 2024',
       fechaInicio: '01/01/2024',
       fechaFin: '31/03/2024',
@@ -29,7 +29,7 @@ describe('PeriodoListComponent', () => {
     },
     {
       id: 2,
-      codigoPeriodo: '2024-T2',
+      codigoPeriodo: '2024T2',
       descripcion: 'Segundo trimestre 2024',
       fechaInicio: '01/04/2024',
       fechaFin: '30/06/2024',
@@ -39,7 +39,7 @@ describe('PeriodoListComponent', () => {
     },
     {
       id: 3,
-      codigoPeriodo: '2024-T3',
+      codigoPeriodo: '2024T3',
       descripcion: 'Tercer trimestre 2024',
       fechaInicio: '01/07/2024',
       fechaFin: '30/09/2024',
@@ -301,7 +301,7 @@ describe('PeriodoListComponent', () => {
       component.eliminar(mockPeriodos[0]);
 
       setTimeout(() => {
-        expect(window.confirm).toHaveBeenCalledWith('¿Está seguro de dar de baja el periodo 2024-T1?');
+        expect(window.confirm).toHaveBeenCalledWith('¿Está seguro de dar de baja el periodo 2024T1?');
         expect(periodoService.cambiarEstado).toHaveBeenCalledWith(1, false, 'admin');
         expect(snackBar.open).toHaveBeenCalledWith('Periodo dado de baja correctamente', 'Cerrar', { duration: 3000 });
         done();

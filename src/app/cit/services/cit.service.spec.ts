@@ -134,7 +134,7 @@ describe('CitService', () => {
   describe('obtenerResumenPorPeriodo', () => {
     it('debería obtener el resumen por período', () => {
       const mockResumen: ResumenCit = {
-        codigoPeriodo: '2024-T1',
+        codigoPeriodo: '2024T1',
         totalAtenciones: 100,
         atencionesCumplen: 85,
         atencionesNoCumplen: 15,
@@ -142,12 +142,12 @@ describe('CitService', () => {
         distribucionNrn: { 0: 85, 1: 10, 2: 5 }
       };
 
-      service.obtenerResumenPorPeriodo('2024-T1').subscribe(resumen => {
+      service.obtenerResumenPorPeriodo('2024T1').subscribe(resumen => {
         expect(resumen).toEqual(mockResumen);
         expect(resumen.totalAtenciones).toBe(100);
       });
 
-      const req = httpMock.expectOne(`${apiUrl}/resumen/periodo/2024-T1`);
+      const req = httpMock.expectOne(`${apiUrl}/resumen/periodo/2024T1`);
       expect(req.request.method).toBe('GET');
       req.flush(mockResumen);
     });
@@ -156,7 +156,7 @@ describe('CitService', () => {
   describe('obtenerResumenPorEmpresa', () => {
     it('debería obtener el resumen por empresa y período', () => {
       const mockResumen: ResumenCitEmpresa = {
-        codigoPeriodo: '2024-T1',
+        codigoPeriodo: '2024T1',
         codigoEmpresa: 'EMP001',
         totalAtenciones: 50,
         atencionesCumplen: 45,
@@ -168,12 +168,12 @@ describe('CitService', () => {
         porcentajeCumplimientoItem4: 100
       };
 
-      service.obtenerResumenPorEmpresa('2024-T1', 'EMP001').subscribe(resumen => {
+      service.obtenerResumenPorEmpresa('2024T1', 'EMP001').subscribe(resumen => {
         expect(resumen).toEqual(mockResumen);
         expect(resumen.codigoEmpresa).toBe('EMP001');
       });
 
-      const req = httpMock.expectOne(`${apiUrl}/resumen/periodo/2024-T1/empresa/EMP001`);
+      const req = httpMock.expectOne(`${apiUrl}/resumen/periodo/2024T1/empresa/EMP001`);
       expect(req.request.method).toBe('GET');
       req.flush(mockResumen);
     });
@@ -182,7 +182,7 @@ describe('CitService', () => {
   describe('listarIndicadoresPorPeriodo', () => {
     it('debería listar indicadores por período', () => {
       const mockIndicadores: IndicadorCit[] = [{
-        codigoPeriodo: '2024-T1',
+        codigoPeriodo: '2024T1',
         codigoEmpresa: 'EMP001',
         codigoAtencion: 'ATN001',
         cumpleItem1: 'S',
@@ -191,12 +191,12 @@ describe('CitService', () => {
         numeroNrn: 1
       }];
 
-      service.listarIndicadoresPorPeriodo('2024-T1').subscribe(indicadores => {
+      service.listarIndicadoresPorPeriodo('2024T1').subscribe(indicadores => {
         expect(indicadores).toEqual(mockIndicadores);
         expect(indicadores.length).toBe(1);
       });
 
-      const req = httpMock.expectOne(`${apiUrl}/resumen/indicadores/2024-T1`);
+      const req = httpMock.expectOne(`${apiUrl}/resumen/indicadores/2024T1`);
       expect(req.request.method).toBe('GET');
       req.flush(mockIndicadores);
     });
@@ -334,7 +334,7 @@ describe('CitService', () => {
     it('debería listar acciones por empresa y atención', () => {
       const mockAcciones: AccionResponse[] = [{
         codigoAccion: 'ACC001',
-        codigoPeriodo: '2024-T1',
+        codigoPeriodo: '2024T1',
         fechaRegistroAccion: '2024-01-15',
         descripcionAccionRealizada: 'Acción correctiva',
         codigoEstadoAtencion: 1,

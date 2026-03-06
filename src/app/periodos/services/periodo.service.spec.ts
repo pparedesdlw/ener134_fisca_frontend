@@ -11,7 +11,7 @@ describe('PeriodoService', () => {
 
   const mockPeriodo: Periodo = {
     id: 1,
-    codigoPeriodo: '2024-T1',
+    codigoPeriodo: '2024T1',
     descripcion: 'Primer trimestre 2024',
     fechaInicio: '01/01/2024',
     fechaFin: '31/03/2024',
@@ -108,12 +108,12 @@ describe('PeriodoService', () => {
 
   describe('obtenerPorCodigo', () => {
     it('debería obtener un periodo por código', () => {
-      service.obtenerPorCodigo('2024-T1').subscribe(periodo => {
+      service.obtenerPorCodigo('2024T1').subscribe(periodo => {
         expect(periodo).toEqual(mockPeriodo);
-        expect(periodo.codigoPeriodo).toBe('2024-T1');
+        expect(periodo.codigoPeriodo).toBe('2024T1');
       });
 
-      const req = httpMock.expectOne(`${apiUrl}/codigo/2024-T1`);
+      const req = httpMock.expectOne(`${apiUrl}/codigo/2024T1`);
       expect(req.request.method).toBe('GET');
       req.flush(mockPeriodo);
     });
@@ -122,7 +122,7 @@ describe('PeriodoService', () => {
   describe('crear', () => {
     it('debería crear un nuevo periodo', () => {
       const request: PeriodoCreateRequest = {
-        codigoPeriodo: '2024-T1',
+        codigoPeriodo: '2024T1',
         descripcion: 'Primer trimestre 2024',
         fechaInicio: '2024-01-01',
         fechaFin: '2024-03-31',
@@ -145,7 +145,7 @@ describe('PeriodoService', () => {
     it('debería editar un periodo existente', () => {
       const request: PeriodoUpdateRequest = {
         id: 1,
-        codigoPeriodo: '2024-T1',
+        codigoPeriodo: '2024T1',
         descripcion: 'Primer trimestre 2024 modificado',
         fechaInicio: '2024-01-01',
         fechaFin: '2024-03-31',
