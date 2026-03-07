@@ -2,7 +2,7 @@ export interface CalculoCitRequest {
   fechaInicio: string;
   fechaFin: string;
   codigoEmpresa: string;
-  codigoAsunto?: string | null;
+  descripcionMotivo?: string | null;
 }
 
 export interface DetalleItem4 {
@@ -33,6 +33,10 @@ export interface TmAsunto {
   descripcionAsunto: string;
   codigoTablaComp?: string;
   estado?: string;
+}
+
+export interface Motivo {
+  descripcionMotivo: string;
 }
 
 export interface IndicadorCit {

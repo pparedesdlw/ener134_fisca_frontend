@@ -40,17 +40,17 @@
           </mat-select>
         </mat-form-field>
         
-        <mat-form-field appearance="outline" class="full-width span-2">
-          <mat-label>Asunto</mat-label>
-          <mat-select [(ngModel)]="selectedAsunto">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Motivo</mat-label>
+          <mat-select [(ngModel)]="selectedMotivo">
             <mat-option [value]="">-- Ninguno Seleccionado --</mat-option>
-            <mat-option *ngFor="let opt of optionsAsunto$ | async" [value]="opt.codigoAsunto">
-              {{ opt.codigoAsunto + ' - ' + opt.descripcion }}
+            <mat-option *ngFor="let opt of optionsMotivo$ | async" [value]="opt.descripcionMotivo">
+              {{ opt.descripcionMotivo }}
             </mat-option>
           </mat-select>
         </mat-form-field>
 
-        <mat-form-field appearance="outline" class="full-width">
+        <mat-form-field appearance="outline" class="full-width span-2">
           <mat-label>Cliente</mat-label>
           <input matInput [formControl]="textNombreApellido" placeholder="Ingrese nombres o apellidos">
         </mat-form-field>

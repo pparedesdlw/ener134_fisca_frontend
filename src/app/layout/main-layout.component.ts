@@ -7,6 +7,7 @@ import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatExpansionModule } from '@angular/material/expansion';
 
 @Component({
   selector: 'app-main-layout',
@@ -19,23 +20,91 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     MatListModule,
     MatIconModule,
     MatButtonModule,
-    MatTooltipModule
+    MatTooltipModule,
+    MatExpansionModule
   ],
   templateUrl: './main-layout.component.html',
   styleUrl: './main-layout.component.scss'
 })
 export class MainLayoutComponent {
-  menuItems = [
-    { path: '/home', icon: 'home', label: 'Inicio' },
-    { path: '/periodos', icon: 'calendar_today', label: 'Periodos de Fiscalización' },
-    { path: '/empresas', icon: 'business', label: 'Empresas' },
-    { path: '/feriados', icon: 'event', label: 'Feriados' },
-    { path: '/parametros', icon: 'tab', label: 'Parámetros' },
-    { path: '/muestras', icon: 'featured_play_list', label: 'Muestras' },
-    { path: '/responsables', icon: 'contact_mail', label: 'Responsables' },
-    { path: '/cit/calculo', icon: 'calculate', label: 'CIT - Cálculo' },
-    { path: '/atencionesComerciales', icon: 'list', label: 'Atenciones Comerciales' },
-    { path: '/indisponibilidades', icon: 'warning', label: 'Indisponibilidades' }
+  menuSections = [
+    {
+      label: 'Atención Comercial',
+      icon: 'storefront',
+      expanded: true,
+      subsections: [
+        {
+          label: 'Fiscalización',
+          items: [
+            { label: 'Acceso a la información', path: '', disabled: true },
+            { label: 'Comprobación de la información a transferir', path: '/cit/calculo', disabled: false }
+          ]
+        },
+        {
+          label: 'Consultas',
+          items: [
+            { label: 'Atenciones Comerciales', path: '/atencionesComerciales', disabled: false }
+          ]
+        },
+        {
+          label: 'Maestros',
+          items: [
+            { label: 'Definir tamaño de muestra', path: '/muestras', disabled: false },
+            { label: 'Definir parámetros', path: '/parametros', disabled: false }
+          ]
+        }
+      ]
+    },
+    {
+      label: 'Fiscalización',
+      icon: 'gavel',
+      expanded: false,
+      subsections: [
+        {
+          label: 'Distribución',
+          items: [
+            { label: 'Alumbrado público', path: '', disabled: true },
+            { label: 'Seguridad pública', path: '', disabled: true }
+          ]
+        },
+        {
+          label: 'Comercialización',
+          items: [
+            { label: 'Reclamos', path: '', disabled: true },
+            { label: 'Atención telefónica', path: '', disabled: true },
+            { label: 'Factura', path: '', disabled: true }
+          ]
+        },
+        {
+          label: 'Calidad de Servicio',
+          items: [
+            { label: 'Calidad procedimiento', path: '', disabled: true }
+          ]
+        },
+        {
+          label: 'Fuerza Mayor',
+          items: []
+        }
+      ]
+    },
+    {
+      label: 'Configuración',
+      icon: 'settings',
+      expanded: false,
+      subsections: [
+        {
+          label: 'Maestros',
+          items: [
+            { label: 'Feriados', path: '/feriados', disabled: false },
+            { label: 'Periodo de fiscalización', path: '/periodos', disabled: false },
+            { label: 'Empresas concesionarias', path: '/empresas', disabled: false },
+            { label: 'Empresas supervisoras', path: '', disabled: true },
+            { label: 'Responsables instrucción', path: '/responsables', disabled: false },
+            { label: 'Roles', path: '/roles', disabled: false }
+          ]
+        }
+      ]
+    }
   ];
 
   constructor(private router: Router) {}

@@ -17,8 +17,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { AtencionComercialService } from '../services/atencionComercial.service';
 import { AtencionComercial } from '../models/atencionComercial.model';
 import { AtencionComercialDetailsFormComponent } from './atencionComercial-details-form.component';
-import { Asunto } from '../../asuntos/models/asunto.model';
-import { AsuntoService } from '../../asuntos/services/asunto.service';
+import { Motivo } from '../../cit/models/cit.model';
+import { CitService } from '../../cit/services/cit.service';
 import { Periodo } from '../../periodos/models/periodo.model';
 import { PeriodoService } from '../../periodos/services/periodo.service';
 import { Empresa } from '../../empresas/models/empresa.model';
@@ -108,9 +108,8 @@ export class AtencionComercialListComponent implements OnInit, AfterViewInit {
   dateIniLocal: string = '';
   dateFinLocal: string = '';
 
-  optionsAsunto$!: Observable<Asunto[]>;
-  selectedAsuntoOption: string = '';
-  selectedAsunto: string = '';
+  optionsMotivo$!: Observable<Motivo[]>;
+  selectedMotivo: string = '';
 
   optionsPeriodo$!: Observable<Periodo[]>;
   selectedPeriodoOption: string = '';
@@ -119,7 +118,7 @@ export class AtencionComercialListComponent implements OnInit, AfterViewInit {
   selectedEmpresaOption: string = '';
 
   constructor(
-    private asuntoService: AsuntoService,
+    private citService: CitService,
     private periodoService: PeriodoService,
     private empresaService: EmpresaService,
     private atencionComercialService: AtencionComercialService,
@@ -129,7 +128,7 @@ export class AtencionComercialListComponent implements OnInit, AfterViewInit {
   ) {}
 
   ngOnInit(): void {
-    this.optionsAsunto$ = this.asuntoService.listarTodos();
+    this.optionsMotivo$ = this.citService.listarMotivos();
     this.optionsPeriodo$ = this.periodoService.listarTodos();
     this.optionsEmpresa$ = this.empresaService.listarTodos();
   }
@@ -218,13 +217,13 @@ export class AtencionComercialListComponent implements OnInit, AfterViewInit {
 
     let sEmpresa = this.validateString(this.selectedEmpresaOption);
     let sPeriodo = this.validateString(this.selectedPeriodoOption);
-    let sAsunto = this.validateString(this.selectedAsunto);
+    let sMotivo = this.validateString(this.selectedMotivo);
 
     console.log('periodos:', sPeriodo);
     console.log('groupEmpresas:', sEmpresa);
     console.log('Inicio:', this.rango.value.start?.toString());
     console.log('Fin:', this.rango.value.end?.toString());
-    console.log('asunto:', sAsunto);
+    console.log('motivo:', sMotivo);
     console.log('NombreApellido:', this.textNombreApellido.value);
   
     let fechaInicial = this.datePipe.transform(this.rango.value.start, 'yyyy-MM-dd');
@@ -246,7 +245,7 @@ export class AtencionComercialListComponent implements OnInit, AfterViewInit {
     }
 
     const observable = this.atencionComercialService.listarPage(
-                            this.dateIniLocal, this.dateFinLocal, sAsunto,
+                            this.dateIniLocal, this.dateFinLocal, sMotivo,
                             this.textNombreApellido.value!, sEmpresa
                         );
     observable.subscribe({

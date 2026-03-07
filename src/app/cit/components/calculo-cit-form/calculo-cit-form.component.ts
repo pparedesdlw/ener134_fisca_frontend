@@ -14,7 +14,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { CitService } from '../../services/cit.service';
 import { EmpresaService } from '../../../empresas/services/empresa.service';
 import { Empresa } from '../../../empresas/models/empresa.model';
-import { CitResultadoResponse, TmAsunto, AtencionResponse } from '../../models/cit.model';
+import { CitResultadoResponse, Motivo, AtencionResponse } from '../../models/cit.model';
 import { AccionesAtencionComponent } from '../../../atencionesComerciales/components/acciones-atencion/acciones-atencion.component';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 
@@ -48,17 +48,16 @@ import { animate, state, style, transition, trigger } from '@angular/animations'
 })
 export class CalculoCitFormComponent implements OnInit {
   empresas: Empresa[] = [];
-  asuntos: TmAsunto[] = [];
+  motivos: Motivo[] = [];
   fechaInicio: Date | null = null;
   fechaFin: Date | null = null;
+  maxDate: Date = new Date();
   empresaSeleccionada: string | null = null;
-  asuntoSeleccionado: string | null = null;
+  motivoSeleccionado: string | null = null;
   calculando = false;
   resultado: CitResultadoResponse | null = null;
   mensaje = '';
   error = '';
-
-  displayedColumns = ['concepto', 'cantidad'];
 
   atenciones: AtencionResponse[] = [];
   atencionesColumns = ['codigoAtencion', 'codigoAsunto', 'descripcionAsunto', 'estadoAtencion', 'tieneCierre', 'expandir'];
@@ -71,7 +70,7 @@ export class CalculoCitFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.cargarEmpresas();
-    this.cargarAsuntos();
+    this.cargarMotivos();
   }
 
   cargarEmpresas(): void {
@@ -85,13 +84,13 @@ export class CalculoCitFormComponent implements OnInit {
     });
   }
 
-  cargarAsuntos(): void {
-    this.citService.listarAsuntos().subscribe({
-      next: (asuntos) => {
-        this.asuntos = asuntos;
+  cargarMotivos(): void {
+    this.citService.listarMotivos().subscribe({
+      next: (motivos) => {
+        this.motivos = motivos;
       },
       error: (error) => {
-        console.error('Error cargando asuntos', error);
+        console.error('Error cargando motivos', error);
       }
     });
   }
@@ -116,7 +115,7 @@ export class CalculoCitFormComponent implements OnInit {
       fechaInicio: this.formatDate(this.fechaInicio),
       fechaFin: this.formatDate(this.fechaFin),
       codigoEmpresa: this.empresaSeleccionada,
-      codigoAsunto: this.asuntoSeleccionado
+      descripcionMotivo: this.motivoSeleccionado
     };
 
     this.citService.calcularCit(request).subscribe({
@@ -141,23 +140,6 @@ export class CalculoCitFormComponent implements OnInit {
     return `${year}-${month}-${day}`;
   }
 
-  get tablaResultados(): { concepto: string; cantidad: string }[] {
-    if (!this.resultado) return [];
-    const r = this.resultado;
-    return [
-      { concepto: 'a) Atención no enviada dentro de los m minutos', cantidad: r.incumplimientosItem1.toString() },
-      { concepto: 'b) No definido', cantidad: r.incumplimientosItem2.toString() },
-      { concepto: 'c) Acciones no enviadas dentro de 24h del día hábil siguiente', cantidad: r.incumplimientosItem3.toString() },
-      { concepto: 'd) Registros cerrados sin información complementaria', cantidad: r.incumplimientosItem4.toString() },
-      { concepto: '   d.1) Sin detalle en TH_3', cantidad: r.detalleItem4.sinDetalleTh3.toString() },
-      { concepto: '   d.2) Sin detalle en TH_4', cantidad: r.detalleItem4.sinDetalleTh4.toString() },
-      { concepto: '   d.3) Sin detalle en TH_5', cantidad: r.detalleItem4.sinDetalleTh5.toString() },
-      { concepto: '   d.4) Sin detalle en TH_6', cantidad: r.detalleItem4.sinDetalleTh6.toString() },
-      { concepto: '   d.5) Sin detalle en TH_7', cantidad: r.detalleItem4.sinDetalleTh7.toString() },
-      { concepto: '   d.6) Sin detalle en TH_8', cantidad: r.detalleItem4.sinDetalleTh8.toString() },
-    ];
-  }
-
   cargarAtenciones(): void {
     if (!this.empresaSeleccionada || !this.fechaInicio || !this.fechaFin) return;
     this.atenciones = [];
@@ -167,7 +149,7 @@ export class CalculoCitFormComponent implements OnInit {
       this.empresaSeleccionada,
       this.formatDate(this.fechaInicio),
       this.formatDate(this.fechaFin),
-      this.asuntoSeleccionado || undefined
+      this.motivoSeleccionado || undefined
     ).subscribe({
       next: (atenciones) => {
         this.atenciones = atenciones;

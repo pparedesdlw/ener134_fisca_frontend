@@ -4,7 +4,7 @@ import { CitService } from './cit.service';
 import {
   CalculoCitRequest,
   CitResultadoResponse,
-  TmAsunto,
+  Motivo,
   ResumenCit,
   ResumenCitEmpresa,
   IndicadorCit,
@@ -41,9 +41,9 @@ describe('CitService', () => {
     superaTolerancia: false
   };
 
-  const mockAsuntos: TmAsunto[] = [
-    { codigoAsunto: 1, descripcionAsunto: 'Interrupción' },
-    { codigoAsunto: 2, descripcionAsunto: 'Tensión' }
+  const mockMotivos: Motivo[] = [
+    { descripcionMotivo: 'Denuncias' },
+    { descripcionMotivo: 'Reclamos' }
   ];
 
   beforeEach(() => {
@@ -82,12 +82,12 @@ describe('CitService', () => {
       req.flush(mockResultado);
     });
 
-    it('debería calcular con codigoAsunto opcional', () => {
+    it('debería calcular con descripcionMotivo opcional', () => {
       const request: CalculoCitRequest = {
         fechaInicio: '2024-01-01',
         fechaFin: '2024-03-31',
         codigoEmpresa: 'EMP001',
-        codigoAsunto: 'ASU001'
+        descripcionMotivo: 'Denuncias'
       };
 
       service.calcularCit(request).subscribe(resultado => {
@@ -95,7 +95,7 @@ describe('CitService', () => {
       });
 
       const req = httpMock.expectOne(`${apiUrl}/calculo/calcular`);
-      expect(req.request.body.codigoAsunto).toBe('ASU001');
+      expect(req.request.body.descripcionMotivo).toBe('Denuncias');
       req.flush(mockResultado);
     });
 
@@ -118,16 +118,16 @@ describe('CitService', () => {
     });
   });
 
-  describe('listarAsuntos', () => {
-    it('debería obtener la lista de asuntos', () => {
-      service.listarAsuntos().subscribe(asuntos => {
-        expect(asuntos).toEqual(mockAsuntos);
-        expect(asuntos.length).toBe(2);
+  describe('listarMotivos', () => {
+    it('debería obtener la lista de motivos', () => {
+      service.listarMotivos().subscribe(motivos => {
+        expect(motivos).toEqual(mockMotivos);
+        expect(motivos.length).toBe(2);
       });
 
-      const req = httpMock.expectOne(`${apiUrl}/resumen/asuntos`);
+      const req = httpMock.expectOne(`${apiUrl}/resumen/motivos`);
       expect(req.request.method).toBe('GET');
-      req.flush(mockAsuntos);
+      req.flush(mockMotivos);
     });
   });
 
@@ -305,7 +305,7 @@ describe('CitService', () => {
       tieneCierre: false
     }];
 
-    it('debería listar atenciones sin código de asunto', () => {
+    it('debería listar atenciones sin descripcionMotivo', () => {
       service.listarAtenciones('EMP001', '2024-01-01', '2024-03-31').subscribe(atenciones => {
         expect(atenciones).toEqual(mockAtenciones);
       });
@@ -317,17 +317,16 @@ describe('CitService', () => {
       req.flush(mockAtenciones);
     });
 
-    it('debería listar atenciones con código de asunto', () => {
-      service.listarAtenciones('EMP001', '2024-01-01', '2024-03-31', 'ASU001').subscribe(atenciones => {
+    it('debería listar atenciones con descripcionMotivo', () => {
+      service.listarAtenciones('EMP001', '2024-01-01', '2024-03-31', 'Denuncias').subscribe(atenciones => {
         expect(atenciones).toEqual(mockAtenciones);
       });
 
       const req = httpMock.expectOne(
-        `${apiUrl}/info-tecnica/atenciones?codigoEmpresa=EMP001&fechaInicio=2024-01-01&fechaFin=2024-03-31&codigoAsunto=ASU001`
+        `${apiUrl}/info-tecnica/atenciones?codigoEmpresa=EMP001&fechaInicio=2024-01-01&fechaFin=2024-03-31&descripcionMotivo=Denuncias`
       );
       expect(req.request.method).toBe('GET');
       req.flush(mockAtenciones);
-    });
   });
 
   describe('listarAcciones', () => {

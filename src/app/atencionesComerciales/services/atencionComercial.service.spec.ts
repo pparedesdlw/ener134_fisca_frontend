@@ -111,7 +111,7 @@ describe('AtencionComercialService', () => {
     it('debería listar atenciones con filtros', () => {
       const mockAtenciones: AtencionComercial[] = [mockAtencion];
 
-      service.listarPage('2024-01-01', '2024-03-31', 'ASU001', 'Juan', 'EMP001').subscribe(atenciones => {
+      service.listarPage('2024-01-01', '2024-03-31', 'Denuncias FISE', 'Juan', 'EMP001').subscribe(atenciones => {
         expect(atenciones).toEqual(mockAtenciones);
       });
 
@@ -119,7 +119,7 @@ describe('AtencionComercialService', () => {
       expect(req.request.method).toBe('GET');
       expect(req.request.params.get('fechaIni')).toBe('2024-01-01');
       expect(req.request.params.get('fechaFin')).toBe('2024-03-31');
-      expect(req.request.params.get('codigoAsunto')).toBe('ASU001');
+      expect(req.request.params.get('descripcionMotivo')).toBe('Denuncias FISE');
       expect(req.request.params.get('nombreCliente')).toBe('Juan');
       expect(req.request.params.get('groupsEmpresa')).toBe('EMP001');
       req.flush(mockAtenciones);
