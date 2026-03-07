@@ -5,12 +5,34 @@
       <p>Fiscalización</p>
     </div>
 
-    <mat-nav-list>
-      <a mat-list-item *ngFor="let item of menuItems" [routerLink]="item.path" routerLinkActive="active">
-        <mat-icon matListItemIcon>{{item.icon}}</mat-icon>
-        <span matListItemTitle>{{item.label}}</span>
-      </a>
-    </mat-nav-list>
+    <div class="menu-sections">
+      <mat-accordion [multi]="true" displayMode="flat">
+        <mat-expansion-panel *ngFor="let section of menuSections"
+                             [expanded]="section.expanded"
+                             class="menu-section">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              <mat-icon class="section-icon">{{section.icon}}</mat-icon>
+              <span class="section-label">{{section.label}}</span>
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+
+          <mat-nav-list>
+            <ng-container *ngFor="let sub of section.subsections">
+              <div class="subsection-header">{{sub.label}}</div>
+              <ng-container *ngFor="let item of sub.items">
+                <a mat-list-item *ngIf="!item.disabled" [routerLink]="item.path" routerLinkActive="active" class="menu-item">
+                  <span matListItemTitle>{{item.label}}</span>
+                </a>
+                <a mat-list-item *ngIf="item.disabled" class="menu-item disabled">
+                  <span matListItemTitle>{{item.label}}</span>
+                </a>
+              </ng-container>
+            </ng-container>
+          </mat-nav-list>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </div>
   </mat-sidenav>
 
   <mat-sidenav-content>

@@ -46,7 +46,7 @@ export class PeriodoFormComponent implements OnInit {
   ) {
     this.isEditMode = data.mode === 'edit';
     this.form = this.fb.group({
-      codigoPeriodo: ['', [Validators.required, Validators.pattern(/^\d{4}-T[1-4]$/)]],
+      codigoPeriodo: ['', [Validators.required, Validators.pattern(/^\d{4}[A-Za-z0-9]{2}$/)]],
       descripcion: ['', [Validators.required, Validators.minLength(10)]],
       fechaInicio: ['', Validators.required],
       fechaFin: ['', Validators.required],

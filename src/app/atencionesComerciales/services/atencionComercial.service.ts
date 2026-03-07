@@ -29,14 +29,14 @@ export class AtencionComercialService {
   }
 
   
-  listarPage(fechaIni: String , fechaFin: String, codigoAsunto: String,
+  listarPage(fechaIni: String , fechaFin: String, descripcionMotivo: String,
                 nombreCliente: String, groupEmpresas: String
   ): Observable<AtencionComercial[]> {
       
       let params = new HttpParams()
         .set('fechaIni', fechaIni.toString())
         .set('fechaFin', fechaFin.toString())
-        .set('codigoAsunto', codigoAsunto.toString())
+        .set('descripcionMotivo', descripcionMotivo.toString())
         .set('nombreCliente', nombreCliente.toString())
         .set('groupsEmpresa', groupEmpresas.trim());
 

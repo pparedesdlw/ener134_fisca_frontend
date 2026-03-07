@@ -17,7 +17,7 @@ describe('AmpliarVigenciaDialogComponent', () => {
 
   const mockPeriodo: Periodo = {
     id: 1,
-    codigoPeriodo: '2024-T1',
+    codigoPeriodo: '2024T1',
     descripcion: 'Primer trimestre 2024',
     fechaInicio: '01/01/2024',
     fechaFin: '31/03/2024',
@@ -279,7 +279,7 @@ describe('AmpliarVigenciaDialogComponent', () => {
     it('debería mostrar la información del periodo en el template', () => {
       const compiled = fixture.nativeElement;
 
-      expect(component.data.periodo.codigoPeriodo).toBe('2024-T1');
+      expect(component.data.periodo.codigoPeriodo).toBe('2024T1');
       expect(component.data.periodo.descripcion).toBe('Primer trimestre 2024');
       expect(component.data.periodo.fechaFin).toBe('31/03/2024');
       expect(component.data.periodo.diasRestantes).toBe(15);

@@ -17,7 +17,7 @@ describe('PeriodoFormComponent', () => {
 
   const mockPeriodo: Periodo = {
     id: 1,
-    codigoPeriodo: '2024-T1',
+    codigoPeriodo: '2024T1',
     descripcion: 'Primer trimestre 2024',
     fechaInicio: '01/01/2024',
     fechaFin: '31/03/2024',
@@ -66,16 +66,22 @@ describe('PeriodoFormComponent', () => {
     it('debería validar el formato del código de periodo', () => {
       const codigoControl = component.form.get('codigoPeriodo');
 
-      codigoControl?.setValue('2024-T1');
+      codigoControl?.setValue('2024T1');
       expect(codigoControl?.valid).toBeTrue();
 
-      codigoControl?.setValue('2024-T5');
+      codigoControl?.setValue('2025S1');
+      expect(codigoControl?.valid).toBeTrue();
+
+      codigoControl?.setValue('202501');
+      expect(codigoControl?.valid).toBeTrue();
+
+      codigoControl?.setValue('24T1');
       expect(codigoControl?.valid).toBeFalse();
 
-      codigoControl?.setValue('2024T1');
+      codigoControl?.setValue('2024-T1');
       expect(codigoControl?.valid).toBeFalse();
 
-      codigoControl?.setValue('24-T1');
+      codigoControl?.setValue('2024T');
       expect(codigoControl?.valid).toBeFalse();
     });
 
@@ -106,7 +112,7 @@ describe('PeriodoFormComponent', () => {
       periodoService.crear.and.returnValue(of(mockResponse));
 
       component.form.patchValue({
-        codigoPeriodo: '2024-T1',
+        codigoPeriodo: '2024T1',
         descripcion: 'Primer trimestre 2024',
         fechaInicio: new Date('2024-01-01'),
         fechaFin: new Date('2024-03-31'),
@@ -117,7 +123,7 @@ describe('PeriodoFormComponent', () => {
 
       expect(periodoService.crear).toHaveBeenCalled();
       const request = periodoService.crear.calls.mostRecent().args[0] as PeriodoCreateRequest;
-      expect(request.codigoPeriodo).toBe('2024-T1');
+      expect(request.codigoPeriodo).toBe('2024T1');
       expect(request.fechaInicio).toMatch(/2024-01-01/);
       expect(snackBar.open).toHaveBeenCalledWith('Periodo creado correctamente', 'Cerrar', { duration: 3000 });
       expect(dialogRef.close).toHaveBeenCalledWith(true);
@@ -128,7 +134,7 @@ describe('PeriodoFormComponent', () => {
       periodoService.crear.and.returnValue(throwError(() => errorResponse));
 
       component.form.patchValue({
-        codigoPeriodo: '2024-T1',
+        codigoPeriodo: '2024T1',
         descripcion: 'Primer trimestre 2024',
         fechaInicio: new Date('2024-01-01'),
         fechaFin: new Date('2024-03-31'),
@@ -189,7 +195,7 @@ describe('PeriodoFormComponent', () => {
 
     it('debería inicializar el formulario con datos del periodo en modo edición', () => {
       expect(component.isEditMode).toBeTrue();
-      expect(component.form.get('codigoPeriodo')?.value).toBe('2024-T1');
+      expect(component.form.get('codigoPeriodo')?.value).toBe('2024T1');
       expect(component.form.get('descripcion')?.value).toBe('Primer trimestre 2024');
       expect(component.form.get('estadoActivo')?.value).toBe(true);
     });
@@ -245,7 +251,7 @@ describe('PeriodoFormComponent', () => {
 
     it('debería formatear correctamente las fechas a YYYY-MM-DD', () => {
       component.form.patchValue({
-        codigoPeriodo: '2024-T1',
+        codigoPeriodo: '2024T1',
         descripcion: 'Descripción de prueba',
         fechaInicio: new Date('2024-01-15T12:00:00'),
         fechaFin: new Date('2024-03-20T12:00:00'),

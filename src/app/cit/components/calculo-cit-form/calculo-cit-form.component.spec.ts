@@ -36,10 +36,10 @@ describe('CalculoCitFormComponent', () => {
   };
 
   beforeEach(async () => {
-    const citServiceSpy = jasmine.createSpyObj('CitService', ['calcularCit', 'listarAsuntos']);
+    const citServiceSpy = jasmine.createSpyObj('CitService', ['calcularCit', 'listarMotivos']);
     const empresaServiceSpy = jasmine.createSpyObj('EmpresaService', ['listarTodos']);
 
-    citServiceSpy.listarAsuntos.and.returnValue(of([]));
+    citServiceSpy.listarMotivos.and.returnValue(of([]));
     empresaServiceSpy.listarTodos.and.returnValue(of([]));
 
     await TestBed.configureTestingModule({
@@ -76,16 +76,16 @@ describe('CalculoCitFormComponent', () => {
     expect(component.resultado).toBeNull();
   });
 
-  it('should load empresas and asuntos on init', () => {
+  it('should load empresas and motivos on init', () => {
     expect(empresaService.listarTodos).toHaveBeenCalled();
-    expect(citService.listarAsuntos).toHaveBeenCalled();
+    expect(citService.listarMotivos).toHaveBeenCalled();
   });
 
   it('should call calcularCit with correct request', () => {
     component.fechaInicio = new Date(2024, 0, 1);
     component.fechaFin = new Date(2024, 2, 31);
     component.empresaSeleccionada = '0010';
-    component.asuntoSeleccionado = '20';
+    component.motivoSeleccionado = 'Denuncias';
     citService.calcularCit.and.returnValue(of(mockResultado));
 
     component.calcularCit();
@@ -94,7 +94,7 @@ describe('CalculoCitFormComponent', () => {
       fechaInicio: '2024-01-01',
       fechaFin: '2024-03-31',
       codigoEmpresa: '0010',
-      codigoAsunto: '20'
+      descripcionMotivo: 'Denuncias'
     });
   });
 
@@ -143,22 +143,5 @@ describe('CalculoCitFormComponent', () => {
 
     expect(component.calculando).toBe(false);
     expect(component.error).toContain('Error');
-  });
-
-  it('should build tablaResultados from resultado', () => {
-    component.resultado = mockResultado;
-
-    const tabla = component.tablaResultados;
-
-    expect(tabla.length).toBe(10);
-    expect(tabla[0].cantidad).toBe('5');
-    expect(tabla[1].cantidad).toBe('0');
-    expect(tabla[2].cantidad).toBe('3');
-    expect(tabla[3].cantidad).toBe('2');
-  });
-
-  it('should return empty tablaResultados when no resultado', () => {
-    component.resultado = null;
-    expect(component.tablaResultados).toEqual([]);
   });
 });

@@ -11,6 +11,7 @@ import {
   ResumenCitEmpresa,
   IndisponibilidadSistema,
   TmAsunto,
+  Motivo,
   InfoTecnicaCierreResponse,
   AtencionResponse,
   AccionResponse
@@ -31,6 +32,10 @@ export class CitService {
 
   listarAsuntos(): Observable<TmAsunto[]> {
     return this.http.get<TmAsunto[]>(`${this.apiUrl}/resumen/asuntos`);
+  }
+
+  listarMotivos(): Observable<Motivo[]> {
+    return this.http.get<Motivo[]>(`${this.apiUrl}/resumen/motivos`);
   }
 
   obtenerResumenPorPeriodo(codigoPeriodo: string): Observable<ResumenCit> {
@@ -65,10 +70,10 @@ export class CitService {
     return this.http.get<InfoTecnicaCierreResponse>(`${this.apiUrl}/info-tecnica/${codigoEmpresa}/${codigoAtencion}`);
   }
 
-  listarAtenciones(codigoEmpresa: string, fechaInicio: string, fechaFin: string, codigoAsunto?: string): Observable<AtencionResponse[]> {
+  listarAtenciones(codigoEmpresa: string, fechaInicio: string, fechaFin: string, descripcionMotivo?: string): Observable<AtencionResponse[]> {
     let params = `codigoEmpresa=${codigoEmpresa}&fechaInicio=${fechaInicio}&fechaFin=${fechaFin}`;
-    if (codigoAsunto) {
-      params += `&codigoAsunto=${codigoAsunto}`;
+    if (descripcionMotivo) {
+      params += `&descripcionMotivo=${encodeURIComponent(descripcionMotivo)}`;
     }
     return this.http.get<AtencionResponse[]>(`${this.apiUrl}/info-tecnica/atenciones?${params}`);
   }
