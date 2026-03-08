@@ -1,5 +1,6 @@
-import { HttpInterceptorFn, HttpRequest, HttpHandlerFn } from '@angular/common/http';
+import { HttpInterceptorFn, HttpRequest, HttpHandlerFn, HttpErrorResponse } from '@angular/common/http';
 import { inject } from '@angular/core';
+import { catchError, switchMap, throwError } from 'rxjs';
 import { AuthService } from '../services/auth.service';
 
 export const authInterceptor: HttpInterceptorFn = (req: HttpRequest<any>, next: HttpHandlerFn) => {
@@ -23,5 +24,22 @@ export const authInterceptor: HttpInterceptorFn = (req: HttpRequest<any>, next: 
 
   req = req.clone({ headers });
 
-  return next(req);
+  return next(req).pipe(
+    catchError((error: HttpErrorResponse) => {
+      if (error.status === 401) {
+        return authService.refreshToken().pipe(
+          switchMap((res) => {
+            const newHeaders = req.headers.set('Authorization', `Bearer ${res.access_token}`);
+            const cloneReq = req.clone({ headers: newHeaders });
+            return next(cloneReq);
+          }),
+          catchError((refreshError) => {
+            authService.clearSession();
+            return throwError(() => refreshError);
+          })
+        );
+      }
+      return throwError(() => error);
+    })
+  );
 };

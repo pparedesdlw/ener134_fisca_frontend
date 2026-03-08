@@ -11,6 +11,14 @@ export interface LoginResponse {
   token_type: string;
 }
 
+export interface RefreshRequest {
+  refreshToken: string;
+}
+
+export interface LogoutRequest {
+  refreshToken: string;
+}
+
 export interface UserProfileInfo {
   perfiles: any[];
   roles: any[];

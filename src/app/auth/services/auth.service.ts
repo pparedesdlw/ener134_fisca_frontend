@@ -1,8 +1,9 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable, tap, switchMap } from 'rxjs';
+import { Router } from '@angular/router';
+import { BehaviorSubject, Observable, tap, switchMap, catchError, of, throwError, finalize } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { LoginRequest, LoginResponse, UserInfoResponse } from '../models/auth.model';
+import { LoginRequest, LoginResponse, UserInfoResponse, RefreshRequest, LogoutRequest } from '../models/auth.model';
 
 export interface Usuario {
   username: string;
@@ -18,6 +19,7 @@ export interface Usuario {
 })
 export class AuthService {
   private http = inject(HttpClient);
+  private router = inject(Router);
 
   private currentUserSubject: BehaviorSubject<Usuario | null>;
   public currentUser: Observable<Usuario | null>;
@@ -71,11 +73,46 @@ export class AuthService {
     );
   }
 
+  refreshToken(): Observable<LoginResponse> {
+    const rfToken = sessionStorage.getItem('refresh_token');
+    if (!rfToken) {
+      return throwError(() => new Error('No hay refresh token'));
+    }
+
+    const payload: RefreshRequest = { refreshToken: rfToken };
+    const url = `${environment.urlbase}public/auth/refresh`;
+
+    return this.http.post<LoginResponse>(url, payload).pipe(
+      tap(response => {
+        sessionStorage.setItem('access_token', response.access_token);
+        if (response.refresh_token) {
+          sessionStorage.setItem('refresh_token', response.refresh_token);
+        }
+      })
+    );
+  }
+
   logout(): void {
-    sessionStorage.removeItem('currentUser');
-    sessionStorage.removeItem('access_token');
-    sessionStorage.removeItem('refresh_token');
+    const rfToken = sessionStorage.getItem('refresh_token');
+
+    if (rfToken) {
+      const payload: LogoutRequest = { refreshToken: rfToken };
+      const url = `${environment.urlbase}public/auth/logout`;
+
+      this.http.post(url, payload).pipe(
+        finalize(() => this.clearSession())
+      ).subscribe({
+        error: () => { }
+      });
+    } else {
+      this.clearSession();
+    }
+  }
+
+  clearSession(): void {
+    sessionStorage.clear();
     this.currentUserSubject.next(null);
+    this.router.navigate(['/login']);
   }
 
   setUser(user: Usuario): void {
