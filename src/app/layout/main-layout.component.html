@@ -7,9 +7,7 @@
 
     <div class="menu-sections">
       <mat-accordion [multi]="true" displayMode="flat">
-        <mat-expansion-panel *ngFor="let section of menuSections"
-                             [expanded]="section.expanded"
-                             class="menu-section">
+        <mat-expansion-panel *ngFor="let section of menuSections" [expanded]="section.expanded" class="menu-section">
           <mat-expansion-panel-header>
             <mat-panel-title>
               <mat-icon class="section-icon">{{section.icon}}</mat-icon>
@@ -21,7 +19,8 @@
             <ng-container *ngFor="let sub of section.subsections">
               <div class="subsection-header">{{sub.label}}</div>
               <ng-container *ngFor="let item of sub.items">
-                <a mat-list-item *ngIf="!item.disabled" [routerLink]="item.path" routerLinkActive="active" class="menu-item">
+                <a mat-list-item *ngIf="!item.disabled" [routerLink]="item.path" routerLinkActive="active"
+                  class="menu-item">
                   <span matListItemTitle>{{item.label}}</span>
                 </a>
                 <a mat-list-item *ngIf="item.disabled" class="menu-item disabled">
@@ -39,7 +38,9 @@
     <mat-toolbar color="primary">
       <span>Sistema de Fiscalización</span>
       <span class="spacer"></span>
-      <span style="margin-right: 10px;">{{getCurrentUser()}}</span>
+      <span style="margin-right: 10px;" *ngIf="authService.currentUser | async as user">
+        {{ user.nombre }} ({{ user.rol }})
+      </span>
       <button mat-icon-button (click)="logout()" matTooltip="Cerrar Sesión">
         <mat-icon>logout</mat-icon>
       </button>

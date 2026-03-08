@@ -1,21 +1,29 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { Injectable, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { BehaviorSubject, Observable, tap, switchMap } from 'rxjs';
+import { environment } from '../../../environments/environment';
+import { LoginRequest, LoginResponse, UserInfoResponse } from '../models/auth.model';
 
 export interface Usuario {
   username: string;
   rol: 'ADMIN' | 'ERE-OR';
   nombre?: string;
+  email?: string;
+  perfiles?: any[];
+  roles?: any[];
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
+  private http = inject(HttpClient);
+
   private currentUserSubject: BehaviorSubject<Usuario | null>;
   public currentUser: Observable<Usuario | null>;
 
   constructor() {
-    const storedUser = localStorage.getItem('currentUser');
+    const storedUser = sessionStorage.getItem('currentUser');
     const user = storedUser ? JSON.parse(storedUser) : null;
     this.currentUserSubject = new BehaviorSubject<Usuario | null>(user);
     this.currentUser = this.currentUserSubject.asObservable();
@@ -33,30 +41,45 @@ export class AuthService {
     return this.currentUserSubject.value?.rol || 'ADMIN';
   }
 
-  login(username: string, password: string): Observable<any> {
+  login(request: LoginRequest): Observable<UserInfoResponse> {
+    const url = `${environment.urlbase}public/auth/login`;
+    return this.http.post<LoginResponse>(url, request).pipe(
+      tap(response => {
+        sessionStorage.setItem('access_token', response.access_token);
+        sessionStorage.setItem('refresh_token', response.refresh_token);
+      }),
+      switchMap(() => this.getUserInfo())
+    );
+  }
 
-    const mockUser: Usuario = {
-      username: username,
-      rol: 'ADMIN',
-      nombre: 'Administrador'
-    };
+  getUserInfo(): Observable<UserInfoResponse> {
+    const url = `${environment.urlbase}api/v1/user/me`;
+    return this.http.get<UserInfoResponse>(url).pipe(
+      tap(response => {
+        const user: Usuario = {
+          username: response.user.preferred_username || 'admin',
+          rol: 'ADMIN',
+          nombre: response.user.name,
+          email: response.user.email,
+          perfiles: response.profile.perfiles || [],
+          roles: response.profile.roles || []
+        };
 
-    localStorage.setItem('currentUser', JSON.stringify(mockUser));
-    this.currentUserSubject.next(mockUser);
-
-    return new Observable(observer => {
-      observer.next(mockUser);
-      observer.complete();
-    });
+        sessionStorage.setItem('currentUser', JSON.stringify(user));
+        this.currentUserSubject.next(user);
+      })
+    );
   }
 
   logout(): void {
-    localStorage.removeItem('currentUser');
+    sessionStorage.removeItem('currentUser');
+    sessionStorage.removeItem('access_token');
+    sessionStorage.removeItem('refresh_token');
     this.currentUserSubject.next(null);
   }
 
   setUser(user: Usuario): void {
-    localStorage.setItem('currentUser', JSON.stringify(user));
+    sessionStorage.setItem('currentUser', JSON.stringify(user));
     this.currentUserSubject.next(user);
   }
 }

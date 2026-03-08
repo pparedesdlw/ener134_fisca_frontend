@@ -6,15 +6,22 @@ export const authInterceptor: HttpInterceptorFn = (req: HttpRequest<any>, next: 
   const authService = inject(AuthService);
   const currentUser = authService.currentUserValue;
 
-  if (currentUser) {
-
-    req = req.clone({
-      setHeaders: {
-        'X-Usuario': currentUser.username,
-        'X-Usuario-Rol': currentUser.rol
-      }
-    });
+  if (req.url.includes('/public/')) {
+    return next(req);
   }
+
+  const token = sessionStorage.getItem('access_token');
+  let headers = req.headers;
+
+  if (currentUser) {
+    headers = headers.set('X-Usuario', currentUser.username).set('X-Usuario-Rol', currentUser.rol);
+  }
+
+  if (token) {
+    headers = headers.set('Authorization', `Bearer ${token}`);
+  }
+
+  req = req.clone({ headers });
 
   return next(req);
 };

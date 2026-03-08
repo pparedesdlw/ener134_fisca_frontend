@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
+import { AuthService } from '../auth/services/auth.service';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatListModule } from '@angular/material/list';
@@ -107,15 +108,11 @@ export class MainLayoutComponent {
     }
   ];
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, public authService: AuthService) {}
 
   logout(): void {
-    sessionStorage.removeItem('currentUser');
+    this.authService.logout();
     sessionStorage.removeItem('isAuthenticated');
     this.router.navigate(['/login']);
-  }
-
-  getCurrentUser(): string {
-    return sessionStorage.getItem('currentUser') || 'Usuario';
   }
 }
