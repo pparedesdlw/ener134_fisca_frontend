@@ -8,12 +8,12 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { EmpresaService } from '../services/empresa.service';
-import { Empresa } from '../models/empresa.model';
-import { EmpresaFormComponent } from './empresa-form.component';
+import { EmpresaConcesionariaService } from '../services/empresa-concesionaria.service';
+import { EmpresaConcesionaria } from '../models/empresa-concesionaria.model';
+import { EmpresaConcesionariaFormComponent } from './empresa-concesionaria-form.component';
 
 @Component({
-  selector: 'app-empresa-list',
+  selector: 'app-empresa-concesionaria-list',
   standalone: true,
   imports: [
     CommonModule,
@@ -26,11 +26,11 @@ import { EmpresaFormComponent } from './empresa-form.component';
     MatSnackBarModule,
     MatTooltipModule
   ],
-  templateUrl: './empresa-list.component.html',
-  styleUrl: './empresa-list.component.scss'
+  templateUrl: './empresa-concesionaria-list.component.html',
+  styleUrl: './empresa-concesionaria-list.component.scss'
 })
-export class EmpresaListComponent implements OnInit {
-  empresas: Empresa[] = [];
+export class EmpresaConcesionariaListComponent implements OnInit {
+  empresas: EmpresaConcesionaria[] = [];
   displayedColumns: string[] = [
     'codigoEmpresa',
     'ruc',
@@ -43,7 +43,7 @@ export class EmpresaListComponent implements OnInit {
   filtroEstado: 'todos' | 'activos' | 'inactivos' = 'todos';
 
   constructor(
-    private empresaService: EmpresaService,
+    private empresaConcesionariaService: EmpresaConcesionariaService,
     private dialog: MatDialog,
     private snackBar: MatSnackBar
   ) {}
@@ -54,8 +54,8 @@ export class EmpresaListComponent implements OnInit {
 
   cargarEmpresas(): void {
     const observable = this.filtroEstado === 'todos'
-      ? this.empresaService.listarTodos()
-      : this.empresaService.listarPorEstado(this.filtroEstado === 'activos' ? '1' : '0');
+      ? this.empresaConcesionariaService.listarTodos()
+      : this.empresaConcesionariaService.listarPorEstado(this.filtroEstado === 'activos' ? '1' : '0');
 
     observable.subscribe({
       next: (data) => {
@@ -73,7 +73,7 @@ export class EmpresaListComponent implements OnInit {
   }
 
   crear(): void {
-    const dialogRef = this.dialog.open(EmpresaFormComponent, {
+    const dialogRef = this.dialog.open(EmpresaConcesionariaFormComponent, {
       width: '600px',
       data: { mode: 'create' }
     });
@@ -85,10 +85,10 @@ export class EmpresaListComponent implements OnInit {
     });
   }
 
-  editar(empresa: Empresa): void {
-    const dialogRef = this.dialog.open(EmpresaFormComponent, {
+  editar(empresaConcesionaria: EmpresaConcesionaria): void {
+    const dialogRef = this.dialog.open(EmpresaConcesionariaFormComponent, {
       width: '600px',
-      data: { mode: 'edit', empresa }
+      data: { mode: 'edit', empresaConcesionaria }
     });
 
     dialogRef.afterClosed().subscribe(result => {
@@ -98,21 +98,21 @@ export class EmpresaListComponent implements OnInit {
     });
   }
 
-  eliminar(empresa: Empresa): void {
-    if (empresa.estado === "1"){
-      if (confirm(`¿Está seguro de dar de baja la empresa ${empresa.codigoEmpresa}?`)) {
-      this.empresaService.eliminar(empresa.id!).subscribe({
+  eliminar(empresaConcesionaria: EmpresaConcesionaria): void {
+    if (empresaConcesionaria.estado === "1"){
+      if (confirm(`¿Está seguro de dar de baja la empresa concesionaria ${empresaConcesionaria.codigoEmpresa}?`)) {
+      this.empresaConcesionariaService.eliminar(empresaConcesionaria.id!).subscribe({
           next: () => {
-            this.snackBar.open('Empresa dada de baja correctamente', 'Cerrar', { duration: 3000 });
+            this.snackBar.open('Empresa concesionaria dada de baja correctamente', 'Cerrar', { duration: 3000 });
             this.cargarEmpresas();
           },
           error: (error) => {
-            this.mostrarError('Error al dar de baja la empresa', error);
+            this.mostrarError('Error al dar de baja la empresa concesionaria', error);
           }
         });
       }
     } else {
-      this.mostrarInfo(`la empresa: ${empresa.codigoEmpresa} - se encuentra Inactivo`);
+      this.mostrarInfo(`La empresa concesionaria: ${empresaConcesionaria.codigoEmpresa} - se encuentra Inactivo`);
     }
     
   }

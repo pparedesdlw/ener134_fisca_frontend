@@ -21,8 +21,8 @@ import { Motivo } from '../../cit/models/cit.model';
 import { CitService } from '../../cit/services/cit.service';
 import { Periodo } from '../../periodos/models/periodo.model';
 import { PeriodoService } from '../../periodos/services/periodo.service';
-import { Empresa } from '../../empresas/models/empresa.model';
-import { EmpresaService } from '../../empresas/services/empresa.service';
+import { EmpresaConcesionaria } from '../../empresas/models/empresa-concesionaria.model';
+import { EmpresaConcesionariaService } from '../../empresas/services/empresa-concesionaria.service';
 import { Observable } from 'rxjs';
 import {provideNativeDateAdapter} from '@angular/material/core';
 import {MatDatepickerModule} from '@angular/material/datepicker';
@@ -114,13 +114,13 @@ export class AtencionComercialListComponent implements OnInit, AfterViewInit {
   optionsPeriodo$!: Observable<Periodo[]>;
   selectedPeriodoOption: string = '';
 
-  optionsEmpresa$!: Observable<Empresa[]>;
+  optionsEmpresa$!: Observable<EmpresaConcesionaria[]>;
   selectedEmpresaOption: string = '';
 
   constructor(
     private citService: CitService,
     private periodoService: PeriodoService,
-    private empresaService: EmpresaService,
+    private empresaConcesionariaService: EmpresaConcesionariaService,
     private atencionComercialService: AtencionComercialService,
     private dialog: MatDialog,
     private snackBar: MatSnackBar,
@@ -130,7 +130,7 @@ export class AtencionComercialListComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     this.optionsMotivo$ = this.citService.listarMotivos();
     this.optionsPeriodo$ = this.periodoService.listarTodos();
-    this.optionsEmpresa$ = this.empresaService.listarTodos();
+    this.optionsEmpresa$ = this.empresaConcesionariaService.listarTodos();
   }
 
   periodo: Periodo | undefined;

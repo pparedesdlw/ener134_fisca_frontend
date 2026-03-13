@@ -12,8 +12,8 @@ import { MatTableModule } from '@angular/material/table';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatIconModule } from '@angular/material/icon';
 import { CitService } from '../../services/cit.service';
-import { EmpresaService } from '../../../empresas/services/empresa.service';
-import { Empresa } from '../../../empresas/models/empresa.model';
+import { EmpresaConcesionariaService } from '../../../empresas/services/empresa-concesionaria.service';
+import { EmpresaConcesionaria } from '../../../empresas/models/empresa-concesionaria.model';
 import { CitResultadoResponse, Motivo, AtencionResponse } from '../../models/cit.model';
 import { AccionesAtencionComponent } from '../../../atencionesComerciales/components/acciones-atencion/acciones-atencion.component';
 import { animate, state, style, transition, trigger } from '@angular/animations';
@@ -47,7 +47,7 @@ import { animate, state, style, transition, trigger } from '@angular/animations'
   ],
 })
 export class CalculoCitFormComponent implements OnInit {
-  empresas: Empresa[] = [];
+  empresas: EmpresaConcesionaria[] = [];
   motivos: Motivo[] = [];
   fechaInicio: Date | null = null;
   fechaFin: Date | null = null;
@@ -65,7 +65,7 @@ export class CalculoCitFormComponent implements OnInit {
 
   constructor(
     private citService: CitService,
-    private empresaService: EmpresaService
+    private empresaConcesionariaService: EmpresaConcesionariaService
   ) {}
 
   ngOnInit(): void {
@@ -74,7 +74,7 @@ export class CalculoCitFormComponent implements OnInit {
   }
 
   cargarEmpresas(): void {
-    this.empresaService.listarTodos().subscribe({
+    this.empresaConcesionariaService.listarTodos().subscribe({
       next: (empresas) => {
         this.empresas = empresas;
       },

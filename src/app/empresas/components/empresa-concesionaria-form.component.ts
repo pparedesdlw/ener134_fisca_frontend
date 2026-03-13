@@ -11,11 +11,11 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { EmpresaService } from '../services/empresa.service';
-import { Empresa, EmpresaCreateRequest, EmpresaUpdateRequest } from '../models/empresa.model';
+import { EmpresaConcesionariaService } from '../services/empresa-concesionaria.service';
+import { EmpresaConcesionaria, EmpresaConcesionariaCreateRequest, EmpresaConcesionariaUpdateRequest } from '../models/empresa-concesionaria.model';
 
 @Component({
-  selector: 'app-empresa-form',
+  selector: 'app-empresa-concesionaria-form',
   standalone: true,
   imports: [
     CommonModule,
@@ -30,19 +30,19 @@ import { Empresa, EmpresaCreateRequest, EmpresaUpdateRequest } from '../models/e
     MatNativeDateModule,
     MatIconModule
   ],
-  templateUrl: './empresa-form.component.html',
-  styleUrl: './empresa-form.component.scss'
+  templateUrl: './empresa-concesionaria-form.component.html',
+  styleUrl: './empresa-concesionaria-form.component.scss'
 })
-export class EmpresaFormComponent implements OnInit {
+export class EmpresaConcesionariaFormComponent implements OnInit {
       form: FormGroup;
       isEditMode: boolean;
 
       constructor(
         private fb: FormBuilder,
-        private empresaService: EmpresaService,
+        private empresaConcesionariaService: EmpresaConcesionariaService,
         private snackBar: MatSnackBar,
-        public dialogRef: MatDialogRef<EmpresaFormComponent>,
-        @Inject(MAT_DIALOG_DATA) public data: { mode: string; empresa?: Empresa }
+        public dialogRef: MatDialogRef<EmpresaConcesionariaFormComponent>,
+        @Inject(MAT_DIALOG_DATA) public data: { mode: string; empresaConcesionaria?: EmpresaConcesionaria }
       ) {
         this.isEditMode = data.mode === 'edit';
         this.form = this.fb.group({
@@ -58,17 +58,17 @@ export class EmpresaFormComponent implements OnInit {
       sRazonSocialAnt: string = '';
 
       ngOnInit(): void {
-        if (this.isEditMode && this.data.empresa) {
+        if (this.isEditMode && this.data.empresaConcesionaria) {
           this.form.get('codigoEmpresa')?.disable();
           this.form.get('ruc')?.disable();
-          this.sRazonSocialAnt = this.data.empresa.razonSocial!;
+          this.sRazonSocialAnt = this.data.empresaConcesionaria.razonSocial!;
           this.form.patchValue({
-            codigoEmpresa: this.data.empresa.codigoEmpresa,
-            razonSocial: this.data.empresa.razonSocial || '',
-            descripcion: this.data.empresa.descripcion || '',
-            ruc: this.data.empresa.ruc || '',
-            tipo: this.data.empresa.tipo || '',
-            estado: this.data.empresa.estado === '1' ? true : false
+            codigoEmpresa: this.data.empresaConcesionaria.codigoEmpresa,
+            razonSocial: this.data.empresaConcesionaria.razonSocial || '',
+            descripcion: this.data.empresaConcesionaria.descripcion || '',
+            ruc: this.data.empresaConcesionaria.ruc || '',
+            tipo: this.data.empresaConcesionaria.tipo || '',
+            estado: this.data.empresaConcesionaria.estado === '1' ? true : false
           });
         }
       }
@@ -87,7 +87,7 @@ export class EmpresaFormComponent implements OnInit {
       }
 
       crear(): void {
-        const request: EmpresaCreateRequest = {
+        const request: EmpresaConcesionariaCreateRequest = {
           codigoEmpresa: this.form.value.codigoEmpresa,
           razonSocial: this.form.value.razonSocial,
           descripcion: this.form.value.descripcion,
@@ -97,13 +97,13 @@ export class EmpresaFormComponent implements OnInit {
           usuarioCreacion: 'admin'
         };
 
-        this.empresaService.crear(request).subscribe({
+        this.empresaConcesionariaService.crear(request).subscribe({
           next: () => {
-            this.snackBar.open('Empresa creada correctamente', 'Cerrar', { duration: 3000 });
+            this.snackBar.open('Empresa concesionaria creada correctamente', 'Cerrar', { duration: 3000 });
             this.dialogRef.close(true);
           },
           error: (error) => {
-            const mensaje = error.error?.message || 'Error al crear empresa';
+            const mensaje = error.error?.message || 'Error al crear empresa concesionaria';
             this.snackBar.open(mensaje, 'Cerrar', { duration: 5000 });
           }
         });
@@ -111,8 +111,8 @@ export class EmpresaFormComponent implements OnInit {
 
       actualizar(): void {
         
-        const request: EmpresaUpdateRequest = {
-          id: this.data.empresa!.id!,
+        const request: EmpresaConcesionariaUpdateRequest = {
+          id: this.data.empresaConcesionaria!.id!,
           codigoEmpresa: this.form.get('codigoEmpresa')?.value,
           razonSocial: this.form.value.razonSocial,
           razonSocialAnt: this.sRazonSocialAnt,
@@ -123,13 +123,13 @@ export class EmpresaFormComponent implements OnInit {
           usuarioModificacion: 'admin'
         };
         
-        this.empresaService.editar(request).subscribe({
+        this.empresaConcesionariaService.editar(request).subscribe({
           next: () => {
-            this.snackBar.open('Empresa actualizada correctamente', 'Cerrar', { duration: 3000 });
+            this.snackBar.open('Empresa concesionaria actualizada correctamente', 'Cerrar', { duration: 3000 });
             this.dialogRef.close(true);
           },
           error: (error) => {
-            const mensaje = error.error?.message || 'Error al actualizar empresa';
+            const mensaje = error.error?.message || 'Error al actualizar empresa concesionaria';
             this.snackBar.open(mensaje, 'Cerrar', { duration: 5000 });
           }
         });
