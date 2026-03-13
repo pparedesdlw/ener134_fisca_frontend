@@ -1,15 +1,15 @@
 import { TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
-import { EmpresaService } from './empresa.service';
-import { Empresa, EmpresaCreateRequest, EmpresaUpdateRequest } from '../models/empresa.model';
+import { EmpresaConcesionariaService } from './empresa-concesionaria.service';
+import { Empresa, EmpresaCreateRequest, EmpresaUpdateRequest } from '../models/empresa-concesionaria.model';
 import { environment } from '../../../environments/environment';
 
-describe('EmpresaService', () => {
-  let service: EmpresaService;
+describe('EmpresaConcesionariaService', () => {
+  let service: EmpresaConcesionariaService;
   let httpMock: HttpTestingController;
   const apiUrl = `${environment.apiUrl}/empresa`;
 
-  const mockEmpresa: Empresa = {
+  const mockEmpresa: EmpresaConcesionaria = {
     id: 1,
     codigoEmpresa: 'EMP001',
     razonSocial: 'Luz del Sur S.A.A.',
@@ -26,9 +26,9 @@ describe('EmpresaService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule],
-      providers: [EmpresaService]
+      providers: [EmpresaConcesionariaService]
     });
-    service = TestBed.inject(EmpresaService);
+    service = TestBed.inject(EmpresaConcesionariaService);
     httpMock = TestBed.inject(HttpTestingController);
   });
 
@@ -42,7 +42,7 @@ describe('EmpresaService', () => {
 
   describe('listarTodos', () => {
     it('debería obtener todas las empresas', () => {
-      const mockEmpresas: Empresa[] = [mockEmpresa];
+      const mockEmpresas: EmpresaConcesionaria[] = [mockEmpresa];
 
       service.listarTodos().subscribe(empresas => {
         expect(empresas).toEqual(mockEmpresas);
@@ -69,7 +69,7 @@ describe('EmpresaService', () => {
 
   describe('listarPorEstado', () => {
     it('debería obtener empresas activas', () => {
-      const mockEmpresas: Empresa[] = [mockEmpresa];
+      const mockEmpresas: EmpresaConcesionaria[] = [mockEmpresa];
 
       service.listarPorEstado('1').subscribe(empresas => {
         expect(empresas).toEqual(mockEmpresas);

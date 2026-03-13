@@ -1,4 +1,4 @@
-export interface Empresa {
+export interface EmpresaConcesionaria {
   id?: number;
   codigoEmpresa: string;
   razonSocial?: string;
@@ -14,7 +14,7 @@ export interface Empresa {
   fechaModificacion?: string;
 }
 
-export interface EmpresaCreateRequest {
+export interface EmpresaConcesionariaCreateRequest {
   codigoEmpresa: string;
   razonSocial: string;
   descripcion: string;
@@ -24,7 +24,7 @@ export interface EmpresaCreateRequest {
   usuarioCreacion: string;
 }
 
-export interface EmpresaUpdateRequest {
+export interface EmpresaConcesionariaUpdateRequest {
   id: number;
   codigoEmpresa: string;
   razonSocial: string;

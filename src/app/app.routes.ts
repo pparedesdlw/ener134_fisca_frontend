@@ -3,7 +3,7 @@ import { LoginComponent } from './auth/login/login.component';
 import { HomeComponent } from './presentation/home/home.component';
 import { MainLayoutComponent } from './layout/main-layout.component';
 import { PeriodoListComponent } from './periodos/components/periodo-list.component';
-import { EmpresaListComponent } from './empresas/components/empresa-list.component';
+import { EmpresaConcesionariaListComponent } from './empresas/components/empresa-concesionaria-list.component';
 import { authGuard } from './auth/guards/auth.guard';
 import { FeriadoListComponent } from './feriados/components/feriado-list.component';
 import { RolListComponent } from './roles/components/rol-list.component';
@@ -24,7 +24,7 @@ export const routes: Routes = [
     children: [
       { path: 'home', component: HomeComponent },
       { path: 'periodos', component: PeriodoListComponent },
-      { path: 'empresas', component: EmpresaListComponent },
+      { path: 'empresas', component: EmpresaConcesionariaListComponent },
       { path: 'feriados', component: FeriadoListComponent },
       { path: 'roles', component: RolListComponent },
       { path: 'parametros', component: ParametroListComponent },

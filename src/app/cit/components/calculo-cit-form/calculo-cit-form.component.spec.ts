@@ -5,14 +5,14 @@ import { FormsModule } from '@angular/forms';
 import { of, throwError } from 'rxjs';
 import { CalculoCitFormComponent } from './calculo-cit-form.component';
 import { CitService } from '../../services/cit.service';
-import { EmpresaService } from '../../../empresas/services/empresa.service';
+import { EmpresaConcesionariaService } from '../../../empresas/services/empresa-concesionaria.service';
 import { CitResultadoResponse } from '../../models/cit.model';
 
 describe('CalculoCitFormComponent', () => {
   let component: CalculoCitFormComponent;
   let fixture: ComponentFixture<CalculoCitFormComponent>;
   let citService: jasmine.SpyObj<CitService>;
-  let empresaService: jasmine.SpyObj<EmpresaService>;
+  let empresaConcesionariaService: jasmine.SpyObj<EmpresaConcesionariaService>;
 
   const mockResultado: CitResultadoResponse = {
     nmd: 100,
@@ -37,10 +37,10 @@ describe('CalculoCitFormComponent', () => {
 
   beforeEach(async () => {
     const citServiceSpy = jasmine.createSpyObj('CitService', ['calcularCit', 'listarMotivos']);
-    const empresaServiceSpy = jasmine.createSpyObj('EmpresaService', ['listarTodos']);
+    const empresaConcesionariaServiceSpy = jasmine.createSpyObj('EmpresaConcesionariaService', ['listarTodos']);
 
     citServiceSpy.listarMotivos.and.returnValue(of([]));
-    empresaServiceSpy.listarTodos.and.returnValue(of([]));
+    empresaConcesionariaServiceSpy.listarTodos.and.returnValue(of([]));
 
     await TestBed.configureTestingModule({
       imports: [
@@ -51,14 +51,14 @@ describe('CalculoCitFormComponent', () => {
       ],
       providers: [
         { provide: CitService, useValue: citServiceSpy },
-        { provide: EmpresaService, useValue: empresaServiceSpy }
+        { provide: EmpresaConcesionariaService, useValue: empresaConcesionariaServiceSpy }
       ]
     }).compileComponents();
 
     fixture = TestBed.createComponent(CalculoCitFormComponent);
     component = fixture.componentInstance;
     citService = TestBed.inject(CitService) as jasmine.SpyObj<CitService>;
-    empresaService = TestBed.inject(EmpresaService) as jasmine.SpyObj<EmpresaService>;
+    empresaConcesionariaService = TestBed.inject(EmpresaConcesionariaService) as jasmine.SpyObj<EmpresaConcesionariaService>;
     fixture.detectChanges();
   });
 
@@ -77,7 +77,7 @@ describe('CalculoCitFormComponent', () => {
   });
 
   it('should load empresas and motivos on init', () => {
-    expect(empresaService.listarTodos).toHaveBeenCalled();
+    expect(empresaConcesionariaService.listarTodos).toHaveBeenCalled();
     expect(citService.listarMotivos).toHaveBeenCalled();
   });
 

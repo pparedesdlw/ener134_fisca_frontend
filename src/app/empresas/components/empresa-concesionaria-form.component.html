@@ -1,9 +1,9 @@
-<h2 mat-dialog-title>{{isEditMode ? 'Editar' : 'Nueva'}} Empresa</h2>
+<h2 mat-dialog-title>{{isEditMode ? 'Editar' : 'Nueva'}} Empresa Concesionaria</h2>
 
 <mat-dialog-content>
   <form [formGroup]="form">
     <mat-form-field appearance="outline" class="full-width">
-      <mat-label>Código de Empresa</mat-label>
+      <mat-label>Código de Empresa Concesionaria</mat-label>
       <input matInput formControlName="codigoEmpresa" maxlength="4" placeholder="Ej: ELSE">
       <mat-hint>Formato: [A-Z] (Ej: ESLE)</mat-hint>
       <mat-error *ngIf="form.get('codigoEmpresa')?.hasError('required')">
@@ -19,7 +19,7 @@
 
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>RUC</mat-label>
-      <input matInput pattern="[0-9]*" maxlength="11" formControlName="ruc" placeholder="Ingrese el RUC de la empresa">
+      <input matInput pattern="[0-9]*" maxlength="11" formControlName="ruc" placeholder="Ingrese el RUC de la empresa concesionaria">
       <mat-hint align="end">{{ form.get('ruc')?.value?.length || 0 }}/11</mat-hint>
       <mat-error *ngIf="form.get('ruc')?.hasError('required')">
         El RUC es requerido
@@ -34,7 +34,7 @@
 
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>Razón Social</mat-label>
-      <input matInput formControlName="razonSocial" maxlength="100" placeholder="Razón social de la empresa">
+      <input matInput formControlName="razonSocial" maxlength="100" placeholder="Razón social de la empresa concesionaria">
       <mat-hint>Ingrese una descripción detallada (mínimo 5 caracteres)</mat-hint>
       <mat-error *ngIf="form.get('razonSocial')?.hasError('required')">
         La razón social es requerida
@@ -49,7 +49,7 @@
 
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>Descripción</mat-label>
-      <textarea matInput formControlName="descripcion" maxlength="250" placeholder="Descripción de la empresa" rows="3"></textarea>
+      <textarea matInput formControlName="descripcion" maxlength="250" placeholder="Descripción de la empresa concesionaria" rows="3"></textarea>
       <mat-hint>Ingrese una descripción detallada</mat-hint>
       <mat-error *ngIf="form.get('razonSocial')?.hasError('pattern')">
         Solo se permiten letras y números
@@ -63,7 +63,7 @@
         <mat-option value="2">TRANSMISORAS</mat-option>
         <mat-option value="3">COMERCIALIZADORAS</mat-option>
       </mat-select>
-      <mat-hint>Seleccione un Tipo de Empresa</mat-hint>
+      <mat-hint>Seleccione un Tipo de Empresa Concesionaria</mat-hint>
       <mat-error *ngIf="form.get('tipo')?.hasError('required')">
         El Tipo es requerido
       </mat-error>
