@@ -48,8 +48,7 @@ export class RolFormComponent implements OnInit {
         this.form = this.fb.group({
           codigoRol: ['', [Validators.required, Validators.minLength(4)]],
           responsableRol: ['', [Validators.required, Validators.minLength(3)]],
-          descripcionRol: ['', [Validators.required, Validators.minLength(5)]],
-          estado: [true]
+          descripcionRol: ['', [Validators.required, Validators.minLength(5)]]
         });
       }
 
@@ -58,8 +57,7 @@ export class RolFormComponent implements OnInit {
           this.form.patchValue({
             codigoRol: this.data.rol.codigoRol,
             responsableRol: this.data.rol.responsableRol || '',
-            descripcionRol: this.data.rol.descripcionRol || '',
-            estado: this.data.rol.estado === '1' ? true : false
+            descripcionRol: this.data.rol.descripcionRol || ''
           });
         }
       }
@@ -82,7 +80,6 @@ export class RolFormComponent implements OnInit {
           codigoRol: this.form.value.codigoRol,
           responsableRol: this.form.value.responsableRol,
           descripcionRol: this.form.value.descripcionRol,
-          estado: this.form.value.estado === true ? '1' : '0',
           usuarioCreacion: 'admin'
         };
 
@@ -106,7 +103,6 @@ export class RolFormComponent implements OnInit {
           codigoRol: this.form.value.codigoRol,
           responsableRol: this.form.value.responsableRol,
           descripcionRol: this.form.value.descripcionRol,
-          estado: this.form.value.estado === true ? '1' : '0',
           usuarioModificacion: 'admin'
         };
 

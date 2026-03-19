@@ -3,7 +3,7 @@ export interface Rol {
   codigoRol: string;
   responsableRol?: string;
   descripcionRol: string;
-  estado?: string;
+  estado?: boolean;
   deEstado?: string;
   usuarioCreacion?: string;
   fechaCreacion?: string;
@@ -15,7 +15,6 @@ export interface RolCreateRequest {
   codigoRol: string;
   responsableRol?: string;
   descripcionRol: string;
-  estado: string;
   usuarioCreacion: string;
 }
 
@@ -24,6 +23,5 @@ export interface RolUpdateRequest {
   codigoRol: string;
   responsableRol?: string;
   descripcionRol: string;
-  estado: string;
   usuarioModificacion: string;
 }

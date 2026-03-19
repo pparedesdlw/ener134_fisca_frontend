@@ -6,7 +6,7 @@ export interface Feriado {
   descripcionRegion?: string;
   descripcionFeriado?: string;
   tipoFeriado?: string;
-  estado?: string;
+  estado?: boolean;
   deEstado?: string;
   usuarioCreacion?: string;
   fechaCreacion?: string;
@@ -20,7 +20,6 @@ export interface FeriadoCreateRequest {
   codigoRegion: string;
   descripcionFeriado: string;
   tipoFeriado: string;
-  estado: string;
   usuarioCreacion: string;
 }
 
@@ -31,6 +30,5 @@ export interface FeriadoUpdateRequest {
   codigoRegion: string;
   descripcionFeriado: string;
   tipoFeriado: string;
-  estado: string;
   usuarioModificacion: string;
 }

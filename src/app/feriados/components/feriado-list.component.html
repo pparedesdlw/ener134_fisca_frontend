@@ -76,9 +76,11 @@
           <button mat-icon-button color="primary" (click)="editar(feriado)" matTooltip="Editar">
             <mat-icon>edit</mat-icon>
           </button>
-          <button mat-icon-button color="warn" (click)="eliminar(feriado)" matTooltip="Eliminar">
-            <mat-icon>delete</mat-icon>
-          </button>
+          <mat-slide-toggle
+            [checked]="feriado.estado === true"
+            (change)="cambiarEstado(feriado)"
+            color="primary">
+          </mat-slide-toggle>
         </td>
       </ng-container>
 

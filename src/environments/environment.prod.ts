@@ -1,5 +1,5 @@
 export const environment = {
   production: true,
-  urlbase:"http://localhost:8083/",
-  apiUrl: "http://localhost:8083/osinergmin/tisecweb"
+  urlbase: "https://PENDIENTE-PRODUCCION/tisec-backend/",
+  apiUrl: "https://PENDIENTE-PRODUCCION/tisec-backend/osinergmin/tisecweb"
 };

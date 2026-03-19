@@ -85,9 +85,11 @@
           <button mat-icon-button color="primary" (click)="editar(usuario)" matTooltip="Editar">
             <mat-icon>edit</mat-icon>
           </button>
-          <button mat-icon-button color="warn" (click)="eliminar(usuario)" matTooltip="Eliminar">
-            <mat-icon>delete</mat-icon>
-          </button>
+          <mat-slide-toggle
+            [checked]="usuario.estado === true"
+            (change)="cambiarEstado(usuario)"
+            color="primary">
+          </mat-slide-toggle>
         </td>
       </ng-container>
 

@@ -8,6 +8,7 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { RolService } from '../services/rol.service';
 import { Rol } from '../models/rol.model';
 import { RolFormComponent } from './rol-form.component';
@@ -24,7 +25,8 @@ import { RolFormComponent } from './rol-form.component';
     MatChipsModule,
     MatDialogModule,
     MatSnackBarModule,
-    MatTooltipModule
+    MatTooltipModule,
+    MatSlideToggleModule
   ],
   templateUrl: './rol-list.component.html',
   styleUrl: './rol-list.component.scss'
@@ -96,18 +98,18 @@ export class RolListComponent implements OnInit {
     });
   }
 
-  eliminar(rol: Rol): void {
-    if (confirm(`¿Está seguro de dar de baja el rol ${rol.descripcionRol}?`)) {
-      this.rolService.eliminar(rol.id!).subscribe({
-        next: () => {
-          this.snackBar.open('Rol dado de baja correctamente', 'Cerrar', { duration: 3000 });
-          this.cargarRoles();
-        },
-        error: (error) => {
-          this.mostrarError('Error al dar de baja el rol', error);
-        }
-      });
-    }
+  cambiarEstado(rol: Rol): void {
+    this.rolService.cambiarEstado(rol.id!).subscribe({
+      next: () => {
+        const msg = rol.estado ? 'desactivado' : 'activado';
+        this.snackBar.open(`Rol ${msg} correctamente`, 'Cerrar', { duration: 3000 });
+        this.cargarRoles();
+      },
+      error: (error) => {
+        this.mostrarError('Error al cambiar estado del rol', error);
+        this.cargarRoles();
+      }
+    });
   }
 
   private mostrarError(mensaje: string, error: any): void {

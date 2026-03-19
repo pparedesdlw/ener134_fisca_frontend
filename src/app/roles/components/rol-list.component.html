@@ -65,9 +65,11 @@
           <button mat-icon-button color="primary" (click)="editar(rol)" matTooltip="Editar">
             <mat-icon>edit</mat-icon>
           </button>
-          <button mat-icon-button color="warn" (click)="eliminar(rol)" matTooltip="Eliminar">
-            <mat-icon>delete</mat-icon>
-          </button>
+          <mat-slide-toggle
+            [checked]="rol.estado === true"
+            (change)="cambiarEstado(rol)"
+            color="primary">
+          </mat-slide-toggle>
         </td>
       </ng-container>
 

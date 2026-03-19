@@ -75,9 +75,11 @@
           <button mat-icon-button color="primary" (click)="editar(empresa)" matTooltip="Editar">
             <mat-icon>edit</mat-icon>
           </button>
-          <button mat-icon-button color="warn" (click)="eliminar(empresa)" matTooltip="Eliminar">
-            <mat-icon>delete</mat-icon>
-          </button>
+          <mat-slide-toggle
+            [checked]="empresa.estado === true"
+            (change)="cambiarEstado(empresa)"
+            color="primary">
+          </mat-slide-toggle>
         </td>
       </ng-container>
 

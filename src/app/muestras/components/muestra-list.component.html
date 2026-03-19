@@ -70,9 +70,11 @@
           <button mat-icon-button color="primary" (click)="editar(muestra)" matTooltip="Editar">
             <mat-icon>edit</mat-icon>
           </button>
-          <button mat-icon-button color="warn" (click)="eliminar(muestra)" matTooltip="Eliminar">
-            <mat-icon>delete</mat-icon>
-          </button>
+          <mat-slide-toggle
+            [checked]="muestra.estado === true"
+            (change)="cambiarEstado(muestra)"
+            color="primary">
+          </mat-slide-toggle>
         </td>
       </ng-container>
 

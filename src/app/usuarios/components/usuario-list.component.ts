@@ -8,6 +8,7 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { UsuarioService } from '../services/usuario.service';
 import { Usuario } from '../models/usuario.model';
 import { UsuarioFormComponent } from './usuario-form.component';
@@ -25,7 +26,8 @@ import { UsuarioFormComponent } from './usuario-form.component';
     MatChipsModule,
     MatDialogModule,
     MatSnackBarModule,
-    MatTooltipModule
+    MatTooltipModule,
+    MatSlideToggleModule
   ],
   templateUrl: './usuario-list.component.html',
   styleUrl: './usuario-list.component.scss'
@@ -101,18 +103,18 @@ export class UsuarioListComponent implements OnInit {
     });
   }
 
-  eliminar(usuario: Usuario): void {
-    if (confirm(`¿Está seguro de dar de baja el usuario ${usuario.nombreUsuario}?`)) {
-      this.usuarioService.eliminar(usuario.id!).subscribe({
-        next: () => {
-          this.snackBar.open('Usuario dado de baja correctamente', 'Cerrar', { duration: 3000 });
-          this.cargarUsuarios();
-        },
-        error: (error) => {
-          this.mostrarError('Error al dar de baja el usuario', error);
-        }
-      });
-    }
+  cambiarEstado(usuario: Usuario): void {
+    this.usuarioService.cambiarEstado(usuario.id!).subscribe({
+      next: () => {
+        const msg = usuario.estado ? 'desactivado' : 'activado';
+        this.snackBar.open(`Usuario ${msg} correctamente`, 'Cerrar', { duration: 3000 });
+        this.cargarUsuarios();
+      },
+      error: (error) => {
+        this.mostrarError('Error al cambiar estado del usuario', error);
+        this.cargarUsuarios();
+      }
+    });
   }
 
   private mostrarError(mensaje: string, error: any): void {

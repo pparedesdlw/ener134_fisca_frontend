@@ -8,6 +8,7 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { ParametroService } from '../services/parametro.service';
 import { Parametro } from '../models/parametro.model';
 import { ParametroFormComponent } from './parametro-form.component';
@@ -24,7 +25,8 @@ import { ParametroFormComponent } from './parametro-form.component';
     MatChipsModule,
     MatDialogModule,
     MatSnackBarModule,
-    MatTooltipModule
+    MatTooltipModule,
+    MatSlideToggleModule
   ],
   templateUrl: './parametro-list.component.html',
   styleUrl: './parametro-list.component.scss'
@@ -97,22 +99,18 @@ export class ParametroListComponent implements OnInit {
     });
   }
 
-  eliminar(parametro: Parametro): void {
-    if (parametro.estado === "1"){
-      if (confirm(`¿Está seguro de dar de baja el parámetro ${parametro.codigoParametro}?`)) {
-        this.parametroService.eliminar(parametro.id!).subscribe({
-          next: () => {
-            this.snackBar.open('Parámetro dado de baja correctamente', 'Cerrar', { duration: 3000 });
-            this.cargarParametros();
-          },
-          error: (error) => {
-            this.mostrarError('Error al dar de baja el parámetro', error);
-          }
-        });
+  cambiarEstado(parametro: Parametro): void {
+    this.parametroService.cambiarEstado(parametro.id!).subscribe({
+      next: () => {
+        const msg = parametro.estado ? 'desactivado' : 'activado';
+        this.snackBar.open(`Parámetro ${msg} correctamente`, 'Cerrar', { duration: 3000 });
+        this.cargarParametros();
+      },
+      error: (error) => {
+        this.mostrarError('Error al cambiar estado del parámetro', error);
+        this.cargarParametros();
       }
-    } else {
-      this.mostrarInfo(`El parámetro de código: ${parametro.codigoParametro} - se encuentra Inactivo`);
-    }
+    });
   }
 
   private mostrarError(mensaje: string, error: any): void {

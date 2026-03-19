@@ -8,7 +8,7 @@ export interface Usuario {
   telefono: string;
   perfil: string;
   nombrePerfil: string;
-  estado?: string;
+  estado?: boolean;
   deEstado?: string;
   usuarioCreacion?: string;
   fechaCreacion?: string;
@@ -24,7 +24,6 @@ export interface UsuarioCreateRequest {
   email: string;
   telefono: string;
   perfil: string;
-  estado: string;
   usuarioCreacion: string;
 }
 
@@ -37,6 +36,5 @@ export interface UsuarioUpdateRequest {
   email: string;
   telefono: string;
   perfil: string;
-  estado: string;
   usuarioModificacion: string;
 }

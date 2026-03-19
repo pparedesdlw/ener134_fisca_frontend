@@ -8,6 +8,7 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { FeriadoService } from '../services/feriado.service';
 import { Feriado } from '../models/feriado.model';
 import { FeriadoFormComponent } from './feriado-form.component';
@@ -24,7 +25,8 @@ import { FeriadoFormComponent } from './feriado-form.component';
     MatChipsModule,
     MatDialogModule,
     MatSnackBarModule,
-    MatTooltipModule
+    MatTooltipModule,
+    MatSlideToggleModule
   ],
   templateUrl: './feriado-list.component.html',
   styleUrl: './feriado-list.component.scss'
@@ -98,22 +100,18 @@ export class FeriadoListComponent implements OnInit {
     });
   }
 
-  eliminar(feriado: Feriado): void {
-    if (feriado.estado === "1"){
-      if (confirm(`¿Está seguro de dar de baja el feriado: ${feriado.descripcionFeriado}?`)) {
-        this.feriadoService.eliminar(feriado.id!).subscribe({
-          next: () => {
-            this.snackBar.open('Feriado dado de baja correctamente', 'Cerrar', { duration: 3000 });
-            this.cargarFeriados();
-          },
-          error: (error) => {
-            this.mostrarError('Error al dar de baja el feriado', error);
-          }
-        });
+  cambiarEstado(feriado: Feriado): void {
+    this.feriadoService.cambiarEstado(feriado.id!).subscribe({
+      next: () => {
+        const msg = feriado.estado ? 'desactivado' : 'activado';
+        this.snackBar.open(`Feriado ${msg} correctamente`, 'Cerrar', { duration: 3000 });
+        this.cargarFeriados();
+      },
+      error: (error) => {
+        this.mostrarError('Error al cambiar estado del feriado', error);
+        this.cargarFeriados();
       }
-    } else {
-      this.mostrarInfo(`El feriado: ${feriado.descripcionFeriado} - se encuentra Inactivo`);
-    }
+    });
   }
 
   private mostrarError(mensaje: string, error: any): void {

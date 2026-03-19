@@ -6,7 +6,7 @@ export interface EmpresaConcesionaria {
   tipo?: string;
   deTipo?: string;
   ruc?: string;
-  estado?: string;
+  estado?: boolean;
   deEstado?: string;
   usuarioCreacion?: string;
   fechaCreacion?: string;
@@ -20,7 +20,6 @@ export interface EmpresaConcesionariaCreateRequest {
   descripcion: string;
   tipo: string;
   ruc: string;
-  estado: string;
   usuarioCreacion: string;
 }
 
@@ -32,6 +31,5 @@ export interface EmpresaConcesionariaUpdateRequest {
   descripcion: string;
   tipo: string;
   ruc: string;
-  estado: string;
   usuarioModificacion: string;
 }
