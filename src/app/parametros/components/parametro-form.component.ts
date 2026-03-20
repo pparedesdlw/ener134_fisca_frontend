@@ -49,8 +49,7 @@ export class ParametroFormComponent implements OnInit {
           codigoParametro: ['', [Validators.required, Validators.pattern("^[a-zA-Z0-9!@#\$%\^\&*\)\(+=._-]+$")]],
           descripcionParametro: ['', [Validators.required, Validators.minLength(5)]],
           valor: ['', [Validators.required, Validators.minLength(1)]],
-          tipoParametro: ['', [Validators.required]],
-          estado: [true]
+          tipoParametro: ['', [Validators.required]]
         });
       }
 
@@ -62,8 +61,7 @@ export class ParametroFormComponent implements OnInit {
             codigoParametro: this.data.parametro.codigoParametro,
             descripcionParametro: this.data.parametro.descripcionParametro,
             valor: this.data.parametro.valor,
-            tipoParametro: this.data.parametro.tipoParametro,
-            estado: this.data.parametro.estado === '1' ? true : false
+            tipoParametro: this.data.parametro.tipoParametro
           });
         }
       }
@@ -87,7 +85,6 @@ export class ParametroFormComponent implements OnInit {
           descripcionParametro: this.form.value.descripcionParametro,
           valor: this.form.value.valor,
           tipoParametro: this.form.value.tipoParametro,
-          estado: this.form.value.estado === true ? '1' : '0',
           usuarioCreacion: 'admin'
         };
 
@@ -112,7 +109,6 @@ export class ParametroFormComponent implements OnInit {
           descripcionParametro: this.form.get('descripcionParametro')?.value,
           valor: this.form.value.valor,
           tipoParametro: this.form.value.tipoParametro,
-          estado: this.form.value.estado === true ? '1' : '0',
           usuarioModificacion: 'admin'
         };
 

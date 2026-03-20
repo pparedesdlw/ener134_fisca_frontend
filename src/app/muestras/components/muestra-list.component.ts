@@ -8,6 +8,7 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MuestraService } from '../services/muestra.service';
 import { Muestra } from '../models/muestra.model';
 import { MuestraFormComponent } from './muestra-form.component';
@@ -24,7 +25,8 @@ import { MuestraFormComponent } from './muestra-form.component';
     MatChipsModule,
     MatDialogModule,
     MatSnackBarModule,
-    MatTooltipModule
+    MatTooltipModule,
+    MatSlideToggleModule
   ],
   templateUrl: './muestra-list.component.html',
   styleUrl: './muestra-list.component.scss'
@@ -97,22 +99,18 @@ export class MuestraListComponent implements OnInit {
     });
   }
 
-  eliminar(muestra: Muestra): void {
-    if (muestra.estado === "1"){
-      if (confirm(`¿Está seguro de dar de baja la muestra ${muestra.codigoMuestra}?`)) {
-        this.muestraService.eliminar(muestra.id!).subscribe({
-          next: () => {
-            this.snackBar.open('Muestra dada de baja correctamente', 'Cerrar', { duration: 3000 });
-            this.cargarMuestras();
-          },
-          error: (error) => {
-            this.mostrarError('Error al dar de baja la muestra', error);
-          }
-        });
+  cambiarEstado(muestra: Muestra): void {
+    this.muestraService.cambiarEstado(muestra.id!).subscribe({
+      next: () => {
+        const msg = muestra.estado ? 'desactivada' : 'activada';
+        this.snackBar.open(`Muestra ${msg} correctamente`, 'Cerrar', { duration: 3000 });
+        this.cargarMuestras();
+      },
+      error: (error) => {
+        this.mostrarError('Error al cambiar estado de la muestra', error);
+        this.cargarMuestras();
       }
-    } else {
-      this.mostrarInfo(`la muestra de código: ${muestra.codigoMuestra} - se encuentra Inactivo`);
-    }
+    });
   }
 
   private mostrarError(mensaje: string, error: any): void {

@@ -8,6 +8,7 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { EmpresaConcesionariaService } from '../services/empresa-concesionaria.service';
 import { EmpresaConcesionaria } from '../models/empresa-concesionaria.model';
 import { EmpresaConcesionariaFormComponent } from './empresa-concesionaria-form.component';
@@ -24,7 +25,8 @@ import { EmpresaConcesionariaFormComponent } from './empresa-concesionaria-form.
     MatChipsModule,
     MatDialogModule,
     MatSnackBarModule,
-    MatTooltipModule
+    MatTooltipModule,
+    MatSlideToggleModule
   ],
   templateUrl: './empresa-concesionaria-list.component.html',
   styleUrl: './empresa-concesionaria-list.component.scss'
@@ -98,23 +100,18 @@ export class EmpresaConcesionariaListComponent implements OnInit {
     });
   }
 
-  eliminar(empresaConcesionaria: EmpresaConcesionaria): void {
-    if (empresaConcesionaria.estado === "1"){
-      if (confirm(`¿Está seguro de dar de baja la empresa concesionaria ${empresaConcesionaria.codigoEmpresa}?`)) {
-      this.empresaConcesionariaService.eliminar(empresaConcesionaria.id!).subscribe({
-          next: () => {
-            this.snackBar.open('Empresa concesionaria dada de baja correctamente', 'Cerrar', { duration: 3000 });
-            this.cargarEmpresas();
-          },
-          error: (error) => {
-            this.mostrarError('Error al dar de baja la empresa concesionaria', error);
-          }
-        });
+  cambiarEstado(empresa: EmpresaConcesionaria): void {
+    this.empresaConcesionariaService.cambiarEstado(empresa.id!).subscribe({
+      next: () => {
+        const msg = empresa.estado ? 'desactivada' : 'activada';
+        this.snackBar.open(`Empresa concesionaria ${msg} correctamente`, 'Cerrar', { duration: 3000 });
+        this.cargarEmpresas();
+      },
+      error: (error) => {
+        this.mostrarError('Error al cambiar estado de la empresa concesionaria', error);
+        this.cargarEmpresas();
       }
-    } else {
-      this.mostrarInfo(`La empresa concesionaria: ${empresaConcesionaria.codigoEmpresa} - se encuentra Inactivo`);
-    }
-    
+    });
   }
 
   private mostrarError(mensaje: string, error: any): void {

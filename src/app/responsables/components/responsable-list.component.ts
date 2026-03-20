@@ -8,6 +8,7 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { ResponsableService } from '../services/responsable.service';
 import { Responsable } from '../models/responsable.model';
 import { ResponsableFormComponent } from './responsable-form.component';
@@ -25,7 +26,8 @@ import { ResponsableFormComponent } from './responsable-form.component';
     MatChipsModule,
     MatDialogModule,
     MatSnackBarModule,
-    MatTooltipModule
+    MatTooltipModule,
+    MatSlideToggleModule
   ],
   templateUrl: './responsable-list.component.html',
   styleUrl: './responsable-list.component.scss'
@@ -97,23 +99,18 @@ export class ResponsableListComponent implements OnInit {
     });
   }
 
-  eliminar(responsable: Responsable): void {
-    if (responsable.estado === "1"){
-      if (confirm(`¿Está seguro de dar de baja el responsable ${responsable.nombreResponsable}?`)) {
-        this.responsableService.eliminar(responsable.id!).subscribe({
-          next: () => {
-            this.snackBar.open('Responsable dado de baja correctamente', 'Cerrar', { duration: 3000 });
-            this.cargarResponsables();
-          },
-          error: (error) => {
-            this.mostrarError('Error al dar de baja el responsable', error);
-          }
-        });
+  cambiarEstado(responsable: Responsable): void {
+    this.responsableService.cambiarEstado(responsable.id!).subscribe({
+      next: () => {
+        const msg = responsable.estado ? 'desactivado' : 'activado';
+        this.snackBar.open(`Responsable ${msg} correctamente`, 'Cerrar', { duration: 3000 });
+        this.cargarResponsables();
+      },
+      error: (error) => {
+        this.mostrarError('Error al cambiar estado del responsable', error);
+        this.cargarResponsables();
       }
-    } else {
-      this.mostrarInfo(`el responsable: ${responsable.nombreResponsable} - se encuentra Inactivo`);
-    }
-    
+    });
   }
 
   private mostrarError(mensaje: string, error: any): void {

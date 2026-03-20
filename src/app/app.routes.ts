@@ -24,7 +24,7 @@ export const routes: Routes = [
     children: [
       { path: 'home', component: HomeComponent },
       { path: 'periodos', component: PeriodoListComponent },
-      { path: 'empresas', component: EmpresaConcesionariaListComponent },
+      { path: 'empresaConcesionaria', component: EmpresaConcesionariaListComponent },
       { path: 'feriados', component: FeriadoListComponent },
       { path: 'roles', component: RolListComponent },
       { path: 'parametros', component: ParametroListComponent },

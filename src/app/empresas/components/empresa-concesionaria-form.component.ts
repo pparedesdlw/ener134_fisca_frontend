@@ -50,8 +50,7 @@ export class EmpresaConcesionariaFormComponent implements OnInit {
           razonSocial: ['', [Validators.required, Validators.pattern('^[a-zA-Z0-9 .()/\&$]*$'), Validators.minLength(5)]],
           ruc: ['', [Validators.required, Validators.pattern("^[0-9]*$"), Validators.maxLength(11)]],
           tipo: ['', [Validators.required]],
-          descripcion: ['', [Validators.pattern('^[a-zA-Z0-9 .()/\&$]*$')]],
-          estado: [true]
+          descripcion: ['', [Validators.pattern('^[a-zA-Z0-9 .()/\&$]*$')]]
         });
       }
 
@@ -67,8 +66,7 @@ export class EmpresaConcesionariaFormComponent implements OnInit {
             razonSocial: this.data.empresaConcesionaria.razonSocial || '',
             descripcion: this.data.empresaConcesionaria.descripcion || '',
             ruc: this.data.empresaConcesionaria.ruc || '',
-            tipo: this.data.empresaConcesionaria.tipo || '',
-            estado: this.data.empresaConcesionaria.estado === '1' ? true : false
+            tipo: this.data.empresaConcesionaria.tipo || ''
           });
         }
       }
@@ -93,7 +91,6 @@ export class EmpresaConcesionariaFormComponent implements OnInit {
           descripcion: this.form.value.descripcion,
           tipo: this.form.value.tipo,
           ruc: this.form.value.ruc,
-          estado: this.form.value.estado === true ? '1' : '0',
           usuarioCreacion: 'admin'
         };
 
@@ -119,7 +116,6 @@ export class EmpresaConcesionariaFormComponent implements OnInit {
           descripcion: this.form.value.descripcion,
           tipo: this.form.value.tipo,
           ruc: this.form.get('ruc')?.value,
-          estado: this.form.value.estado === true ? '1' : '0',
           usuarioModificacion: 'admin'
         };
         
