@@ -95,25 +95,33 @@ export class FeriadoFormComponent implements OnInit {
 
           let sCodRegion = this.data.feriado.codigoRegion;
 
-          let sCodDepart = "";
-          let sCodProvin = "";
-          let sCodDistri = "";
-          if (sCodRegion!.length <= 6){
-              sCodDepart = sCodRegion?.substring(0,2)!;
-              sCodProvin = sCodRegion?.substring(2,4)!;
-              sCodDistri = sCodRegion?.slice(-2)!;
-              this.onItemChangeDepartamento({value: sCodDepart});
-              this.onItemChangeProvincia({value: sCodProvin});
-              this.onItemChangeDistrito({value: sCodDistri});
+          // Solo descomponer ubigeo si es REGIONAL
+          if (this.data.feriado.tipoFeriado !== 'NACIONAL') {
+            let sCodDepart = "";
+            let sCodProvin = "";
+            let sCodDistri = "";
+            if (sCodRegion!.length <= 6){
+                sCodDepart = sCodRegion?.substring(0,2)!;
+                sCodProvin = sCodRegion?.substring(2,4)!;
+                sCodDistri = sCodRegion?.slice(-2)!;
+                this.onItemChangeDepartamento({value: sCodDepart});
+                this.onItemChangeProvincia({value: sCodProvin});
+                this.onItemChangeDistrito({value: sCodDistri});
+            }
+            
+            this.form.patchValue({
+              departamento: sCodDepart!,
+              provincia: sCodProvin!,
+              distrito: sCodDistri!,
+              descripcionFeriado: this.data.feriado.descripcionFeriado || '',
+              tipoFeriado: this.data.feriado.tipoFeriado || ''
+            });
+          } else {
+            this.form.patchValue({
+              descripcionFeriado: this.data.feriado.descripcionFeriado || '',
+              tipoFeriado: this.data.feriado.tipoFeriado || ''
+            });
           }
-          
-          this.form.patchValue({
-            departamento: sCodDepart!,
-            provincia: sCodProvin!,
-            distrito: sCodDistri!,
-            descripcionFeriado: this.data.feriado.descripcionFeriado || '',
-            tipoFeriado: this.data.feriado.tipoFeriado || ''
-          });
               
           const fechaIni = this.parsearFecha(this.data.feriado.fechaFeriadoIni);
           const fechaFin = this.parsearFecha(this.data.feriado.fechaFeriadoFin);
@@ -177,12 +185,20 @@ export class FeriadoFormComponent implements OnInit {
           fechaFeriadoFin = new Date(this.rango.value.fechaFeriadoFin!);
         }
 
-        let sDept = this.validateString(this.selectedDepartamentoOption)
-        let sProv = this.validateString(this.selectedProvinciaOption)
-        let sDist = this.validateString(this.selectedDistritoOption)
-        let sCodigoRegion = ((sDept != '') ? sDept : '00') + 
-                            ((sProv != '') ? sProv : '00')  + 
-                            ((sDist != '') ? sDist : '00');
+        let sCodigoRegion: string;
+        if (this.form.value.tipoFeriado === 'NACIONAL') {
+          sCodigoRegion = '000000';
+          this.selectedDepartamentoOption = '';
+          this.selectedProvinciaOption = '';
+          this.selectedDistritoOption = '';
+        } else {
+          let sDept = this.validateString(this.selectedDepartamentoOption)
+          let sProv = this.validateString(this.selectedProvinciaOption)
+          let sDist = this.validateString(this.selectedDistritoOption)
+          sCodigoRegion = ((sDept != '') ? sDept : '00') + 
+                              ((sProv != '') ? sProv : '00')  + 
+                              ((sDist != '') ? sDist : '00');
+        }
 
         const request: FeriadoCreateRequest = {
           fechaFeriadoIni: this.formatearFecha(fechaFeriadoIni!),
@@ -214,12 +230,20 @@ export class FeriadoFormComponent implements OnInit {
           fechaFeriadoFin = new Date(this.rango.value.fechaFeriadoFin!);
         }
 
-        let sDept = this.validateString(this.selectedDepartamentoOption)
-        let sProv = this.validateString(this.selectedProvinciaOption)
-        let sDist = this.validateString(this.selectedDistritoOption)
-        let sCodigoRegion = ((sDept != '') ? sDept : '00') + 
-                            ((sProv != '') ? sProv : '00')  + 
-                            ((sDist != '') ? sDist : '00');
+        let sCodigoRegion: string;
+        if (this.form.value.tipoFeriado === 'NACIONAL') {
+          sCodigoRegion = '000000';
+          this.selectedDepartamentoOption = '';
+          this.selectedProvinciaOption = '';
+          this.selectedDistritoOption = '';
+        } else {
+          let sDept = this.validateString(this.selectedDepartamentoOption)
+          let sProv = this.validateString(this.selectedProvinciaOption)
+          let sDist = this.validateString(this.selectedDistritoOption)
+          sCodigoRegion = ((sDept != '') ? sDept : '00') + 
+                              ((sProv != '') ? sProv : '00')  + 
+                              ((sDist != '') ? sDist : '00');
+        }
         
         const request: FeriadoUpdateRequest = {
           id: this.data.feriado!.id!,

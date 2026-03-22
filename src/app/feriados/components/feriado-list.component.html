@@ -48,7 +48,9 @@
 
       <ng-container matColumnDef="descripcionRegion">
         <th mat-header-cell *matHeaderCellDef>Ubigeo</th>
-        <td mat-cell *matCellDef="let feriado">{{feriado.descripcionRegion}}</td>
+        <td mat-cell *matCellDef="let feriado">
+          {{ feriado.tipoFeriado === 'NACIONAL' ? 'TODO EL PAÍS' : feriado.descripcionRegion }}
+        </td>
       </ng-container>
 
       <ng-container matColumnDef="descripcionFeriado">

@@ -20,6 +20,19 @@
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Tipo</mat-label>
+      <mat-select formControlName="tipoFeriado">
+        <mat-option value="NACIONAL">NACIONAL</mat-option>
+        <mat-option value="REGIONAL">REGIONAL</mat-option>
+      </mat-select>
+      <mat-hint>Seleccione un Tipo de Feriado</mat-hint>
+      <mat-error *ngIf="form.get('tipoFeriado')?.hasError('required')">
+        El Tipo es requerido
+      </mat-error>
+    </mat-form-field>
+
+    <ng-container *ngIf="form.get('tipoFeriado')?.value === 'REGIONAL'">
+    <mat-form-field appearance="outline" class="full-width">
       <mat-label>Departamento</mat-label>
       <mat-select formControlName="departamento" (selectionChange)="onItemChangeDepartamento($event)" [(ngModel)]="selectedDepartamentoOption" required>
         <mat-option [value]="">-- Ninguno Seleccionado --</mat-option>
@@ -51,6 +64,7 @@
       </mat-select>
       <mat-hint>Seleccione un Distrito</mat-hint>
     </mat-form-field>
+    </ng-container>
 
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>Descripción del Feriado</mat-label>
@@ -62,18 +76,6 @@
       <mat-error *ngIf="form.get('descripcionFeriado')?.hasError('minlength')">
         La descripción del feriado debe tener al menos 5 caracteres
       </mat-error>      
-    </mat-form-field>
-
-    <mat-form-field appearance="outline" class="full-width">
-      <mat-label>Tipo</mat-label>
-      <mat-select formControlName="tipoFeriado">
-        <mat-option value="NACIONAL">NACIONAL</mat-option>
-        <mat-option value="REGIONAL">REGIONAL</mat-option>
-      </mat-select>
-      <mat-hint>Seleccione un Tipo de Feriado</mat-hint>
-      <mat-error *ngIf="form.get('tipoFeriado')?.hasError('required')">
-        El Tipo es requerido
-      </mat-error>
     </mat-form-field>
 
   </form>
