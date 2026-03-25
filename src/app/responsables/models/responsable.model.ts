@@ -3,7 +3,7 @@ export interface Responsable {
   codigoResponsable: string;
   nombreResponsable?: string;
   codigoEmpresa?: string;
-  estado?: string;
+  estado?: boolean;
   deEstado?: string;
   usuarioCreacion?: string;
   fechaCreacion?: string;
@@ -15,7 +15,6 @@ export interface ResponsableCreateRequest {
   codigoResponsable: string;
   nombreResponsable: string;
   codigoEmpresa: string;
-  estado: string;
   usuarioCreacion: string;
 }
 
@@ -24,6 +23,5 @@ export interface ResponsableUpdateRequest {
   codigoResponsable: string;
   nombreResponsable: string;
   codigoEmpresa: string;
-  estado: string;
   usuarioModificacion: string;
 }

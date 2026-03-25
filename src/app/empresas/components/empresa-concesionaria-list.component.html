@@ -1,7 +1,7 @@
 <mat-card>
   <mat-card-header>
     <mat-card-title>
-      <h2>Empresas</h2>
+      <h2>Empresas Concesionarias</h2>
     </mat-card-title>
   </mat-card-header>
 
@@ -10,7 +10,7 @@
       <div class="actions">
         <button mat-raised-button color="primary" (click)="crear()">
           <mat-icon>add</mat-icon>
-          Nueva Empresa
+          Nueva Empresa Concesionaria
         </button>
       </div>
 
@@ -75,9 +75,11 @@
           <button mat-icon-button color="primary" (click)="editar(empresa)" matTooltip="Editar">
             <mat-icon>edit</mat-icon>
           </button>
-          <button mat-icon-button color="warn" (click)="eliminar(empresa)" matTooltip="Eliminar">
-            <mat-icon>delete</mat-icon>
-          </button>
+          <mat-slide-toggle
+            [checked]="empresa.estado === true"
+            (change)="cambiarEstado(empresa)"
+            color="primary">
+          </mat-slide-toggle>
         </td>
       </ng-container>
 
@@ -86,7 +88,7 @@
 
       <tr class="mat-row" *matNoDataRow>
         <td class="mat-cell" [attr.colspan]="displayedColumns.length">
-          No hay empresas registradas
+          No hay empresas concesionarias registradas
         </td>
       </tr>
     </table>

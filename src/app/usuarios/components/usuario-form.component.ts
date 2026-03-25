@@ -59,8 +59,7 @@ export class UsuarioFormComponent implements OnInit {
           apellidos: ['', [Validators.required, Validators.minLength(5)]],
           email: ['', [Validators.required, Validators.pattern("^[a-zA-Z0-9-ZñÑ@.\\s]*$"), Validators.email]],
           telefono: ['', [Validators.required, Validators.pattern("^[0-9]*$"), Validators.minLength(9)]],
-          perfil: [null],
-          estado: [true]
+          perfil: [null]
         });
 
       }
@@ -76,8 +75,7 @@ export class UsuarioFormComponent implements OnInit {
             apellidos: this.data.usuario.apellidos || '',
             email: this.data.usuario.email || '',
             telefono: this.data.usuario.telefono || '',
-            perfil: Number(this.data.usuario.perfil),
-            estado: this.data.usuario.estado === '1' ? true : false
+            perfil: Number(this.data.usuario.perfil)
           });
         }
 
@@ -105,7 +103,6 @@ export class UsuarioFormComponent implements OnInit {
           email: this.form.value.email,
           telefono: this.form.value.telefono,
           perfil: this.form.value.perfil,
-          estado: this.form.value.estado === true ? '1' : '0',
           usuarioCreacion: 'admin'
         };
     
@@ -133,7 +130,6 @@ export class UsuarioFormComponent implements OnInit {
           email: this.form.value.email,
           telefono: this.form.value.telefono,
           perfil: this.form.value.perfil,
-          estado: this.form.value.estado === true ? '1' : '0',
           usuarioModificacion: 'admin'
         };
     

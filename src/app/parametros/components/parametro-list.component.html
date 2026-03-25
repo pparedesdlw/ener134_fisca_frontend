@@ -70,9 +70,11 @@
           <button mat-icon-button color="primary" (click)="editar(parametro)" matTooltip="Editar">
             <mat-icon>edit</mat-icon>
           </button>
-          <button mat-icon-button color="warn" (click)="eliminar(parametro)" matTooltip="Eliminar">
-            <mat-icon>delete</mat-icon>
-          </button>
+          <mat-slide-toggle
+            [checked]="parametro.estado === true"
+            (change)="cambiarEstado(parametro)"
+            color="primary">
+          </mat-slide-toggle>
         </td>
       </ng-container>
 

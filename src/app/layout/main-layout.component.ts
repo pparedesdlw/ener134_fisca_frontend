@@ -98,8 +98,8 @@ export class MainLayoutComponent {
           items: [
             { label: 'Feriados', path: '/feriados', disabled: false },
             { label: 'Periodo de fiscalización', path: '/periodos', disabled: false },
-            { label: 'Empresas concesionarias', path: '/empresas', disabled: false },
-            { label: 'Empresas supervisoras', path: '', disabled: true },
+            { label: 'Empresas concesionarias', path: '/empresaConcesionaria', disabled: false },
+            { label: 'Empresas supervisoras', path: '/empresas-supervisoras', disabled: true },
             { label: 'Responsables instrucción', path: '/responsables', disabled: false },
             { label: 'Roles', path: '/roles', disabled: false }
           ]

@@ -4,7 +4,7 @@ export interface Parametro {
   descripcionParametro?: string;
   valor?: string;
   tipoParametro?: string;
-  estado?: string;
+  estado?: boolean;
   deEstado?: string;
   usuarioCreacion?: string;
   fechaCreacion?: string;
@@ -17,7 +17,6 @@ export interface ParametroCreateRequest {
   descripcionParametro: string;
   valor: string;
   tipoParametro: string;
-  estado: string;
   usuarioCreacion: string;
 }
 
@@ -27,6 +26,5 @@ export interface ParametroUpdateRequest {
   descripcionParametro: string;
   valor: string;
   tipoParametro: string;
-  estado: string;
   usuarioModificacion: string;
 }

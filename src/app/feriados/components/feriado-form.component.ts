@@ -82,8 +82,7 @@ export class FeriadoFormComponent implements OnInit {
           provincia: [''],
           distrito: [''],
           descripcionFeriado: ['', [Validators.required, Validators.minLength(5)]],
-          tipoFeriado: ['', [Validators.required]],
-          estado: [true]
+          tipoFeriado: ['', [Validators.required]]
         });
       }
 
@@ -113,8 +112,7 @@ export class FeriadoFormComponent implements OnInit {
             provincia: sCodProvin!,
             distrito: sCodDistri!,
             descripcionFeriado: this.data.feriado.descripcionFeriado || '',
-            tipoFeriado: this.data.feriado.tipoFeriado || '',
-            estado: this.data.feriado.estado === '1' ? true : false
+            tipoFeriado: this.data.feriado.tipoFeriado || ''
           });
               
           const fechaIni = this.parsearFecha(this.data.feriado.fechaFeriadoIni);
@@ -192,7 +190,6 @@ export class FeriadoFormComponent implements OnInit {
           codigoRegion: sCodigoRegion,
           descripcionFeriado: this.form.value.descripcionFeriado,
           tipoFeriado: this.form.value.tipoFeriado,
-          estado: this.form.value.estado === true ? '1' : '0',
           usuarioCreacion: 'admin'
         };
 
@@ -231,7 +228,6 @@ export class FeriadoFormComponent implements OnInit {
           codigoRegion: sCodigoRegion,
           descripcionFeriado: this.form.value.descripcionFeriado,
           tipoFeriado: this.form.value.tipoFeriado,
-          estado: this.form.value.estado === true ? '1' : '0',
           usuarioModificacion: 'admin'
         };
         this.rango.disable();

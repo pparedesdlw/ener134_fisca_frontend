@@ -4,7 +4,7 @@ export interface Muestra {
   muestra?: string;
   confianza?: string;
   error?: string;
-  estado?: string;
+  estado?: boolean;
   deEstado?: string;
   usuarioCreacion?: string;
   fechaCreacion?: string;
@@ -17,7 +17,6 @@ export interface MuestraCreateRequest {
   muestra: string;
   confianza: string;
   error: string;
-  estado: string;
   usuarioCreacion: string;
 }
 
@@ -27,6 +26,5 @@ export interface MuestraUpdateRequest {
   muestra: string;
   confianza: string;
   error: string;
-  estado: string;
   usuarioModificacion: string;
 }

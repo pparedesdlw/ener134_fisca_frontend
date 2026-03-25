@@ -49,8 +49,7 @@ export class MuestraFormComponent implements OnInit {
           codigoMuestra: ['', [Validators.required, Validators.pattern("^[0-9]*$"), Validators.maxLength(4)]],
           muestra: ['', [Validators.required, Validators.pattern("^[0-9]*$"), Validators.minLength(1)]],
           confianza: ['', [Validators.required, Validators.pattern("^[0-9]*$"), Validators.minLength(1)]],
-          error: ['', [Validators.required, Validators.pattern("^[0-9]*$"), Validators.minLength(1)]],
-          estado: [true]
+          error: ['', [Validators.required, Validators.pattern("^[0-9]*$"), Validators.minLength(1)]]
         });
       }
 
@@ -62,8 +61,7 @@ export class MuestraFormComponent implements OnInit {
             codigoMuestra: this.data.muestra.codigoMuestra,
             muestra: this.data.muestra.muestra,
             confianza: this.data.muestra.confianza,
-            error: this.data.muestra.error,
-            estado: this.data.muestra.estado === '1' ? true : false
+            error: this.data.muestra.error
           });
         }
       }
@@ -87,7 +85,6 @@ export class MuestraFormComponent implements OnInit {
           muestra: this.form.value.muestra,
           confianza: this.form.value.confianza,
           error: this.form.value.error,
-          estado: this.form.value.estado === true ? '1' : '0',
           usuarioCreacion: 'admin'
         };
 
@@ -112,7 +109,6 @@ export class MuestraFormComponent implements OnInit {
           muestra: this.form.get('muestra')?.value,
           confianza: this.form.value.confianza,
           error: this.form.value.error,
-          estado: this.form.value.estado === true ? '1' : '0',
           usuarioModificacion: 'admin'
         };
 
