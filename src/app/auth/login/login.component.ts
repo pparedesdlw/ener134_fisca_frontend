@@ -68,7 +68,7 @@ export class LoginComponent {
       .subscribe({
         next: (res) => {
           sessionStorage.setItem('isAuthenticated', 'true');
-          this.router.navigate(['/periodos']);
+          this.router.navigate(['/home']);
         },
         error: (err) => {
           console.error('Error during login:', err);

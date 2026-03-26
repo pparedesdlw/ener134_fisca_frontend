@@ -5,6 +5,7 @@ import { MainLayoutComponent } from './layout/main-layout.component';
 import { PeriodoListComponent } from './periodos/components/periodo-list.component';
 import { EmpresaConcesionariaListComponent } from './empresas/components/empresa-concesionaria-list.component';
 import { authGuard } from './auth/guards/auth.guard';
+import { roleGuard } from './auth/guards/role.guard';
 import { FeriadoListComponent } from './feriados/components/feriado-list.component';
 import { RolListComponent } from './roles/components/rol-list.component';
 import { ParametroListComponent } from './parametros/components/parametro-list.component';
@@ -21,6 +22,7 @@ export const routes: Routes = [
     path: '',
     component: MainLayoutComponent,
     canActivate: [authGuard],
+    canActivateChild: [roleGuard],
     children: [
       { path: 'home', component: HomeComponent },
       { path: 'periodos', component: PeriodoListComponent },
@@ -34,7 +36,7 @@ export const routes: Routes = [
       { path: 'cit/calculo', component: CalculoCitFormComponent },
       { path: 'atencionesComerciales', component: AtencionComercialListComponent },
       { path: 'indisponibilidades', component: IndisponibilidadListComponent },
-      { path: '', redirectTo: '/periodos', pathMatch: 'full' }
+      { path: '', redirectTo: '/home', pathMatch: 'full' }
     ]
   },
   { path: '**', redirectTo: '/login' }

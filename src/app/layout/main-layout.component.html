@@ -39,7 +39,7 @@
       <span>Sistema de Fiscalización</span>
       <span class="spacer"></span>
       <span style="margin-right: 10px;" *ngIf="authService.currentUser | async as user">
-        {{ user.nombre }} ({{ user.rol }})
+        {{ user.nombre }}
       </span>
       <button mat-icon-button (click)="logout()" matTooltip="Cerrar Sesión">
         <mat-icon>logout</mat-icon>
