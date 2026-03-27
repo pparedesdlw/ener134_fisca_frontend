@@ -72,7 +72,6 @@ export class LoginComponent {
         },
         error: (err) => {
           console.error('Error during login:', err);
-          // Opcional: Mostrar algún mensaje de error al usuario
         }
       });
   }

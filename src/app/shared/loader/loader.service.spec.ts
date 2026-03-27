@@ -38,7 +38,6 @@ describe('LoaderService', () => {
       service.showLoader();
       tick();
 
-      // Aún debería estar cargando
       let loadingState = false;
       service.isLoading$.subscribe(loading => loadingState = loading);
       expect(loadingState).toBeTrue();
