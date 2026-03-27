@@ -1,12 +1,15 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { LoaderService } from './loader.service';
-import { NgxSpinnerService } from 'ngx-spinner';
+import { NgxSpinnerService, NgxSpinnerModule } from 'ngx-spinner';
 
 @Component({
   selector: 'app-loader',
   templateUrl: './loader.component.html',
+  standalone: true,
+  imports: [CommonModule, NgxSpinnerModule]
 })
-export class LoaderComponent {
+export class LoaderComponent implements OnInit {
   constructor(public loader: LoaderService, private spinner: NgxSpinnerService) { }
   ngOnInit() {
     this.loader.isLoading$.subscribe(isLoading => {

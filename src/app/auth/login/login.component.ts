@@ -9,6 +9,9 @@ import { MatCardModule } from '@angular/material/card';
 
 import { MaterialModule } from '../../shared/material/material.module';
 import { Router } from '@angular/router';
+import { AuthService } from '../services/auth.service';
+import { LoginRequest } from '../models/auth.model';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-login',
@@ -28,27 +31,48 @@ import { Router } from '@angular/router';
 })
 export class LoginComponent {
   hidePassword = true;
+  isLoading = false;
 
   private fb = inject(FormBuilder);
+  private authService = inject(AuthService);
 
-  constructor(    public router: Router
-){
+  constructor(public router: Router
+  ) {
   }
 
   form = this.fb.group({
-    username: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required, Validators.minLength(6)]]
+    username: ['', [Validators.required]],
+    password: ['', [Validators.required]]
   });
 
   login(): void {
-    if (this.form.invalid) return;
+    if (this.form.invalid || this.isLoading) return;
 
-    const { username, password } = this.form.value;
-    console.log('Login attempt:', username);
+    this.isLoading = true;
+    this.form.disable();
 
-    sessionStorage.setItem('currentUser', username || 'admin');
-    sessionStorage.setItem('isAuthenticated', 'true');
+    const request: LoginRequest = {
+      username: this.form.value.username ?? undefined,
+      password: this.form.value.password ?? undefined
+    };
 
-    this.router.navigate(['/periodos']);
+    console.log('Login attempt:', request.username);
+
+    this.authService.login(request)
+      .pipe(
+        finalize(() => {
+          this.isLoading = false;
+          this.form.enable();
+        })
+      )
+      .subscribe({
+        next: (res) => {
+          sessionStorage.setItem('isAuthenticated', 'true');
+          this.router.navigate(['/home']);
+        },
+        error: (err) => {
+          console.error('Error during login:', err);
+        }
+      });
   }
 }

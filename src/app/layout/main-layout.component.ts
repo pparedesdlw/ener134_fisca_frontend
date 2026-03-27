@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
+import { AuthService } from '../auth/services/auth.service';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatListModule } from '@angular/material/list';
@@ -26,8 +27,10 @@ import { MatExpansionModule } from '@angular/material/expansion';
   templateUrl: './main-layout.component.html',
   styleUrl: './main-layout.component.scss'
 })
-export class MainLayoutComponent {
-  menuSections = [
+export class MainLayoutComponent implements OnInit {
+  menuSections: any[] = [];
+
+  allMenuSections = [
     {
       label: 'Atención Comercial',
       icon: 'storefront',
@@ -107,15 +110,46 @@ export class MainLayoutComponent {
     }
   ];
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, public authService: AuthService) {}
 
-  logout(): void {
-    sessionStorage.removeItem('currentUser');
-    sessionStorage.removeItem('isAuthenticated');
-    this.router.navigate(['/login']);
+  ngOnInit(): void {
+    this.filterMenus();
   }
 
-  getCurrentUser(): string {
-    return sessionStorage.getItem('currentUser') || 'Usuario';
+  filterMenus(): void {
+    const currentUserStr = sessionStorage.getItem('currentUser');
+    let isTisecAdmin = false;
+
+    if (currentUserStr) {
+      try {
+        const currentUser = JSON.parse(currentUserStr);
+        if (currentUser && currentUser.roles && Array.isArray(currentUser.roles)) {
+          isTisecAdmin = currentUser.roles.some((role: any) => role.nombre === 'TISEC-ADMIN');
+        }
+      } catch (e) {
+        console.error('Error parsing currentUser from sessionStorage:', e);
+      }
+    }
+
+    if (isTisecAdmin) {
+      this.menuSections = [...this.allMenuSections];
+    } else {
+      const allowedPaths = ['/cit/calculo', '/atencionesComerciales', '/periodos'];
+      
+      this.menuSections = this.allMenuSections.map(section => {
+        const newSubsections = section.subsections.map(sub => {
+          const newItems = sub.items.filter(item => allowedPaths.includes(item.path));
+          return { ...sub, items: newItems };
+        }).filter(sub => sub.items.length > 0);
+        
+        return { ...section, subsections: newSubsections };
+      }).filter(section => section.subsections.length > 0);
+    }
+  }
+
+  logout(): void {
+    this.authService.logout();
+    sessionStorage.removeItem('isAuthenticated');
+    this.router.navigate(['/login']);
   }
 }
