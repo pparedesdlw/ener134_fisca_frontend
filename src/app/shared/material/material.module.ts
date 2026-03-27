@@ -34,7 +34,6 @@ import { NgxSpinnerModule } from 'ngx-spinner';
 
 @NgModule({
   declarations: [
-    LoaderComponent
   ],
   imports: [
     CommonModule,
@@ -65,7 +64,8 @@ import { NgxSpinnerModule } from 'ngx-spinner';
     MatMenuModule,
     MatExpansionModule,
     MatStepperModule,
-    NgxSpinnerModule
+    NgxSpinnerModule,
+    LoaderComponent
   ],
   exports: [
     CommonModule,
