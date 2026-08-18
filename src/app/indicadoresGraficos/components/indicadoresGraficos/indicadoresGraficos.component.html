@@ -1,0 +1,74 @@
+<mat-card>
+  <mat-card-title>Indicadores y gráficos</mat-card-title>
+  <mat-card-content>
+    <section>
+      <h3>Evolución de indicadores por empresa</h3>
+      <div class="filtros">
+        <mat-form-field appearance="outline">
+          <mat-label>Empresa</mat-label>
+          <mat-select [(ngModel)]="empresaSeleccionada">
+            <mat-option *ngFor="let empresa of empresas()" [value]="empresa.id">
+              {{ empresa.codigoEmpresa }} - {{ empresa.razonSocial }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <button mat-raised-button color="primary" (click)="cargarEvolucion()" [disabled]="empresaSeleccionada == null">
+          <mat-icon>bar_chart</mat-icon>
+          Ver evolución
+        </button>
+      </div>
+
+      <ng-container *ngIf="evolucion() as ev">
+        <app-bar-chart
+          titulo="Indicador AIV — Evolución en el tiempo"
+          [labels]="labelsEvolucion()"
+          [valores]="valoresAivEvolucion()"
+          [tolerancia]="ev.toleranciaAiv"
+          colorBarra="#1565c0">
+        </app-bar-chart>
+        <app-bar-chart
+          titulo="Indicador CIT — Evolución en el tiempo"
+          [labels]="labelsEvolucion()"
+          [valores]="valoresCitEvolucion()"
+          [tolerancia]="ev.toleranciaCit"
+          colorBarra="#6a1b9a">
+        </app-bar-chart>
+      </ng-container>
+    </section>
+
+    <section>
+      <h3>Comparativo de indicadores por periodo</h3>
+      <div class="filtros">
+        <mat-form-field appearance="outline">
+          <mat-label>Periodo</mat-label>
+          <mat-select [(ngModel)]="periodoSeleccionado">
+            <mat-option *ngFor="let periodo of periodos()" [value]="periodo.codigoPeriodo">
+              {{ periodo.codigoPeriodo }} - {{ periodo.descripcion }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <button mat-raised-button color="primary" (click)="cargarComparativo()" [disabled]="!periodoSeleccionado">
+          <mat-icon>bar_chart</mat-icon>
+          Ver comparativo
+        </button>
+      </div>
+
+      <ng-container *ngIf="comparativo() as comp">
+        <app-bar-chart
+          titulo="Indicador AIV — Comparativo por empresa"
+          [labels]="labelsComparativo()"
+          [valores]="valoresAivComparativo()"
+          [tolerancia]="comp.toleranciaAiv"
+          colorBarra="#1565c0">
+        </app-bar-chart>
+        <app-bar-chart
+          titulo="Indicador CIT — Comparativo por empresa"
+          [labels]="labelsComparativo()"
+          [valores]="valoresCitComparativo()"
+          [tolerancia]="comp.toleranciaCit"
+          colorBarra="#6a1b9a">
+        </app-bar-chart>
+      </ng-container>
+    </section>
+  </mat-card-content>
+</mat-card>

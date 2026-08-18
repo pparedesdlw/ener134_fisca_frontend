@@ -1,0 +1,7 @@
+<div class="grafico-container">
+  <h4 *ngIf="titulo">{{ titulo }}</h4>
+  <p *ngIf="!labels.length" class="mensaje-vacio">No existe información disponible para los filtros seleccionados</p>
+  <div *ngIf="labels.length" class="scroll-wrapper">
+    <canvas #canvas></canvas>
+  </div>
+</div>
