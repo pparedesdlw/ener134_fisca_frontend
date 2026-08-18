@@ -2,6 +2,7 @@ export interface CalculoCitRequest {
   fechaInicio: string;
   fechaFin: string;
   codigoEmpresa: string;
+  codigoPeriodo: string;
   descripcionMotivo?: string | null;
 }
 

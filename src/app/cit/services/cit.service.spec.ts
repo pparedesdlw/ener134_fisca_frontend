@@ -66,6 +66,7 @@ describe('CitService', () => {
   describe('calcularCit', () => {
     it('debería calcular el CIT con los parámetros proporcionados', () => {
       const request: CalculoCitRequest = {
+        codigoPeriodo: '2024T1',
         fechaInicio: '2024-01-01',
         fechaFin: '2024-03-31',
         codigoEmpresa: 'EMP001'
@@ -84,6 +85,7 @@ describe('CitService', () => {
 
     it('debería calcular con descripcionMotivo opcional', () => {
       const request: CalculoCitRequest = {
+        codigoPeriodo: '2024T1',
         fechaInicio: '2024-01-01',
         fechaFin: '2024-03-31',
         codigoEmpresa: 'EMP001',
@@ -101,6 +103,7 @@ describe('CitService', () => {
 
     it('debería manejar error al calcular CIT', () => {
       const request: CalculoCitRequest = {
+        codigoPeriodo: '2024T1',
         fechaInicio: '2024-01-01',
         fechaFin: '2024-03-31',
         codigoEmpresa: 'EMP001'
@@ -217,7 +220,7 @@ describe('CitService', () => {
         expect(indisps.length).toBe(1);
       });
 
-      const req = httpMock.expectOne(`${apiUrl}/indisponibilidad/listar`);
+      const req = httpMock.expectOne(`${environment.apiUrl}/indisponibilidad/listar`);
       expect(req.request.method).toBe('GET');
       req.flush([mockIndisponibilidad]);
     });
@@ -227,7 +230,7 @@ describe('CitService', () => {
         expect(indisps[0].estado).toBe('ACTIVO');
       });
 
-      const req = httpMock.expectOne(`${apiUrl}/indisponibilidad/activas`);
+      const req = httpMock.expectOne(`${environment.apiUrl}/indisponibilidad/activas`);
       expect(req.request.method).toBe('GET');
       req.flush([mockIndisponibilidad]);
     });
@@ -244,7 +247,7 @@ describe('CitService', () => {
         expect(indisp).toEqual(mockIndisponibilidad);
       });
 
-      const req = httpMock.expectOne(`${apiUrl}/indisponibilidad/registrar`);
+      const req = httpMock.expectOne(`${environment.apiUrl}/indisponibilidad/registrar`);
       expect(req.request.method).toBe('POST');
       expect(req.request.body).toEqual(nueva);
       req.flush(mockIndisponibilidad);
@@ -257,7 +260,7 @@ describe('CitService', () => {
         expect(indisp.estado).toBe('INACTIVO');
       });
 
-      const req = httpMock.expectOne(`${apiUrl}/indisponibilidad/IND001/desactivar`);
+      const req = httpMock.expectOne(`${environment.apiUrl}/indisponibilidad/IND001/desactivar`);
       expect(req.request.method).toBe('PUT');
       req.flush(desactivada);
     });
@@ -327,6 +330,7 @@ describe('CitService', () => {
       );
       expect(req.request.method).toBe('GET');
       req.flush(mockAtenciones);
+    });
   });
 
   describe('listarAcciones', () => {

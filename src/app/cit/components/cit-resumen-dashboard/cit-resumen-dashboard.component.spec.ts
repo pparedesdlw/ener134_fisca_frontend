@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { of, throwError } from 'rxjs';
 import { CitResumenDashboardComponent } from './cit-resumen-dashboard.component';
 import { CitService } from '../../services/cit.service';
@@ -30,7 +31,8 @@ describe('CitResumenDashboardComponent', () => {
     await TestBed.configureTestingModule({
       imports: [
         CitResumenDashboardComponent,
-        HttpClientTestingModule
+        HttpClientTestingModule,
+        NoopAnimationsModule
       ],
       providers: [
         { provide: CitService, useValue: citServiceSpy },

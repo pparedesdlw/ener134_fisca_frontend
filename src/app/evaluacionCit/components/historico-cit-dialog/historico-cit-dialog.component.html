@@ -1,0 +1,69 @@
+<h2 mat-dialog-title>Ver histórico — Evaluación CIT del trimestre</h2>
+<mat-dialog-content>
+  <div *ngIf="cargando()" class="spinner-container">
+    <mat-spinner diameter="32"></mat-spinner>
+  </div>
+
+  <p *ngIf="!cargando() && sinInformacion()" class="mensaje-vacio">
+    No existe información disponible para el periodo y empresa seleccionados.
+  </p>
+
+  <ng-container *ngIf="!cargando() && evaluacion() as e">
+    <p class="aviso">
+      Rango evaluado: {{ e.fechaInicio }} — {{ e.fechaFin }}
+      · Tipo de consolidación: {{ e.tipoConsolidacion === 'CONSOLIDADO_TOTAL' ? 'Total' : 'Parcial' }}
+      · Consolidado por {{ e.usuario }} el {{ e.fechaConsolidado }}
+    </p>
+
+    <h4>Resumen por ítem</h4>
+    <table class="tabla-resumen">
+      <thead>
+        <tr>
+          <th>Ítem</th>
+          <th>Descripción</th>
+          <th class="text-right">Incumplimientos</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td>Atención no enviada dentro de los m minutos</td>
+          <td class="text-right">{{ e.incumplimientosItem1 }}</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td>Acciones no enviadas dentro de 24h del día hábil siguiente</td>
+          <td class="text-right">{{ e.incumplimientosItem3 }}</td>
+        </tr>
+        <tr>
+          <td rowspan="7">4</td>
+          <td>Registros cerrados sin información complementaria</td>
+          <td class="text-right"><strong>{{ e.incumplimientosItem4 }}</strong></td>
+        </tr>
+        <tr><td class="sub-row">TH_3: Sin detalle</td><td class="text-right sub-row">{{ e.detalleItem4.sinDetalleTh3 }}</td></tr>
+        <tr><td class="sub-row">TH_4: Sin detalle</td><td class="text-right sub-row">{{ e.detalleItem4.sinDetalleTh4 }}</td></tr>
+        <tr><td class="sub-row">TH_5: Sin detalle</td><td class="text-right sub-row">{{ e.detalleItem4.sinDetalleTh5 }}</td></tr>
+        <tr><td class="sub-row">TH_6: Sin detalle</td><td class="text-right sub-row">{{ e.detalleItem4.sinDetalleTh6 }}</td></tr>
+        <tr><td class="sub-row">TH_7: Sin detalle</td><td class="text-right sub-row">{{ e.detalleItem4.sinDetalleTh7 }}</td></tr>
+        <tr><td class="sub-row">TH_8: Sin detalle</td><td class="text-right sub-row">{{ e.detalleItem4.sinDetalleTh8 }}</td></tr>
+      </tbody>
+    </table>
+
+    <h4>Fórmula del indicador CIT (referencial)</h4>
+    <p class="formula">CIT = ( Σ NRN / (NTA × NMD) ) × 100</p>
+
+    <h4>Cálculo del indicador</h4>
+    <div class="calculo">
+      <div><strong>NRN:</strong> {{ e.nrn }}</div>
+      <div><strong>NTA:</strong> {{ e.nta }}</div>
+      <div><strong>NMD:</strong> {{ e.nmd }}</div>
+      <div>
+        <strong>Resultado del CIT:</strong>
+        {{ e.indicadorCit }}%
+      </div>
+    </div>
+  </ng-container>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-raised-button color="primary" (click)="salir()">Salir</button>
+</mat-dialog-actions>

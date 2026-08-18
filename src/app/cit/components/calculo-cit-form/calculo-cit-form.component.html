@@ -8,15 +8,26 @@
     <div class="filtros-container">
       <div class="filtros-row">
         <mat-form-field appearance="outline">
+          <mat-label>Periodo *</mat-label>
+          <mat-select [(ngModel)]="periodoSeleccionado" [disabled]="calculando" (selectionChange)="onPeriodoChange()">
+            <mat-option *ngFor="let periodo of periodos" [value]="periodo.codigoPeriodo">
+              {{ periodo.codigoPeriodo }} - {{ periodo.descripcion }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <div class="filtros-row">
+        <mat-form-field appearance="outline">
           <mat-label>Fecha Inicio</mat-label>
-          <input matInput [matDatepicker]="pickerInicio" [(ngModel)]="fechaInicio" [max]="maxDate" [disabled]="calculando">
+          <input matInput [matDatepicker]="pickerInicio" [(ngModel)]="fechaInicio" [min]="periodoMinDate" [max]="periodoMaxDate" [disabled]="calculando">
           <mat-datepicker-toggle matIconSuffix [for]="pickerInicio"></mat-datepicker-toggle>
           <mat-datepicker #pickerInicio></mat-datepicker>
         </mat-form-field>
 
         <mat-form-field appearance="outline">
           <mat-label>Fecha Fin</mat-label>
-          <input matInput [matDatepicker]="pickerFin" [(ngModel)]="fechaFin" [max]="maxDate" [disabled]="calculando">
+          <input matInput [matDatepicker]="pickerFin" [(ngModel)]="fechaFin" [min]="periodoMinDate" [max]="periodoMaxDate" [disabled]="calculando">
           <mat-datepicker-toggle matIconSuffix [for]="pickerFin"></mat-datepicker-toggle>
           <mat-datepicker #pickerFin></mat-datepicker>
         </mat-form-field>
@@ -46,9 +57,22 @@
       <div class="button-container">
         <button mat-raised-button color="primary"
                 (click)="calcularCit()"
-                [disabled]="calculando || !fechaInicio || !fechaFin || !empresaSeleccionada">
+                [disabled]="calculando || !periodoSeleccionado || !fechaInicio || !fechaFin || !empresaSeleccionada">
           <mat-icon>calculate</mat-icon>
           Calcular CIT
+        </button>
+        <button mat-raised-button color="accent"
+                (click)="finalizarEvaluacion()"
+                [disabled]="!resultado || finalizando"
+                title="Persiste el cálculo mostrado como evaluación consolidada">
+          <mat-icon>task_alt</mat-icon>
+          Eval. Finalizada
+        </button>
+        <button mat-stroked-button
+                (click)="verHistorico()"
+                [disabled]="!periodoSeleccionado || !empresaSeleccionada">
+          <mat-icon>history</mat-icon>
+          Ver histórico
         </button>
       </div>
     </div>
