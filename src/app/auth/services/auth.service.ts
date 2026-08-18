@@ -43,6 +43,11 @@ export class AuthService {
     return this.currentUserSubject.value?.rol || 'ADMIN';
   }
 
+  public get isTisecAdmin(): boolean {
+    const roles = this.currentUserSubject.value?.roles ?? [];
+    return roles.some((role: any) => role?.nombre === 'TISEC-ADMIN');
+  }
+
   login(request: LoginRequest): Observable<UserInfoResponse> {
     const url = `${environment.urlbase}public/auth/login`;
     return this.http.post<LoginResponse>(url, request).pipe(

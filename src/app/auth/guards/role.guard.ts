@@ -1,6 +1,7 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { RUTAS_PERMITIDAS_NO_ADMIN } from '../config/rutas-permitidas.config';
 
 export const roleGuard: CanActivateFn = (route, state) => {
   const router = inject(Router);
@@ -23,10 +24,9 @@ export const roleGuard: CanActivateFn = (route, state) => {
     return true;
   }
 
-  const allowedPaths = ['/cit/calculo', '/atencionesComerciales', '/periodos', '/home'];
   const currentPath = state.url;
 
-  const isAllowed = allowedPaths.some(path => currentPath.startsWith(path) || currentPath === path);
+  const isAllowed = RUTAS_PERMITIDAS_NO_ADMIN.some(path => currentPath.startsWith(path) || currentPath === path);
 
   if (isAllowed) {
     return true;
