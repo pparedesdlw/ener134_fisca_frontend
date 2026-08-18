@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -65,7 +66,8 @@ describe('PeriodoListComponent', () => {
     await TestBed.configureTestingModule({
       imports: [
         PeriodoListComponent,
-        BrowserAnimationsModule
+        BrowserAnimationsModule,
+        HttpClientTestingModule
       ],
       providers: [
         { provide: PeriodoService, useValue: periodoServiceSpy },
@@ -365,17 +367,14 @@ describe('PeriodoListComponent', () => {
       ]);
     });
 
-    it('debería mostrar mensaje de error genérico cuando no hay mensaje específico', (done) => {
+    it('debería mostrar mensaje de error genérico cuando no hay mensaje específico', () => {
       const errorResponse = {};
       periodoService.listarTodos.and.returnValue(throwError(() => errorResponse));
       spyOn(console, 'error');
 
-      fixture.detectChanges();
+      component.cargarPeriodos();
 
-      setTimeout(() => {
-        expect(snackBar.open).toHaveBeenCalledWith('Error al cargar periodos', 'Cerrar', { duration: 5000 });
-        done();
-      }, 100);
+      expect(snackBar.open).toHaveBeenCalledWith('Error al cargar periodos', 'Cerrar', { duration: 5000 });
     });
   });
 });

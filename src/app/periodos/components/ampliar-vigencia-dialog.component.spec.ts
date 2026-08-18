@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -35,7 +36,8 @@ describe('AmpliarVigenciaDialogComponent', () => {
       imports: [
         AmpliarVigenciaDialogComponent,
         ReactiveFormsModule,
-        BrowserAnimationsModule
+        BrowserAnimationsModule,
+        HttpClientTestingModule
       ],
       providers: [
         { provide: PeriodoService, useValue: periodoServiceSpy },
@@ -116,7 +118,11 @@ describe('AmpliarVigenciaDialogComponent', () => {
       expect(request.sustentoAmpliacion).toBe(sustentoValido);
       expect(request.usuarioModificacion).toBe('admin');
 
-      expect(snackBar.open).toHaveBeenCalledWith('Vigencia ampliada correctamente', 'Cerrar', { duration: 3000 });
+      expect(snackBar.open).toHaveBeenCalledWith(
+        'Vigencia ampliada correctamente hasta 2024-04-30. Se notificará a los ERE-OR',
+        'Cerrar',
+        { duration: 5000 }
+      );
       expect(dialogRef.close).toHaveBeenCalledWith(true);
     });
 
@@ -169,7 +175,7 @@ describe('AmpliarVigenciaDialogComponent', () => {
 
       const sustentoValido = 'Sustento con más de cincuenta caracteres para cumplir validación del formulario';
       component.form.patchValue({
-        fechaAmpliacion: new Date('2024-07-30T12:00:00'),
+        fechaAmpliacion: new Date('2024-05-15T12:00:00'),
         sustentoAmpliacion: sustentoValido
       });
 
@@ -203,7 +209,7 @@ describe('AmpliarVigenciaDialogComponent', () => {
       const sustentoValido = 'Sustento válido con más de cincuenta caracteres para cumplir con validación';
 
       component.form.patchValue({
-        fechaAmpliacion: new Date('2024-12-15T12:00:00'),
+        fechaAmpliacion: new Date('2024-06-15T12:00:00'),
         sustentoAmpliacion: sustentoValido
       });
 
@@ -211,14 +217,14 @@ describe('AmpliarVigenciaDialogComponent', () => {
       component.ampliar();
 
       const request = periodoService.ampliarVigencia.calls.mostRecent().args[0] as AmpliacionVigenciaRequest;
-      expect(request.nuevaFechaFin).toBe('2024-12-15');
+      expect(request.nuevaFechaFin).toBe('2024-06-15');
     });
 
     it('debería agregar ceros a la izquierda en meses y días', () => {
       const sustentoValido = 'Sustento válido con más de cincuenta caracteres para cumplir con validación';
 
       component.form.patchValue({
-        fechaAmpliacion: new Date('2024-01-05T12:00:00'),
+        fechaAmpliacion: new Date('2024-04-05T12:00:00'),
         sustentoAmpliacion: sustentoValido
       });
 
@@ -226,7 +232,7 @@ describe('AmpliarVigenciaDialogComponent', () => {
       component.ampliar();
 
       const request = periodoService.ampliarVigencia.calls.mostRecent().args[0] as AmpliacionVigenciaRequest;
-      expect(request.nuevaFechaFin).toBe('2024-01-05');
+      expect(request.nuevaFechaFin).toBe('2024-04-05');
     });
   });
 

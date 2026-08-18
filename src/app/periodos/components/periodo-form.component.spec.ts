@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -33,7 +34,8 @@ describe('PeriodoFormComponent', () => {
       imports: [
         PeriodoFormComponent,
         ReactiveFormsModule,
-        BrowserAnimationsModule
+        BrowserAnimationsModule,
+        HttpClientTestingModule
       ],
       providers: [
         { provide: PeriodoService, useValue: periodoServiceSpy },
@@ -114,8 +116,8 @@ describe('PeriodoFormComponent', () => {
       component.form.patchValue({
         codigoPeriodo: '2024T1',
         descripcion: 'Primer trimestre 2024',
-        fechaInicio: new Date('2024-01-01'),
-        fechaFin: new Date('2024-03-31'),
+        fechaInicio: new Date('2024-01-01T12:00:00'),
+        fechaFin: new Date('2024-03-31T12:00:00'),
         estadoActivo: true
       });
 
@@ -174,7 +176,8 @@ describe('PeriodoFormComponent', () => {
         imports: [
           PeriodoFormComponent,
           ReactiveFormsModule,
-          BrowserAnimationsModule
+          BrowserAnimationsModule,
+          HttpClientTestingModule
         ],
         providers: [
           { provide: PeriodoService, useValue: periodoServiceSpy },

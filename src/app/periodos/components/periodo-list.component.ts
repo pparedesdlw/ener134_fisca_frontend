@@ -5,8 +5,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { PeriodoService } from '../services/periodo.service';
 import { Periodo } from '../models/periodo.model';
@@ -24,8 +24,6 @@ import { AuthService } from '../../auth/services/auth.service';
     MatIconModule,
     MatCardModule,
     MatChipsModule,
-    MatDialogModule,
-    MatSnackBarModule,
     MatTooltipModule
   ],
   templateUrl: './periodo-list.component.html',

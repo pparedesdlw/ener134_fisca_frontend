@@ -127,6 +127,7 @@ describe('PeriodoService', () => {
         fechaInicio: '2024-01-01',
         fechaFin: '2024-03-31',
         estadoActivo: true,
+        estadoEliminado: false,
         usuarioCreacion: 'admin'
       };
 
