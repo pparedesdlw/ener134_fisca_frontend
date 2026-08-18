@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../auth/services/auth.service';
+import { RUTAS_PERMITIDAS_NO_ADMIN } from '../auth/config/rutas-permitidas.config';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatListModule } from '@angular/material/list';
@@ -91,6 +92,24 @@ export class MainLayoutComponent implements OnInit {
       ]
     },
     {
+      label: 'Fiscalización AIV / CIT',
+      icon: 'rule',
+      expanded: true,
+      subsections: [
+        {
+          label: 'AIV',
+          items: [
+            { label: 'Registros cerrados', path: '/registros-cerrados', disabled: false },
+            { label: 'Muestra AIV', path: '/muestra-aiv', disabled: false },
+            { label: 'Evaluación AIV', path: '/evaluacion-aiv', disabled: false },
+            { label: 'Sustentos', path: '/sustento-aiv', disabled: false },
+            { label: 'Histórico AIV', path: '/historico-aiv', disabled: false },
+            { label: 'Indicadores y gráficos', path: '/indicadores-graficos', disabled: false }
+          ]
+        }
+      ]
+    },
+    {
       label: 'Configuración',
       icon: 'settings',
       expanded: false,
@@ -134,11 +153,9 @@ export class MainLayoutComponent implements OnInit {
     if (isTisecAdmin) {
       this.menuSections = [...this.allMenuSections];
     } else {
-      const allowedPaths = ['/cit/calculo', '/atencionesComerciales', '/periodos'];
-      
       this.menuSections = this.allMenuSections.map(section => {
         const newSubsections = section.subsections.map(sub => {
-          const newItems = sub.items.filter(item => allowedPaths.includes(item.path));
+          const newItems = sub.items.filter(item => RUTAS_PERMITIDAS_NO_ADMIN.includes(item.path));
           return { ...sub, items: newItems };
         }).filter(sub => sub.items.length > 0);
         

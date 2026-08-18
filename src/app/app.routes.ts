@@ -15,6 +15,12 @@ import { UsuarioListComponent } from './usuarios/components/usuario-list.compone
 import { CalculoCitFormComponent } from './cit/components/calculo-cit-form/calculo-cit-form.component';
 import { AtencionComercialListComponent } from './atencionesComerciales/components/atencionComercial-list.component';
 import { IndisponibilidadListComponent } from './cit/components/indisponibilidad-list/indisponibilidad-list.component';
+import { RegistroCerradoListComponent } from './registroCerrado/components/registroCerrado-list/registroCerrado-list.component';
+import { MuestraAivListComponent } from './muestraAiv/components/muestraAiv-list/muestraAiv-list.component';
+import { EvaluacionAivComponent } from './evaluacionAiv/components/evaluacionAiv/evaluacionAiv.component';
+import { SustentoAivComponent } from './sustentoAiv/components/sustentoAiv/sustentoAiv.component';
+import { HistoricoAivComponent } from './historicoAiv/components/historicoAiv/historicoAiv.component';
+import { IndicadoresGraficosComponent } from './indicadoresGraficos/components/indicadoresGraficos/indicadoresGraficos.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -36,6 +42,12 @@ export const routes: Routes = [
       { path: 'cit/calculo', component: CalculoCitFormComponent },
       { path: 'atencionesComerciales', component: AtencionComercialListComponent },
       { path: 'indisponibilidades', component: IndisponibilidadListComponent },
+      { path: 'registros-cerrados', component: RegistroCerradoListComponent },
+      { path: 'muestra-aiv', component: MuestraAivListComponent },
+      { path: 'evaluacion-aiv', component: EvaluacionAivComponent },
+      { path: 'sustento-aiv', component: SustentoAivComponent },
+      { path: 'historico-aiv', component: HistoricoAivComponent },
+      { path: 'indicadores-graficos', component: IndicadoresGraficosComponent },
       { path: '', redirectTo: '/home', pathMatch: 'full' }
     ]
   },
