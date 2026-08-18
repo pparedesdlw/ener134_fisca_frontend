@@ -1,13 +1,17 @@
 import { TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { EmpresaConcesionariaService } from './empresa-concesionaria.service';
-import { Empresa, EmpresaCreateRequest, EmpresaUpdateRequest } from '../models/empresa-concesionaria.model';
+import {
+  EmpresaConcesionaria,
+  EmpresaConcesionariaCreateRequest,
+  EmpresaConcesionariaUpdateRequest
+} from '../models/empresa-concesionaria.model';
 import { environment } from '../../../environments/environment';
 
 describe('EmpresaConcesionariaService', () => {
   let service: EmpresaConcesionariaService;
   let httpMock: HttpTestingController;
-  const apiUrl = `${environment.apiUrl}/empresa`;
+  const apiUrl = `${environment.apiUrl}/empresa-concesionaria`;
 
   const mockEmpresa: EmpresaConcesionaria = {
     id: 1,
@@ -17,7 +21,7 @@ describe('EmpresaConcesionariaService', () => {
     tipo: 'DISTRIBUCION',
     deTipo: 'Distribución',
     ruc: '20345678901',
-    estado: '1',
+    estado: true,
     deEstado: 'Activo',
     usuarioCreacion: 'admin',
     fechaCreacion: '2024-01-01'
@@ -120,13 +124,12 @@ describe('EmpresaConcesionariaService', () => {
 
   describe('crear', () => {
     it('debería crear una nueva empresa', () => {
-      const request: EmpresaCreateRequest = {
+      const request: EmpresaConcesionariaCreateRequest = {
         codigoEmpresa: 'EMP002',
         razonSocial: 'Enel Distribución Perú',
         descripcion: 'Empresa distribuidora',
         tipo: 'DISTRIBUCION',
         ruc: '20456789012',
-        estado: '1',
         usuarioCreacion: 'admin'
       };
 
@@ -143,7 +146,7 @@ describe('EmpresaConcesionariaService', () => {
 
   describe('editar', () => {
     it('debería editar una empresa existente', () => {
-      const request: EmpresaUpdateRequest = {
+      const request: EmpresaConcesionariaUpdateRequest = {
         id: 1,
         codigoEmpresa: 'EMP001',
         razonSocial: 'Luz del Sur S.A.A. Modificado',
@@ -151,7 +154,6 @@ describe('EmpresaConcesionariaService', () => {
         descripcion: 'Empresa distribuidora de energía eléctrica actualizada',
         tipo: 'DISTRIBUCION',
         ruc: '20345678901',
-        estado: '1',
         usuarioModificacion: 'admin'
       };
 

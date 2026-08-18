@@ -15,7 +15,7 @@ describe('MuestraService', () => {
     muestra: '100',
     confianza: '95',
     error: '5',
-    estado: '1',
+    estado: true,
     deEstado: 'Activo',
     usuarioCreacion: 'admin',
     fechaCreacion: '2024-01-01'
@@ -123,7 +123,6 @@ describe('MuestraService', () => {
         muestra: '200',
         confianza: '99',
         error: '1',
-        estado: '1',
         usuarioCreacion: 'admin'
       };
 
@@ -146,7 +145,6 @@ describe('MuestraService', () => {
         muestra: '150',
         confianza: '97',
         error: '3',
-        estado: '1',
         usuarioModificacion: 'admin'
       };
 

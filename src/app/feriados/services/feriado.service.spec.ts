@@ -16,7 +16,7 @@ describe('FeriadoService', () => {
     codigoRegion: 'NAC',
     descripcionFeriado: 'Año Nuevo',
     tipoFeriado: 'NACIONAL',
-    estado: '1',
+    estado: true,
     deEstado: 'Activo',
     usuarioCreacion: 'admin',
     fechaCreacion: '2024-01-01'
@@ -124,7 +124,6 @@ describe('FeriadoService', () => {
         codigoRegion: 'NAC',
         descripcionFeriado: 'Fiestas Patrias',
         tipoFeriado: 'NACIONAL',
-        estado: '1',
         usuarioCreacion: 'admin'
       };
 
@@ -148,7 +147,6 @@ describe('FeriadoService', () => {
         codigoRegion: 'NAC',
         descripcionFeriado: 'Año Nuevo Modificado',
         tipoFeriado: 'NACIONAL',
-        estado: '1',
         usuarioModificacion: 'admin'
       };
 

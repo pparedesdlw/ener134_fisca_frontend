@@ -14,7 +14,7 @@ describe('RolService', () => {
     codigoRol: 'ROL001',
     responsableRol: 'Juan Pérez',
     descripcionRol: 'Administrador del sistema',
-    estado: '1',
+    estado: true,
     deEstado: 'Activo',
     usuarioCreacion: 'admin',
     fechaCreacion: '2024-01-01'
@@ -121,7 +121,6 @@ describe('RolService', () => {
         codigoRol: 'ROL002',
         responsableRol: 'María López',
         descripcionRol: 'Supervisor',
-        estado: '1',
         usuarioCreacion: 'admin'
       };
 
@@ -143,7 +142,6 @@ describe('RolService', () => {
         codigoRol: 'ROL001',
         responsableRol: 'Juan Pérez',
         descripcionRol: 'Administrador modificado',
-        estado: '1',
         usuarioModificacion: 'admin'
       };
 

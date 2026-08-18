@@ -14,7 +14,7 @@ describe('ResponsableService', () => {
     codigoResponsable: 'RES001',
     nombreResponsable: 'Carlos Mendoza',
     codigoEmpresa: 'EMP001',
-    estado: '1',
+    estado: true,
     deEstado: 'Activo',
     usuarioCreacion: 'admin',
     fechaCreacion: '2024-01-01'
@@ -121,7 +121,6 @@ describe('ResponsableService', () => {
         codigoResponsable: 'RES002',
         nombreResponsable: 'Ana Torres',
         codigoEmpresa: 'EMP002',
-        estado: '1',
         usuarioCreacion: 'admin'
       };
 
@@ -143,7 +142,6 @@ describe('ResponsableService', () => {
         codigoResponsable: 'RES001',
         nombreResponsable: 'Carlos Mendoza López',
         codigoEmpresa: 'EMP001',
-        estado: '1',
         usuarioModificacion: 'admin'
       };
 

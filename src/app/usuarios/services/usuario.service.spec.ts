@@ -19,7 +19,7 @@ describe('UsuarioService', () => {
     telefono: '999999999',
     perfil: 'ADMIN',
     nombrePerfil: 'Administrador',
-    estado: '1',
+    estado: true,
     deEstado: 'Activo',
     usuarioCreacion: 'admin',
     fechaCreacion: '2024-01-01'
@@ -130,7 +130,6 @@ describe('UsuarioService', () => {
         email: 'mlopez@osinergmin.gob.pe',
         telefono: '988888888',
         perfil: 'ERE-OR',
-        estado: '1',
         usuarioCreacion: 'admin'
       };
 
@@ -156,7 +155,6 @@ describe('UsuarioService', () => {
         email: 'jcperez@osinergmin.gob.pe',
         telefono: '999999999',
         perfil: 'ADMIN',
-        estado: '1',
         usuarioModificacion: 'admin'
       };
 

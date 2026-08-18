@@ -15,7 +15,7 @@ describe('ParametroService', () => {
     descripcionParametro: 'Tolerancia CIT',
     valor: '90',
     tipoParametro: 'NUMERICO',
-    estado: '1',
+    estado: true,
     deEstado: 'Activo',
     usuarioCreacion: 'admin',
     fechaCreacion: '2024-01-01'
@@ -123,7 +123,6 @@ describe('ParametroService', () => {
         descripcionParametro: 'Nuevo Parámetro',
         valor: '100',
         tipoParametro: 'NUMERICO',
-        estado: '1',
         usuarioCreacion: 'admin'
       };
 
@@ -146,7 +145,6 @@ describe('ParametroService', () => {
         descripcionParametro: 'Tolerancia CIT Modificada',
         valor: '95',
         tipoParametro: 'NUMERICO',
-        estado: '1',
         usuarioModificacion: 'admin'
       };
 
