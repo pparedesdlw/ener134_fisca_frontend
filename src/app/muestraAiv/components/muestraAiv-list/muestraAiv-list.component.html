@@ -1,0 +1,155 @@
+<mat-card>
+  <mat-card-title>Generación de muestra aleatoria AIV</mat-card-title>
+  <mat-card-content>
+    <div class="filtros">
+      <mat-form-field appearance="outline">
+        <mat-label>Periodo *</mat-label>
+        <mat-select [(ngModel)]="periodoSeleccionado" [disabled]="cargando()" (selectionChange)="onPeriodoChange()">
+          <mat-option *ngFor="let periodo of periodos()" [value]="periodo.codigoPeriodo">
+            {{ periodo.codigoPeriodo }} - {{ periodo.descripcion }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Fecha inicio *</mat-label>
+        <input matInput [matDatepicker]="pickerInicio" [(ngModel)]="fechaInicio" [min]="periodoMinDate" [max]="periodoMaxDate" [disabled]="cargando()">
+        <mat-datepicker-toggle matIconSuffix [for]="pickerInicio"></mat-datepicker-toggle>
+        <mat-datepicker #pickerInicio></mat-datepicker>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Fecha fin *</mat-label>
+        <input matInput [matDatepicker]="pickerFin" [(ngModel)]="fechaFin" [min]="periodoMinDate" [max]="periodoMaxDate" [disabled]="cargando()">
+        <mat-datepicker-toggle matIconSuffix [for]="pickerFin"></mat-datepicker-toggle>
+        <mat-datepicker #pickerFin></mat-datepicker>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Empresa *</mat-label>
+        <mat-select [(ngModel)]="empresaSeleccionada" [disabled]="cargando()">
+          <mat-option *ngFor="let empresa of empresas()" [value]="empresa.codigoEmpresa">
+            {{ empresa.codigoEmpresa }} - {{ empresa.razonSocial }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <div class="filtros">
+      <mat-form-field appearance="outline" class="filtro-multiselect">
+        <mat-label>Asunto (todos por defecto)</mat-label>
+        <mat-select [(ngModel)]="asuntosSeleccionados" multiple [disabled]="cargando()">
+          <mat-option *ngFor="let asunto of asuntos()" [value]="asunto.codigoAsunto">
+            {{ asunto.codigoAsunto }} - {{ asunto.descripcion }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="filtro-multiselect">
+        <mat-label>Ubigeo — Departamento (todos por defecto)</mat-label>
+        <mat-select [(ngModel)]="departamentosSeleccionados" multiple [disabled]="cargando()">
+          <mat-option *ngFor="let dpto of departamentos()" [value]="dpto.codigoDepartamento">
+            {{ dpto.descripcionDepartamento }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <div class="acciones-generacion">
+      <button mat-raised-button color="accent" (click)="generar()" [disabled]="cargando()">
+        <mat-icon>casino</mat-icon> Generar muestra
+      </button>
+    </div>
+
+    <div *ngIf="cargando()" class="spinner-container">
+      <mat-spinner diameter="36"></mat-spinner>
+      <p>Generando muestra...</p>
+    </div>
+
+    <ng-container *ngIf="muestra() as m">
+      <div class="resumen">
+        <div><strong>Población (N):</strong> {{ m.poblacion }}</div>
+        <div><strong>Tamaño muestra (n):</strong> {{ m.tamanioBase }}</div>
+        <div><strong>% adicional:</strong> {{ m.porcentajeAdicional }}</div>
+        <div><strong>Tamaño total:</strong> {{ m.tamanioFinal }}</div>
+        <div><strong>Estado:</strong> {{ m.estadoMuestra }}</div>
+      </div>
+
+      <h3>Distribución por tipo de requerimiento</h3>
+      <table class="tabla-distribucion">
+        <thead>
+          <tr>
+            <th>Requerimiento</th>
+            <th>Universo (Nci)</th>
+            <th>%</th>
+            <th>Muestra principal (nj)</th>
+            <th>Muestra adicional (10%)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let d of m.distribucion">
+            <td>{{ d.tipoRequerimiento }}</td>
+            <td>{{ d.universo }}</td>
+            <td>{{ d.porcentaje }}%</td>
+            <td>{{ d.muestraPrincipal }}</td>
+            <td>{{ d.muestraAdicional }}</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Detalle de la muestra</h3>
+      <table mat-table [dataSource]="m.detalle" class="mat-elevation-z2">
+        <ng-container matColumnDef="orden">
+          <th mat-header-cell *matHeaderCellDef>#</th>
+          <td mat-cell *matCellDef="let d">{{ d.orden }}</td>
+        </ng-container>
+        <ng-container matColumnDef="idRegistroCerrado">
+          <th mat-header-cell *matHeaderCellDef>Registro</th>
+          <td mat-cell *matCellDef="let d">{{ d.idRegistroCerrado }}</td>
+        </ng-container>
+        <ng-container matColumnDef="codigoTipoAtencion">
+          <th mat-header-cell *matHeaderCellDef>Tipo de requerimiento</th>
+          <td mat-cell *matCellDef="let d">{{ d.codigoTipoAtencion }}</td>
+        </ng-container>
+        <ng-container matColumnDef="titular">
+          <th mat-header-cell *matHeaderCellDef>Titular</th>
+          <td mat-cell *matCellDef="let d">{{ d.titular ? 'Sí' : 'No' }}</td>
+        </ng-container>
+        <ng-container matColumnDef="adicional">
+          <th mat-header-cell *matHeaderCellDef>Adicional</th>
+          <td mat-cell *matCellDef="let d">{{ d.adicional ? 'Sí' : 'No' }}</td>
+        </ng-container>
+        <ng-container matColumnDef="reemplazado">
+          <th mat-header-cell *matHeaderCellDef>Reemplazado</th>
+          <td mat-cell *matCellDef="let d">{{ d.reemplazado ? 'Sí' : 'No' }}</td>
+        </ng-container>
+        <ng-container matColumnDef="acciones">
+          <th mat-header-cell *matHeaderCellDef>Acciones</th>
+          <td mat-cell *matCellDef="let d">
+            <button mat-icon-button color="warn" *ngIf="!d.reemplazado"
+                    (click)="reemplazar(d.id)" title="Reemplazar">
+              <mat-icon>swap_horiz</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+      </table>
+
+      <div *ngIf="reemplazandoId() as id" class="reemplazo-panel">
+        <mat-form-field appearance="outline" class="motivo-field">
+          <mat-label>Motivo del reemplazo *</mat-label>
+          <input matInput [(ngModel)]="motivoReemplazo" placeholder="Ingrese el motivo del reemplazo" />
+        </mat-form-field>
+        <button mat-raised-button color="primary" (click)="confirmarReemplazo()">Confirmar</button>
+        <button mat-stroked-button (click)="cancelarReemplazo()">Cancelar</button>
+      </div>
+
+      <div class="acciones-generacion">
+        <button mat-raised-button color="primary" (click)="iniciarEvaluacion()">
+          <mat-icon>fact_check</mat-icon> Iniciar evaluación
+        </button>
+      </div>
+    </ng-container>
+  </mat-card-content>
+</mat-card>

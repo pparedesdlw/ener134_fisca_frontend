@@ -1,0 +1,118 @@
+<mat-card>
+  <mat-card-title>Selección de registros cerrados</mat-card-title>
+  <mat-card-content>
+    <div class="filtros">
+      <mat-form-field appearance="outline">
+        <mat-label>Periodo *</mat-label>
+        <mat-select [(ngModel)]="periodoSeleccionado" [disabled]="cargando()" (selectionChange)="onPeriodoChange()">
+          <mat-option *ngFor="let periodo of periodos()" [value]="periodo.codigoPeriodo">
+            {{ periodo.codigoPeriodo }} - {{ periodo.descripcion }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Fecha inicio *</mat-label>
+        <input matInput [matDatepicker]="pickerInicio" [(ngModel)]="fechaInicio" [min]="periodoMinDate" [max]="periodoMaxDate" [disabled]="cargando()">
+        <mat-datepicker-toggle matIconSuffix [for]="pickerInicio"></mat-datepicker-toggle>
+        <mat-datepicker #pickerInicio></mat-datepicker>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Fecha fin *</mat-label>
+        <input matInput [matDatepicker]="pickerFin" [(ngModel)]="fechaFin" [min]="periodoMinDate" [max]="periodoMaxDate" [disabled]="cargando()">
+        <mat-datepicker-toggle matIconSuffix [for]="pickerFin"></mat-datepicker-toggle>
+        <mat-datepicker #pickerFin></mat-datepicker>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Asunto *</mat-label>
+        <mat-select [(ngModel)]="asuntoSeleccionado" [disabled]="cargando()">
+          <mat-option *ngFor="let asunto of asuntos()" [value]="asunto.codigoAsunto">
+            {{ asunto.codigoAsunto }} - {{ asunto.descripcion }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Empresa *</mat-label>
+        <mat-select [(ngModel)]="empresaSeleccionada" [disabled]="cargando()">
+          <mat-option *ngFor="let empresa of empresas()" [value]="empresa.codigoEmpresa">
+            {{ empresa.codigoEmpresa }} - {{ empresa.razonSocial }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <div class="acciones-busqueda">
+      <button mat-raised-button color="primary" (click)="buscar()" [disabled]="cargando()">
+        <mat-icon>search</mat-icon> Buscar
+      </button>
+      <button mat-stroked-button (click)="exportar()" [disabled]="cargando() || !buscoAlMenosUnaVez()">
+        <mat-icon>download</mat-icon> Exportar registros
+      </button>
+      <button mat-stroked-button (click)="verEnProceso()">
+        <mat-icon>pending_actions</mat-icon> Ver en proceso
+      </button>
+      <button mat-stroked-button (click)="abrirReaperturaEvaluaciones()">
+        <mat-icon>lock_reset</mat-icon> Reapertura de evaluaciones
+      </button>
+      <button mat-stroked-button (click)="verHistorico()">
+        <mat-icon>history</mat-icon> Ver histórico - Periodo en evaluación
+      </button>
+    </div>
+
+    <div *ngIf="cargando()" class="spinner-container">
+      <mat-spinner diameter="36"></mat-spinner>
+      <p>Buscando registros cerrados...</p>
+    </div>
+
+    <ng-container *ngIf="!cargando() && buscoAlMenosUnaVez()">
+      <div class="cantidad-registros">
+        Cantidad de registros: <strong>{{ totalElements() }}</strong>
+      </div>
+
+      <div *ngIf="totalElements() === 0" class="mensaje-vacio">
+        No existen registros cerrados para los filtros seleccionados.
+      </div>
+
+      <table *ngIf="totalElements() > 0" mat-table [dataSource]="registros()" class="mat-elevation-z2">
+        <ng-container matColumnDef="codigoAtencion">
+          <th mat-header-cell *matHeaderCellDef>Código atención</th>
+          <td mat-cell *matCellDef="let r">{{ r.codigoAtencion }}</td>
+        </ng-container>
+        <ng-container matColumnDef="codigoAsunto">
+          <th mat-header-cell *matHeaderCellDef>Asunto</th>
+          <td mat-cell *matCellDef="let r">{{ r.codigoAsunto }}</td>
+        </ng-container>
+        <ng-container matColumnDef="fechaRecepcion">
+          <th mat-header-cell *matHeaderCellDef>Fecha recepción</th>
+          <td mat-cell *matCellDef="let r">{{ r.fechaRecepcion }}</td>
+        </ng-container>
+        <ng-container matColumnDef="fechaCierre">
+          <th mat-header-cell *matHeaderCellDef>Fecha cierre</th>
+          <td mat-cell *matCellDef="let r">{{ r.fechaCierre }}</td>
+        </ng-container>
+        <ng-container matColumnDef="codigoUbigeo">
+          <th mat-header-cell *matHeaderCellDef>Ubigeo</th>
+          <td mat-cell *matCellDef="let r">{{ r.codigoUbigeo }}</td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+      </table>
+
+      <mat-paginator *ngIf="totalElements() > 0" [length]="totalElements()" [pageSize]="20"
+                     [pageSizeOptions]="[10, 20, 50, 100]" (page)="onPage($event)">
+      </mat-paginator>
+
+      <div class="acciones-evaluacion">
+        <button mat-raised-button color="accent" (click)="definirMuestra()" [disabled]="totalElements() === 0">
+          Definir muestra
+        </button>
+        <button mat-raised-button color="accent" (click)="obtenerTotal()" [disabled]="totalElements() === 0">
+          Obtener total
+        </button>
+      </div>
+    </ng-container>
+  </mat-card-content>
+</mat-card>
