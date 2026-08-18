@@ -27,6 +27,7 @@ describe('AtencionComercialService', () => {
     telefonoContacto: '999999999',
     direccion: 'Av. Principal 123',
     ubigeo: '150101',
+    descripcionUbigeo: 'Lima / Lima / Lima',
     fechaMaxima: new Date('2024-02-15'),
     observacion: 'Sin observaciones',
     descripcionAsunto: 'Interrupción',
