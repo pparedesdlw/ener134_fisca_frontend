@@ -1,0 +1,55 @@
+<h2 mat-dialog-title>Resultados consolidados — Indicador AIV</h2>
+<mat-dialog-content>
+  <div class="encabezado">
+    <span class="tipo-consolidacion">{{ esTotal ? 'Consolidado Total' : 'Consolidado Parcial' }}</span>
+    <span class="rango-fechas" *ngIf="data.evaluacion.fechaInicio && data.evaluacion.fechaFin">
+      Rango evaluado: {{ data.evaluacion.fechaInicio }} — {{ data.evaluacion.fechaFin }}
+    </span>
+  </div>
+
+  <h4>Cuadro resumen de ítems evaluados</h4>
+  <table mat-table [dataSource]="data.evaluacion.itemsResumen" class="mat-elevation-z1">
+    <ng-container matColumnDef="item">
+      <th mat-header-cell *matHeaderCellDef>Ítem</th>
+      <td mat-cell *matCellDef="let i; let idx = index">{{ idx + 1 }}</td>
+    </ng-container>
+    <ng-container matColumnDef="descripcion">
+      <th mat-header-cell *matHeaderCellDef>Descripción</th>
+      <td mat-cell *matCellDef="let i">{{ i.descripcion }}</td>
+    </ng-container>
+    <ng-container matColumnDef="existentes">
+      <th mat-header-cell *matHeaderCellDef>Existentes</th>
+      <td mat-cell *matCellDef="let i">{{ i.existentes }}</td>
+    </ng-container>
+    <ng-container matColumnDef="fiscalizados">
+      <th mat-header-cell *matHeaderCellDef>Fiscalizados</th>
+      <td mat-cell *matCellDef="let i">{{ i.fiscalizados }}</td>
+    </ng-container>
+    <ng-container matColumnDef="incumplimientos">
+      <th mat-header-cell *matHeaderCellDef>Incumplimientos</th>
+      <td mat-cell *matCellDef="let i">{{ i.incumplimientos }}</td>
+    </ng-container>
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+  </table>
+
+  <h4>Fórmula del indicador AIV (referencial)</h4>
+  <p class="formula">AIV = ( Σ NRN / (NTA × NMD) ) × 100</p>
+
+  <h4>Cálculo del indicador</h4>
+  <div class="calculo">
+    <div><strong>NRN:</strong> {{ data.evaluacion.numeroRegistrosNoConformes }}</div>
+    <div><strong>NTA:</strong> {{ data.evaluacion.totalAtenciones }}</div>
+    <div><strong>NMD:</strong> {{ data.evaluacion.muestraDefinitiva }}</div>
+    <div>
+      <strong>Valor del AIV:</strong>
+      <span [class.supera-tolerancia]="data.evaluacion.superaTolerancia">
+        {{ data.evaluacion.indicadorAiv }}%
+      </span>
+    </div>
+    <div><strong>Tolerancia aplicable:</strong> {{ data.evaluacion.toleranciaAplicable ?? '—' }}%</div>
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-raised-button color="primary" (click)="salir()">Salir</button>
+</mat-dialog-actions>

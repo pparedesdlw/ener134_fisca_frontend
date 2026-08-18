@@ -1,0 +1,55 @@
+<mat-card>
+  <mat-card-title>Sustentos AIV</mat-card-title>
+  <mat-card-content>
+    <div class="filtros">
+      <mat-form-field appearance="outline">
+        <mat-label>Id registro evaluación</mat-label>
+        <input matInput type="number" [(ngModel)]="idEvaluacionRegistro" />
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Código único atención</mat-label>
+        <input matInput [(ngModel)]="codigoUnicoAtencion" />
+      </mat-form-field>
+      <input type="file" (change)="onFileIndividual($event)" />
+      <button mat-raised-button color="accent" (click)="cargarIndividual()">Cargar individual</button>
+      <button mat-raised-button (click)="listar()">Listar</button>
+    </div>
+
+    <div class="filtros">
+      <mat-form-field appearance="outline">
+        <mat-label>Id evaluación AIV</mat-label>
+        <input matInput type="number" [(ngModel)]="idEvaluacionAiv" />
+      </mat-form-field>
+      <input type="file" accept=".zip" (change)="onFileZip($event)" />
+      <button mat-raised-button color="primary" (click)="cargarMasivo()">Cargar ZIP masivo</button>
+    </div>
+
+    <table mat-table [dataSource]="sustentos()" class="mat-elevation-z2">
+      <ng-container matColumnDef="nombreArchivo">
+        <th mat-header-cell *matHeaderCellDef>Archivo</th>
+        <td mat-cell *matCellDef="let s">{{ s.nombreArchivo }}</td>
+      </ng-container>
+      <ng-container matColumnDef="tamanioBytes">
+        <th mat-header-cell *matHeaderCellDef>Tamaño</th>
+        <td mat-cell *matCellDef="let s">{{ s.tamanioBytes }} B</td>
+      </ng-container>
+      <ng-container matColumnDef="origen">
+        <th mat-header-cell *matHeaderCellDef>Origen</th>
+        <td mat-cell *matCellDef="let s">{{ s.origen }}</td>
+      </ng-container>
+      <ng-container matColumnDef="fechaCarga">
+        <th mat-header-cell *matHeaderCellDef>Fecha</th>
+        <td mat-cell *matCellDef="let s">{{ s.fechaCarga }}</td>
+      </ng-container>
+      <ng-container matColumnDef="acciones">
+        <th mat-header-cell *matHeaderCellDef>Acciones</th>
+        <td mat-cell *matCellDef="let s">
+          <button mat-stroked-button (click)="descargar(s)">Descargar</button>
+          <button mat-stroked-button color="warn" (click)="eliminar(s)">Eliminar</button>
+        </td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    </table>
+  </mat-card-content>
+</mat-card>

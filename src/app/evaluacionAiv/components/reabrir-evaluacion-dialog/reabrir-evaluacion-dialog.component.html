@@ -1,0 +1,145 @@
+<h2 mat-dialog-title>Reapertura de evaluaciones</h2>
+<mat-dialog-content>
+  <p>Busque evaluaciones consolidadas y seleccione "Reabrir" para habilitar nuevamente su evaluación.</p>
+
+  <div class="filtros">
+    <mat-form-field appearance="outline">
+      <mat-label>Periodo</mat-label>
+      <mat-select [(ngModel)]="periodoSeleccionado" (selectionChange)="onPeriodoChange()">
+        <mat-option [value]="null">Todos</mat-option>
+        <mat-option *ngFor="let periodo of periodos()" [value]="periodo.codigoPeriodo">
+          {{ periodo.codigoPeriodo }} - {{ periodo.descripcion }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Fecha evaluada</mat-label>
+      <input matInput [matDatepicker]="picker" [(ngModel)]="fechaEvaluada" [min]="periodoMinDate" [max]="periodoMaxDate">
+      <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Empresa</mat-label>
+      <mat-select [(ngModel)]="empresaSeleccionada">
+        <mat-option [value]="null">Todas</mat-option>
+        <mat-option *ngFor="let empresa of empresas()" [value]="empresa.id">
+          {{ empresa.codigoEmpresa }} - {{ empresa.razonSocial }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Tipo de consolidación</mat-label>
+      <mat-select [(ngModel)]="tipoConsolidacionSeleccionado">
+        <mat-option [value]="null">Todas</mat-option>
+        <mat-option value="CONSOLIDADO_PARCIAL">Parcial</mat-option>
+        <mat-option value="CONSOLIDADO_TOTAL">Total</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <button mat-raised-button color="primary" (click)="buscar()" [disabled]="cargando()">
+      <mat-icon>search</mat-icon> Buscar
+    </button>
+  </div>
+
+  <div *ngIf="cargando()" class="spinner-container">
+    <mat-spinner diameter="32"></mat-spinner>
+  </div>
+
+  <ng-container *ngIf="!cargando()">
+    <p *ngIf="buscoAlMenosUnaVez() && !evaluaciones().length" class="mensaje-vacio">
+      No hay evaluaciones consolidadas para los filtros indicados.
+    </p>
+
+    <table *ngIf="evaluaciones().length" mat-table [dataSource]="evaluaciones()" class="mat-elevation-z1">
+      <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef>ID Eval.</th>
+        <td mat-cell *matCellDef="let e">{{ e.id }}</td>
+      </ng-container>
+      <ng-container matColumnDef="codigoPeriodo">
+        <th mat-header-cell *matHeaderCellDef>Periodo</th>
+        <td mat-cell *matCellDef="let e">{{ e.codigoPeriodo }}</td>
+      </ng-container>
+      <ng-container matColumnDef="codigoEmpresa">
+        <th mat-header-cell *matHeaderCellDef>Empresa</th>
+        <td mat-cell *matCellDef="let e">{{ e.codigoEmpresa }}</td>
+      </ng-container>
+      <ng-container matColumnDef="rangoEvaluado">
+        <th mat-header-cell *matHeaderCellDef>Rango evaluado</th>
+        <td mat-cell *matCellDef="let e">{{ e.fechaInicio ?? '—' }} — {{ e.fechaFin ?? '—' }}</td>
+      </ng-container>
+      <ng-container matColumnDef="indicadorAiv">
+        <th mat-header-cell *matHeaderCellDef>Indicador AIV</th>
+        <td mat-cell *matCellDef="let e">{{ e.indicadorAiv }}</td>
+      </ng-container>
+      <ng-container matColumnDef="tipoMuestra">
+        <th mat-header-cell *matHeaderCellDef>Tipo de muestra</th>
+        <td mat-cell *matCellDef="let e">{{ e.tipoMuestra ?? '—' }}</td>
+      </ng-container>
+      <ng-container matColumnDef="tipoConsolidacion">
+        <th mat-header-cell *matHeaderCellDef>Tipo de consolidación</th>
+        <td mat-cell *matCellDef="let e">{{ e.tipoConsolidacion === 'CONSOLIDADO_TOTAL' ? 'Total' : 'Parcial' }}</td>
+      </ng-container>
+      <ng-container matColumnDef="fechaConsolidado">
+        <th mat-header-cell *matHeaderCellDef>Fecha de consolidación</th>
+        <td mat-cell *matCellDef="let e">{{ e.fechaConsolidado ?? '—' }}</td>
+      </ng-container>
+      <ng-container matColumnDef="usuarioConsolido">
+        <th mat-header-cell *matHeaderCellDef>Usuario que consolidó</th>
+        <td mat-cell *matCellDef="let e">{{ e.usuarioConsolido ?? '—' }}</td>
+      </ng-container>
+      <ng-container matColumnDef="numeroRegistrosEvaluados">
+        <th mat-header-cell *matHeaderCellDef>Nro. Registros evaluados</th>
+        <td mat-cell *matCellDef="let e">{{ e.numeroRegistrosEvaluados }}</td>
+      </ng-container>
+      <ng-container matColumnDef="accion">
+        <th mat-header-cell *matHeaderCellDef>Acción</th>
+        <td mat-cell *matCellDef="let e">
+          <button mat-stroked-button (click)="verRegistros(e)">Ver Reg.</button>
+          <button mat-stroked-button color="warn" *ngIf="puedeReabrir" (click)="reabrirEvaluacion(e)">Reabrir</button>
+        </td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    </table>
+  </ng-container>
+
+  <div *ngIf="registrosSeleccionados() as registros" class="registros-seleccionados">
+    <h3>Registros evaluados</h3>
+    <p *ngIf="!registros.length" class="mensaje-vacio">Esta evaluación no tiene registros.</p>
+    <table *ngIf="registros.length" mat-table [dataSource]="registros" class="mat-elevation-z1">
+      <ng-container matColumnDef="orden">
+        <th mat-header-cell *matHeaderCellDef>Ítem</th>
+        <td mat-cell *matCellDef="let r; let i = index">{{ i + 1 }}</td>
+      </ng-container>
+      <ng-container matColumnDef="codigoUnico">
+        <th mat-header-cell *matHeaderCellDef>Código único</th>
+        <td mat-cell *matCellDef="let r">{{ r.codigoUnico ?? '—' }}</td>
+      </ng-container>
+      <ng-container matColumnDef="codigoUbigeo">
+        <th mat-header-cell *matHeaderCellDef>Ubigeo</th>
+        <td mat-cell *matCellDef="let r">{{ r.codigoUbigeo ?? '—' }}</td>
+      </ng-container>
+      <ng-container matColumnDef="codigoAsunto">
+        <th mat-header-cell *matHeaderCellDef>ID asunto</th>
+        <td mat-cell *matCellDef="let r">{{ r.codigoAsunto ?? '—' }}</td>
+      </ng-container>
+      <ng-container matColumnDef="descripcionAsunto">
+        <th mat-header-cell *matHeaderCellDef>Asunto</th>
+        <td mat-cell *matCellDef="let r">{{ r.descripcionAsunto ?? '—' }}</td>
+      </ng-container>
+      <ng-container matColumnDef="total">
+        <th mat-header-cell *matHeaderCellDef>Total</th>
+        <td mat-cell *matCellDef="let r">{{ r.itemsCumplidos }}/{{ r.itemsTotal }}</td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="displayedColumnsRegistros"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumnsRegistros"></tr>
+    </table>
+    <button mat-stroked-button (click)="cerrarRegistros()">Cerrar registros</button>
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-stroked-button (click)="cerrar()">Cerrar</button>
+</mat-dialog-actions>

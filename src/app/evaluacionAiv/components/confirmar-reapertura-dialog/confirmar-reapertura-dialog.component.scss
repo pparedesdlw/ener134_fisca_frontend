@@ -1,0 +1,25 @@
+.info-evaluacion {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 16px;
+  color: #616161;
+}
+.campo-completo {
+  width: 100%;
+}
+.campo-archivo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 16px;
+
+  label {
+    font-size: 12px;
+    color: #616161;
+  }
+}
+.nombre-archivo {
+  font-size: 13px;
+  color: #424242;
+}

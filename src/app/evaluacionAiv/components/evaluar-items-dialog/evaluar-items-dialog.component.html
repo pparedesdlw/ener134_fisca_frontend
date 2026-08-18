@@ -1,0 +1,42 @@
+<h2 mat-dialog-title>Evaluar ítems</h2>
+<mat-dialog-content>
+  <div class="datos-solo-lectura">
+    <mat-form-field appearance="outline">
+      <mat-label>Código único</mat-label>
+      <input matInput [value]="data.registro.codigoUnico ?? '—'" readonly />
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Número de suministro</mat-label>
+      <input matInput value="—" readonly />
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Ap. Usuario</mat-label>
+      <input matInput value="—" readonly />
+    </mat-form-field>
+  </div>
+
+  <div class="item" *ngFor="let item of catalogo">
+    <span class="item-descripcion">{{ item.orden }}. {{ item.descripcion }}</span>
+    <mat-radio-group [ngModel]="cumplePorItem[item.codigoItem]"
+                      [disabled]="itemBloqueadoPorAutoIncumple(item.codigoItem)">
+      <mat-radio-button [value]="true" (click)="seleccionarCumple(item.codigoItem, true)">Cumple</mat-radio-button>
+      <mat-radio-button [value]="false" (click)="seleccionarCumple(item.codigoItem, false)">No cumple</mat-radio-button>
+    </mat-radio-group>
+    <span class="auto-incumple" *ngIf="itemBloqueadoPorAutoIncumple(item.codigoItem)">
+      Incumplimiento automático por ITEM_02
+    </span>
+  </div>
+
+  <mat-form-field appearance="outline" class="justificacion-field">
+    <mat-label>Justificación *</mat-label>
+    <textarea matInput rows="4" [(ngModel)]="justificacion" placeholder="Ingresar justificación"></textarea>
+  </mat-form-field>
+
+  <button mat-stroked-button color="accent" (click)="abrirSustento()">
+    <mat-icon>attach_file</mat-icon> Cargar/Ver sustento
+  </button>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-stroked-button (click)="cancelar()" [disabled]="guardando">Cancelar</button>
+  <button mat-raised-button color="primary" (click)="guardar()" [disabled]="guardando">Guardar</button>
+</mat-dialog-actions>

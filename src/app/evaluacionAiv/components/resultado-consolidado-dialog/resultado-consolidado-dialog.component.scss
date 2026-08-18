@@ -1,0 +1,40 @@
+.encabezado {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: center;
+  margin-bottom: 16px;
+}
+.tipo-consolidacion {
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 4px;
+  background: #e3f2fd;
+}
+.rango-fechas {
+  color: #616161;
+}
+h4 {
+  margin-top: 20px;
+  margin-bottom: 8px;
+}
+table {
+  width: 100%;
+  margin-bottom: 8px;
+}
+.formula {
+  font-family: 'Courier New', monospace;
+  font-size: 1.1em;
+  padding: 8px 12px;
+  background: #fafafa;
+  border-left: 3px solid #90a4ae;
+}
+.calculo {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 8px;
+}
+.supera-tolerancia {
+  color: #c62828;
+  font-weight: 700;
+}

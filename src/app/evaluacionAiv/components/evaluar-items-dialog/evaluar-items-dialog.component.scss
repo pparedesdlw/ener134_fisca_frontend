@@ -1,0 +1,35 @@
+.datos-solo-lectura {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 8px;
+
+  mat-form-field {
+    flex: 1;
+    min-width: 200px;
+  }
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding: 8px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.item-descripcion {
+  flex: 1;
+  min-width: 260px;
+}
+
+.auto-incumple {
+  color: #b71c1c;
+  font-size: 0.85em;
+}
+
+.justificacion-field {
+  width: 100%;
+  margin-top: 12px;
+}

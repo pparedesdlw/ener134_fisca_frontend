@@ -1,0 +1,93 @@
+<h2 mat-dialog-title>Evaluaciones en proceso</h2>
+<mat-dialog-content>
+  <p>Seleccione una evaluación para continuar su gestión.</p>
+
+  <div class="filtros">
+    <mat-form-field appearance="outline">
+      <mat-label>Periodo</mat-label>
+      <mat-select [(ngModel)]="periodoSeleccionado" (selectionChange)="onPeriodoChange()">
+        <mat-option [value]="null">Todos</mat-option>
+        <mat-option *ngFor="let periodo of periodos()" [value]="periodo.codigoPeriodo">
+          {{ periodo.codigoPeriodo }} - {{ periodo.descripcion }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Fecha evaluada</mat-label>
+      <input matInput [matDatepicker]="picker" [(ngModel)]="fechaEvaluada" [min]="periodoMinDate" [max]="periodoMaxDate">
+      <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Empresa</mat-label>
+      <mat-select [(ngModel)]="empresaSeleccionada">
+        <mat-option [value]="null">Todas</mat-option>
+        <mat-option *ngFor="let empresa of empresas()" [value]="empresa.id">
+          {{ empresa.codigoEmpresa }} - {{ empresa.razonSocial }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <button mat-raised-button color="primary" (click)="buscar()" [disabled]="cargando()">
+      <mat-icon>search</mat-icon> Buscar
+    </button>
+  </div>
+
+  <div *ngIf="cargando()" class="spinner-container">
+    <mat-spinner diameter="32"></mat-spinner>
+  </div>
+
+  <ng-container *ngIf="!cargando()">
+    <p *ngIf="buscoAlMenosUnaVez() && !evaluaciones().length" class="mensaje-vacio">
+      No hay evaluaciones en proceso o reabiertas para los filtros indicados.
+    </p>
+
+    <table *ngIf="evaluaciones().length" mat-table [dataSource]="evaluaciones()" class="mat-elevation-z1">
+      <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef>ID Eval.</th>
+        <td mat-cell *matCellDef="let e">{{ e.id }}</td>
+      </ng-container>
+      <ng-container matColumnDef="codigoPeriodo">
+        <th mat-header-cell *matHeaderCellDef>Periodo</th>
+        <td mat-cell *matCellDef="let e">{{ e.codigoPeriodo }}</td>
+      </ng-container>
+      <ng-container matColumnDef="codigoEmpresa">
+        <th mat-header-cell *matHeaderCellDef>Empresa</th>
+        <td mat-cell *matCellDef="let e">{{ e.codigoEmpresa }}</td>
+      </ng-container>
+      <ng-container matColumnDef="rangoEvaluado">
+        <th mat-header-cell *matHeaderCellDef>Rango evaluado</th>
+        <td mat-cell *matCellDef="let e">{{ e.fechaInicio ?? '—' }} — {{ e.fechaFin ?? '—' }}</td>
+      </ng-container>
+      <ng-container matColumnDef="estado">
+        <th mat-header-cell *matHeaderCellDef>Estado</th>
+        <td mat-cell *matCellDef="let e">{{ e.estadoEvaluacion }}</td>
+      </ng-container>
+      <ng-container matColumnDef="fechaModificacion">
+        <th mat-header-cell *matHeaderCellDef>Última modificación</th>
+        <td mat-cell *matCellDef="let e">{{ e.fechaModificacion ?? '—' }}</td>
+      </ng-container>
+      <ng-container matColumnDef="usuarioResponsable">
+        <th mat-header-cell *matHeaderCellDef>Usuario responsable</th>
+        <td mat-cell *matCellDef="let e">{{ e.usuarioResponsable ?? '—' }}</td>
+      </ng-container>
+      <ng-container matColumnDef="avance">
+        <th mat-header-cell *matHeaderCellDef>Avance (%)</th>
+        <td mat-cell *matCellDef="let e">{{ e.avancePorcentaje }}%</td>
+      </ng-container>
+      <ng-container matColumnDef="accion">
+        <th mat-header-cell *matHeaderCellDef>Acción</th>
+        <td mat-cell *matCellDef="let e">
+          <button mat-stroked-button color="primary" (click)="continuar(e)">Continuar</button>
+        </td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    </table>
+  </ng-container>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-stroked-button (click)="cerrar()">Cerrar</button>
+</mat-dialog-actions>

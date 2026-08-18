@@ -1,0 +1,72 @@
+<mat-card>
+  <mat-card-title>Histórico AIV</mat-card-title>
+  <mat-card-content>
+    <div class="filtros">
+      <mat-form-field appearance="outline">
+        <mat-label>Id evaluación</mat-label>
+        <input matInput type="number" [(ngModel)]="idEvaluacion" />
+      </mat-form-field>
+      <button mat-raised-button color="primary" (click)="consultar()">Consultar</button>
+    </div>
+
+    <h3>Versiones preliminares</h3>
+    <table mat-table [dataSource]="preliminares()" class="mat-elevation-z2">
+      <ng-container matColumnDef="version">
+        <th mat-header-cell *matHeaderCellDef>v</th>
+        <td mat-cell *matCellDef="let h">{{ h.version }}</td>
+      </ng-container>
+      <ng-container matColumnDef="estadoSnapshot">
+        <th mat-header-cell *matHeaderCellDef>Estado</th>
+        <td mat-cell *matCellDef="let h">{{ h.estadoSnapshot }}</td>
+      </ng-container>
+      <ng-container matColumnDef="indicadorAiv">
+        <th mat-header-cell *matHeaderCellDef>Indicador</th>
+        <td mat-cell *matCellDef="let h">{{ h.indicadorAiv }}</td>
+      </ng-container>
+      <ng-container matColumnDef="numeroRegistrosNoConformes">
+        <th mat-header-cell *matHeaderCellDef>NRN</th>
+        <td mat-cell *matCellDef="let h">{{ h.numeroRegistrosNoConformes }}</td>
+      </ng-container>
+      <ng-container matColumnDef="motivo">
+        <th mat-header-cell *matHeaderCellDef>Motivo</th>
+        <td mat-cell *matCellDef="let h">{{ h.motivo }}</td>
+      </ng-container>
+      <ng-container matColumnDef="fechaSnapshot">
+        <th mat-header-cell *matHeaderCellDef>Fecha</th>
+        <td mat-cell *matCellDef="let h">{{ h.fechaSnapshot }}</td>
+      </ng-container>
+      <ng-container matColumnDef="usuario">
+        <th mat-header-cell *matHeaderCellDef>Usuario</th>
+        <td mat-cell *matCellDef="let h">{{ h.usuario }}</td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="colsPrelim"></tr>
+      <tr mat-row *matRowDef="let row; columns: colsPrelim"></tr>
+    </table>
+
+    <h3>Trazabilidad de acciones</h3>
+    <table mat-table [dataSource]="acciones()" class="mat-elevation-z2">
+      <ng-container matColumnDef="version">
+        <th mat-header-cell *matHeaderCellDef>v</th>
+        <td mat-cell *matCellDef="let h">{{ h.version }}</td>
+      </ng-container>
+      <ng-container matColumnDef="accion">
+        <th mat-header-cell *matHeaderCellDef>Acción</th>
+        <td mat-cell *matCellDef="let h">{{ h.accion }}</td>
+      </ng-container>
+      <ng-container matColumnDef="detalle">
+        <th mat-header-cell *matHeaderCellDef>Detalle</th>
+        <td mat-cell *matCellDef="let h">{{ h.detalle }}</td>
+      </ng-container>
+      <ng-container matColumnDef="usuario">
+        <th mat-header-cell *matHeaderCellDef>Usuario</th>
+        <td mat-cell *matCellDef="let h">{{ h.usuario }}</td>
+      </ng-container>
+      <ng-container matColumnDef="fechaAccion">
+        <th mat-header-cell *matHeaderCellDef>Fecha</th>
+        <td mat-cell *matCellDef="let h">{{ h.fechaAccion }}</td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="colsAcc"></tr>
+      <tr mat-row *matRowDef="let row; columns: colsAcc"></tr>
+    </table>
+  </mat-card-content>
+</mat-card>

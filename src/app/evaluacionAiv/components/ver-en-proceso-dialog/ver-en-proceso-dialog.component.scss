@@ -1,0 +1,19 @@
+.filtros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 16px;
+}
+.spinner-container {
+  display: flex;
+  justify-content: center;
+  padding: 24px 0;
+}
+.mensaje-vacio {
+  color: #757575;
+  padding: 16px 0;
+}
+table {
+  width: 100%;
+}

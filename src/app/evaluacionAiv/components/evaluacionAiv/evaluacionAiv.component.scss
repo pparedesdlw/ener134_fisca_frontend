@@ -1,0 +1,52 @@
+.filtros, .acciones-globales {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 16px;
+  align-items: center;
+}
+.resumen {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.buscador {
+  width: 100%;
+  max-width: 420px;
+  margin-bottom: 12px;
+}
+.spinner-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 24px 0;
+}
+.reemplazo-banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 12px 0;
+  padding: 12px;
+  background: #fff8e1;
+  border-left: 4px solid #ffb300;
+}
+.reemplazados-panel {
+  margin-top: 12px;
+
+  h4 {
+    margin-bottom: 8px;
+    color: #757575;
+  }
+}
+table {
+  width: 100%;
+  margin-bottom: 16px;
+}
+::ng-deep .fila-evaluada {
+  background-color: #e8f5e9;
+}
+::ng-deep .fila-pendiente {
+  background-color: #ffebee;
+}

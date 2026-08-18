@@ -1,0 +1,8 @@
+<h2 mat-dialog-title>Detalle del requerimiento — {{ data.codigoAtencion }}</h2>
+<mat-dialog-content>
+  <app-acciones-atencion [codigoEmpresa]="data.codigoEmpresa" [codigoAtencion]="data.codigoAtencion">
+  </app-acciones-atencion>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-stroked-button (click)="cerrar()">Cerrar</button>
+</mat-dialog-actions>

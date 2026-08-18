@@ -1,0 +1,60 @@
+<h2 mat-dialog-title>Ver histórico — Periodo en evaluación</h2>
+<mat-dialog-content>
+  <div *ngIf="cargando()" class="spinner-container">
+    <mat-spinner diameter="32"></mat-spinner>
+  </div>
+
+  <p *ngIf="!cargando() && sinInformacion()" class="mensaje-vacio">
+    No existe información preliminar disponible para el periodo y empresa seleccionados.
+  </p>
+
+  <ng-container *ngIf="!cargando() && evaluacion() as e">
+    <p class="aviso">
+      Información preliminar y referencial. No representa una consolidación total.
+    </p>
+
+    <h4>Resumen acumulado por ítem</h4>
+    <table mat-table [dataSource]="e.itemsResumen" class="mat-elevation-z1">
+      <ng-container matColumnDef="item">
+        <th mat-header-cell *matHeaderCellDef>Ítem</th>
+        <td mat-cell *matCellDef="let i; let idx = index">{{ idx + 1 }}</td>
+      </ng-container>
+      <ng-container matColumnDef="descripcion">
+        <th mat-header-cell *matHeaderCellDef>Descripción</th>
+        <td mat-cell *matCellDef="let i">{{ i.descripcion }}</td>
+      </ng-container>
+      <ng-container matColumnDef="existentes">
+        <th mat-header-cell *matHeaderCellDef>Existentes</th>
+        <td mat-cell *matCellDef="let i">{{ i.existentes }}</td>
+      </ng-container>
+      <ng-container matColumnDef="fiscalizados">
+        <th mat-header-cell *matHeaderCellDef>Fiscalizados</th>
+        <td mat-cell *matCellDef="let i">{{ i.fiscalizados }}</td>
+      </ng-container>
+      <ng-container matColumnDef="incumplimientos">
+        <th mat-header-cell *matHeaderCellDef>Incumplimientos</th>
+        <td mat-cell *matCellDef="let i">{{ i.incumplimientos }}</td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    </table>
+
+    <h4>Fórmula del indicador AIV (referencial)</h4>
+    <p class="formula">AIV = ( Σ NRN / (NTA × NMD) ) × 100</p>
+
+    <h4>Cálculo del indicador (preliminar)</h4>
+    <div class="calculo">
+      <div><strong>NRN:</strong> {{ e.numeroRegistrosNoConformes }}</div>
+      <div><strong>NTA:</strong> {{ e.totalAtenciones }}</div>
+      <div><strong>NMD:</strong> {{ e.muestraDefinitiva }}</div>
+      <div>
+        <strong>Resultado preliminar del AIV:</strong>
+        <span [class.supera-tolerancia]="e.superaTolerancia">{{ e.indicadorAiv }}%</span>
+      </div>
+      <div><strong>Tolerancia aplicable:</strong> {{ e.toleranciaAplicable ?? '—' }}%</div>
+    </div>
+  </ng-container>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-raised-button color="primary" (click)="salir()">Salir</button>
+</mat-dialog-actions>
