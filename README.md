@@ -12,7 +12,7 @@ Aplicación web Angular para el sistema **TISEC-WEB** de fiscalización del sect
 | Node             | ≥ 18 (recomendado LTS)          |
 | Backend          | `http://localhost:8084` (local) |
 
----
+----
 
 ## Requisitos previos
 
