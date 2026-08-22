@@ -26,7 +26,7 @@ describe('MuestraAivListComponent', () => {
   let router: jasmine.SpyObj<Router>;
   let snackBar: jasmine.SpyObj<MatSnackBar>;
 
-  const mockPeriodos: Periodo[] = [{ codigoPeriodo: 'PER-2025-01', fechaInicio: '2025-01-01', fechaFin: '2025-03-31', estadoActivo: true }];
+  const mockPeriodos: Periodo[] = [{ codigoPeriodo: 'PER-2025-01', fechaInicio: '01/01/2025', fechaFin: '31/03/2025', estadoActivo: true }];
   const mockEmpresas: EmpresaConcesionaria[] = [{ id: 1, codigoEmpresa: '10', razonSocial: 'Empresa 1' }];
   const mockAsuntos: Asunto[] = [{ codigoAsunto: '174', descripcion: 'Consumo excesivo', estado: '1' }];
   const mockDepartamentos: Departamento[] = [{ codigoDepartamento: '15', descripcionDepartamento: 'Lima' }];
@@ -48,7 +48,7 @@ describe('MuestraAivListComponent', () => {
   }
 
   beforeEach(async () => {
-    const serviceSpy = jasmine.createSpyObj('MuestraAivService', ['generar', 'reemplazar']);
+    const serviceSpy = jasmine.createSpyObj('MuestraAivService', ['generar', 'reemplazar', 'vigente']);
     const periodoServiceSpy = jasmine.createSpyObj('PeriodoService', ['listarPorEstado']);
     const empresaServiceSpy = jasmine.createSpyObj('EmpresaConcesionariaService', ['listarTodos']);
     const asuntoServiceSpy = jasmine.createSpyObj('AsuntoService', ['listarPorEstado']);
@@ -111,16 +111,16 @@ describe('MuestraAivListComponent', () => {
       expect(component.periodoMaxDate).toEqual(new Date(2025, 2, 31));
     });
 
-    it('al cambiar de periodo, debería limpiar fechas que quedaron fuera del nuevo rango', () => {
+    it('al cambiar de periodo, debería autocompletar fecha inicio y fecha fin con el rango del periodo', () => {
       crearComponente();
       component.periodoSeleccionado = 'PER-2025-01';
       component.fechaInicio = new Date(2024, 11, 1);
-      component.fechaFin = new Date(2025, 1, 1);
+      component.fechaFin = new Date(2025, 5, 1);
 
       component.onPeriodoChange();
 
-      expect(component.fechaInicio).toBeNull();
-      expect(component.fechaFin).toEqual(new Date(2025, 1, 1));
+      expect(component.fechaInicio).toEqual(new Date(2025, 0, 1));
+      expect(component.fechaFin).toEqual(new Date(2025, 2, 31));
     });
   });
 
@@ -181,6 +181,56 @@ describe('MuestraAivListComponent', () => {
     expect(component.cargando()).toBe(false);
   });
 
+  it('generar debería cargar la muestra existente si el backend responde MUESTRA_DUPLICADA (409)', () => {
+    crearComponente();
+    component.periodoSeleccionado = 'PER-2025-01';
+    component.fechaInicio = new Date('2025-01-01T12:00:00');
+    component.fechaFin = new Date('2025-01-31T12:00:00');
+    component.empresaSeleccionada = '10';
+    service.generar.and.returnValue(throwError(() => ({
+      error: { code: 'MUESTRA_DUPLICADA', message: 'Ya existe una muestra activa para el periodo y empresa indicados' }
+    })));
+    service.vigente.and.returnValue(of(mockMuestra));
+
+    component.generar();
+
+    expect(service.vigente).toHaveBeenCalledWith('PER-2025-01', 1);
+    expect(component.muestra()).toEqual(mockMuestra);
+    expect(component.cargando()).toBe(false);
+  });
+
+  it('generar, ante MUESTRA_DUPLICADA, debería avisar si no puede resolver el id interno de la empresa', () => {
+    crearComponente();
+    component.periodoSeleccionado = 'PER-2025-01';
+    component.fechaInicio = new Date('2025-01-01T12:00:00');
+    component.fechaFin = new Date('2025-01-31T12:00:00');
+    component.empresaSeleccionada = '99';
+    service.generar.and.returnValue(throwError(() => ({ error: { code: 'MUESTRA_DUPLICADA' } })));
+
+    component.generar();
+
+    expect(service.vigente).not.toHaveBeenCalled();
+    expect(snackBar.open).toHaveBeenCalledWith(
+      'Ya existe una muestra activa, pero no se pudo cargar automáticamente', 'Cerrar', jasmine.any(Object)
+    );
+    expect(component.cargando()).toBe(false);
+  });
+
+  it('generar, ante MUESTRA_DUPLICADA, debería avisar si la carga de la muestra existente también falla', () => {
+    crearComponente();
+    component.periodoSeleccionado = 'PER-2025-01';
+    component.fechaInicio = new Date('2025-01-01T12:00:00');
+    component.fechaFin = new Date('2025-01-31T12:00:00');
+    component.empresaSeleccionada = '10';
+    service.generar.and.returnValue(throwError(() => ({ error: { code: 'MUESTRA_DUPLICADA' } })));
+    service.vigente.and.returnValue(throwError(() => ({ error: { message: 'No autorizado' } })));
+
+    component.generar();
+
+    expect(snackBar.open).toHaveBeenCalledWith('No autorizado', 'Cerrar', jasmine.any(Object));
+    expect(component.cargando()).toBe(false);
+  });
+
   it('reemplazar debería fijar el id en edición y limpiar el motivo', () => {
     crearComponente();
     component.reemplazar(5);
@@ -215,6 +265,31 @@ describe('MuestraAivListComponent', () => {
     expect(service.reemplazar).toHaveBeenCalledWith({ idMuestraDetalle: 5, motivo: 'Registro no disponible', usuario: 'admin' });
     expect(component.muestra()).toEqual(mockMuestra);
     expect(component.reemplazandoId()).toBeNull();
+  });
+
+  it('onDetallePage debería actualizar la página y el tamaño de página del detalle', () => {
+    crearComponente();
+    expect(component.detallePage).toBe(0);
+    expect(component.detallePageSize).toBe(20);
+
+    component.onDetallePage({ pageIndex: 3, pageSize: 100, length: 385 });
+
+    expect(component.detallePage).toBe(3);
+    expect(component.detallePageSize).toBe(100);
+  });
+
+  it('generar debería reiniciar la página del detalle al generar una muestra nueva', () => {
+    crearComponente();
+    component.periodoSeleccionado = 'PER-2025-01';
+    component.fechaInicio = new Date('2025-01-01T12:00:00');
+    component.fechaFin = new Date('2025-01-31T12:00:00');
+    component.empresaSeleccionada = '10';
+    component.detallePage = 5;
+    service.generar.and.returnValue(of(mockMuestra));
+
+    component.generar();
+
+    expect(component.detallePage).toBe(0);
   });
 
   it('iniciarEvaluacion no debería navegar si no hay muestra generada', () => {
