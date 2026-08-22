@@ -1,17 +1,17 @@
 .full-width {
   width: 100%;
-  margin-bottom: 15px;
+  margin-bottom: var(--space-4);
 }
 
 form {
   display: flex;
   flex-direction: column;
   min-width: 497px;
-  padding-top: 20px;
+  padding-top: var(--space-5);
 }
 
 mat-dialog-content {
-  padding: 20px 24px;
+  padding: var(--space-5) var(--space-5);
 }
 
 textarea {

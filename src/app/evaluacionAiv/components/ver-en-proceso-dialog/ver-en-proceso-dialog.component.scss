@@ -1,18 +1,18 @@
 .filtros {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: var(--space-3);
   align-items: center;
-  margin-bottom: 16px;
+  margin-bottom: var(--space-4);
 }
 .spinner-container {
   display: flex;
   justify-content: center;
-  padding: 24px 0;
+  padding: var(--space-5) 0;
 }
 .mensaje-vacio {
-  color: #757575;
-  padding: 16px 0;
+  color: var(--color-neutral-text);
+  padding: var(--space-4) 0;
 }
 table {
   width: 100%;

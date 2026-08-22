@@ -1,14 +1,14 @@
 section {
-  margin-bottom: 32px;
+  margin-bottom: var(--space-6);
 
   h3 {
-    margin-bottom: 12px;
+    margin-bottom: var(--space-3);
   }
 }
 .filtros {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: var(--space-3);
   align-items: center;
-  margin-bottom: 16px;
+  margin-bottom: var(--space-4);
 }

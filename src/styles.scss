@@ -38,3 +38,43 @@ $tisec-frontend-theme: mat.define-theme((
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+// Tokens de espaciado y color — ver skill "ui" (ener134_fisca_frontend/.claude/skills/ui/SKILL.md).
+// Escala de 8px y colores semánticos tomados de los valores ya dominantes en el código real.
+:root {
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 40px;
+
+  --color-success-bg: #e8f5e9;
+  --color-success-text: #2e7d32;
+  --color-error-bg: #ffebee;
+  --color-error-text: #c62828;
+  --color-warning-bg: #fff3e0;
+  --color-warning-text: #e65100;
+  --color-info-bg: #e3f2fd;
+  --color-info-text: #1565c0;
+  --color-neutral-bg: #f5f5f5;
+  --color-neutral-text: #666666;
+}
+
+// Patrón de sección estándar (filtros, acciones) — ver skill "ui". Los componentes existentes
+// mantienen sus clases locales (.filtros, .acciones-*); estas son para pantallas nuevas o para
+// cuando se migre un componente que de todas formas se esté tocando por otra tarea.
+.tisec-filtros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+  align-items: center;
+}
+.tisec-acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}

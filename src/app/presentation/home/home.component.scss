@@ -19,7 +19,7 @@
 
 .welcome-icon {
   margin-bottom: 1.5rem;
-  background-color: #e3f2fd;
+  background-color: var(--color-info-bg);
   display: inline-flex;
   padding: 1rem;
   border-radius: 50%;
@@ -41,6 +41,6 @@
 
 .welcome-subtitle {
   font-size: 1.1rem;
-  color: #666;
+  color: var(--color-neutral-text);
   line-height: 1.5;
 }

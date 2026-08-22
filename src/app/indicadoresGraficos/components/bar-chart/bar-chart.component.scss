@@ -1,5 +1,5 @@
 .grafico-container {
-  margin-bottom: 8px;
+  margin-bottom: var(--space-2);
 
   h4 {
     margin: 0 0 8px;
@@ -7,9 +7,9 @@
 }
 .scroll-wrapper {
   overflow-x: auto;
-  padding-bottom: 4px;
+  padding-bottom: var(--space-1);
 }
 .mensaje-vacio {
-  color: #757575;
-  padding: 16px 0;
+  color: var(--color-neutral-text);
+  padding: var(--space-4) 0;
 }
