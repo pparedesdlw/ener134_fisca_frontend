@@ -18,15 +18,16 @@ export function calcularRangoFechasPeriodo(
   if (!periodo) {
     return { min: null, max: maxDate };
   }
-  const finPeriodo = parseFechaIso(periodo.fechaFin);
+  const finPeriodo = parseFechaDdMmYyyy(periodo.fechaFin);
   return {
-    min: parseFechaIso(periodo.fechaInicio),
+    min: parseFechaDdMmYyyy(periodo.fechaInicio),
     max: finPeriodo < maxDate ? finPeriodo : maxDate
   };
 }
 
-function parseFechaIso(fechaIso: string): Date {
-  const [anio, mes, dia] = fechaIso.split('-').map(Number);
+/** PeriodoResponse (backend) serializa fechaInicio/fechaFin como "dd/MM/yyyy", no ISO. */
+function parseFechaDdMmYyyy(fecha: string): Date {
+  const [dia, mes, anio] = fecha.split('/').map(Number);
   return new Date(anio, mes - 1, dia);
 }
 

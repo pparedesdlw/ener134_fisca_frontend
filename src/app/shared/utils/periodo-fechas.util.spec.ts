@@ -4,8 +4,8 @@ import { Periodo } from '../../periodos/models/periodo.model';
 describe('calcularRangoFechasPeriodo', () => {
   const maxDate = new Date(2026, 7, 8);
   const periodos: Periodo[] = [
-    { codigoPeriodo: 'PER-2026-01', fechaInicio: '2026-01-01', fechaFin: '2026-03-31', estadoActivo: true },
-    { codigoPeriodo: 'PER-2026-02', fechaInicio: '2026-06-01', fechaFin: '2026-12-31', estadoActivo: true }
+    { codigoPeriodo: 'PER-2026-01', fechaInicio: '01/01/2026', fechaFin: '31/03/2026', estadoActivo: true },
+    { codigoPeriodo: 'PER-2026-02', fechaInicio: '01/06/2026', fechaFin: '31/12/2026', estadoActivo: true }
   ];
 
   it('sin periodo seleccionado, no debería tener mínimo y el máximo debería ser maxDate', () => {
