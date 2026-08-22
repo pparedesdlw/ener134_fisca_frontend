@@ -41,7 +41,7 @@ export class MainLayoutComponent implements OnInit {
           label: 'Fiscalización',
           items: [
             { label: 'Acceso a la información', path: '', disabled: true },
-            { label: 'Comprobación de la información a transferir', path: '/cit/calculo', disabled: false }
+            { label: 'Cálculo CIT', path: '/cit/calculo', disabled: false }
           ]
         },
         {
