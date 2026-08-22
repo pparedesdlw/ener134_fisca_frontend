@@ -1,8 +1,8 @@
 .datos-solo-lectura {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
-  margin-bottom: 8px;
+  gap: var(--space-3);
+  margin-bottom: var(--space-2);
 
   mat-form-field {
     flex: 1;
@@ -12,16 +12,20 @@
 
 .item {
   display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 16px;
-  padding: 8px 0;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-2) 0;
   border-bottom: 1px solid #eee;
+
+  mat-radio-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+  }
 }
 
 .item-descripcion {
-  flex: 1;
-  min-width: 260px;
+  display: block;
 }
 
 .auto-incumple {
@@ -31,5 +35,5 @@
 
 .justificacion-field {
   width: 100%;
-  margin-top: 12px;
+  margin-top: var(--space-3);
 }

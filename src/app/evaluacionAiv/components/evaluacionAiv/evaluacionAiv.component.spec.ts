@@ -323,6 +323,63 @@ describe('EvaluacionAivComponent', () => {
       }, 50);
     });
 
+    it('onArchivoMapeo debería fijar el archivo de plantilla seleccionado', () => {
+      const archivo = new File(['Nombre de archivo,Código único'], 'plantilla.csv');
+      const event = { target: { files: [archivo] } } as unknown as Event;
+      component.onArchivoMapeo(event);
+      expect(component.archivoMapeo).toBe(archivo);
+    });
+
+    it('cargarSustentoMasivo debería incluir el mapeo parseado de la plantilla CSV', (done) => {
+      component.archivoZip = new File(['contenido'], 'sustentos.zip', { type: 'application/zip' });
+      component.archivoMapeo = new File(
+        ['Nombre de archivo,Código único\nfactura1.pdf,21-260010024801'], 'plantilla.csv'
+      );
+      sustentoService.cargarMasivo.and.returnValue(of({ cargados: [{} as any], rechazados: [] }));
+
+      component.cargarSustentoMasivo();
+
+      setTimeout(() => {
+        expect(sustentoService.cargarMasivo).toHaveBeenCalledWith(jasmine.objectContaining({
+          mapeo: [{ nombreArchivo: 'factura1.pdf', codigoUnicoAtencion: '21-260010024801' }]
+        }));
+        expect(component.archivoMapeo).toBeNull();
+        done();
+      }, 50);
+    });
+
+    it('cargarSustentoMasivo debería avisar y no llamar al servicio si la plantilla CSV tiene encabezados inválidos', (done) => {
+      component.archivoZip = new File(['contenido'], 'sustentos.zip', { type: 'application/zip' });
+      component.archivoMapeo = new File(['Columna A,Columna B\nvalor1,valor2'], 'plantilla.csv');
+
+      component.cargarSustentoMasivo();
+
+      setTimeout(() => {
+        expect(sustentoService.cargarMasivo).not.toHaveBeenCalled();
+        expect(snackBar.open).toHaveBeenCalledWith(
+          'La plantilla debe tener las columnas "Nombre de archivo" y "Código único"', 'Cerrar', jasmine.any(Object)
+        );
+        done();
+      }, 50);
+    });
+
+    it('cargarSustentoMasivo debería avisar y no llamar al servicio si la plantilla CSV tiene filas inválidas', (done) => {
+      component.archivoZip = new File(['contenido'], 'sustentos.zip', { type: 'application/zip' });
+      component.archivoMapeo = new File(
+        ['Nombre de archivo,Código único\nfactura1.pdf,'], 'plantilla.csv'
+      );
+
+      component.cargarSustentoMasivo();
+
+      setTimeout(() => {
+        expect(sustentoService.cargarMasivo).not.toHaveBeenCalled();
+        expect(snackBar.open).toHaveBeenCalledWith(
+          jasmine.stringMatching(/plantilla de mapeo tiene filas inválidas/), 'Cerrar', jasmine.any(Object)
+        );
+        done();
+      }, 50);
+    });
+
     it('colorEstado debería retornar la clase según el estado del registro', () => {
       expect(component.colorEstado(registroPrincipal)).toBe('fila-evaluada');
       expect(component.colorEstado({ ...registroPrincipal, estadoRegistro: 'PENDIENTE' })).toBe('fila-pendiente');
