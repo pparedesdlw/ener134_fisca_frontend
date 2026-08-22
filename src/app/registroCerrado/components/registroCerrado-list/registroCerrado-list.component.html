@@ -83,7 +83,7 @@
         </ng-container>
         <ng-container matColumnDef="codigoAsunto">
           <th mat-header-cell *matHeaderCellDef>Asunto</th>
-          <td mat-cell *matCellDef="let r">{{ r.codigoAsunto }}</td>
+          <td mat-cell *matCellDef="let r">{{ descripcionAsunto(r.codigoAsunto) }}</td>
         </ng-container>
         <ng-container matColumnDef="fechaRecepcion">
           <th mat-header-cell *matHeaderCellDef>Fecha recepción</th>
@@ -95,13 +95,13 @@
         </ng-container>
         <ng-container matColumnDef="codigoUbigeo">
           <th mat-header-cell *matHeaderCellDef>Ubigeo</th>
-          <td mat-cell *matCellDef="let r">{{ r.codigoUbigeo }}</td>
+          <td mat-cell *matCellDef="let r">{{ r.descripcionUbigeo || r.codigoUbigeo }}</td>
         </ng-container>
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
         <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
       </table>
 
-      <mat-paginator *ngIf="totalElements() > 0" [length]="totalElements()" [pageSize]="20"
+      <mat-paginator *ngIf="totalElements() > 0" [length]="totalElements()" [pageIndex]="page" [pageSize]="size"
                      [pageSizeOptions]="[10, 20, 50, 100]" (page)="onPage($event)">
       </mat-paginator>
 

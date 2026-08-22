@@ -22,7 +22,7 @@ describe('RegistroCerradoListComponent', () => {
   let snackBar: jasmine.SpyObj<MatSnackBar>;
   let dialog: jasmine.SpyObj<MatDialog>;
 
-  const mockPeriodos: Periodo[] = [{ codigoPeriodo: 'PER-2025-01', fechaInicio: '2025-01-01', fechaFin: '2025-03-31', estadoActivo: true }];
+  const mockPeriodos: Periodo[] = [{ codigoPeriodo: 'PER-2025-01', fechaInicio: '01/01/2025', fechaFin: '31/03/2025', estadoActivo: true }];
   const mockEmpresas: EmpresaConcesionaria[] = [{ id: 1, codigoEmpresa: '10', razonSocial: 'Empresa 1' }];
   const mockAsuntos: Asunto[] = [{ codigoAsunto: '174', descripcion: 'Consumo excesivo', estado: '1' }];
   const mockRegistro: RegistroCerradoResponse = {
@@ -88,15 +88,15 @@ describe('RegistroCerradoListComponent', () => {
       expect(component.periodoMaxDate).toEqual(new Date(2025, 2, 31));
     });
 
-    it('al cambiar de periodo, debería limpiar fechas que quedaron fuera del nuevo rango', () => {
+    it('al cambiar de periodo, debería autocompletar fecha inicio y fecha fin con el rango del periodo', () => {
       component.periodoSeleccionado = 'PER-2025-01';
-      component.fechaInicio = new Date(2025, 1, 1);
-      component.fechaFin = new Date(2025, 5, 1);
+      component.fechaInicio = new Date(2025, 5, 1);
+      component.fechaFin = new Date(2025, 6, 1);
 
       component.onPeriodoChange();
 
-      expect(component.fechaInicio).toEqual(new Date(2025, 1, 1));
-      expect(component.fechaFin).toBeNull();
+      expect(component.fechaInicio).toEqual(new Date(2025, 0, 1));
+      expect(component.fechaFin).toEqual(new Date(2025, 2, 31));
     });
   });
 
@@ -104,6 +104,21 @@ describe('RegistroCerradoListComponent', () => {
     expect(component.periodos()).toEqual(mockPeriodos);
     expect(component.empresas()).toEqual(mockEmpresas);
     expect(component.asuntos()).toEqual(mockAsuntos);
+  });
+
+  describe('descripcionAsunto', () => {
+    it('debería resolver el código a "código - descripción" cuando existe en el catálogo', () => {
+      expect(component.descripcionAsunto('174')).toBe('174 - Consumo excesivo');
+    });
+
+    it('debería devolver el código crudo como respaldo cuando no está en el catálogo', () => {
+      expect(component.descripcionAsunto('999')).toBe('999');
+    });
+
+    it('debería resolver igual aunque el catálogo traiga codigoAsunto numérico (JSON no respeta el tipo TS)', () => {
+      component.asuntos.set([{ codigoAsunto: 174 as unknown as string, descripcion: 'Consumo excesivo', estado: '1' }]);
+      expect(component.descripcionAsunto('174')).toBe('174 - Consumo excesivo');
+    });
   });
 
   it('buscar debería avisar si faltan filtros obligatorios', () => {
@@ -128,6 +143,32 @@ describe('RegistroCerradoListComponent', () => {
     expect(component.totalElements()).toBe(1);
   });
 
+  describe('columnas de la tabla: descripciones en vez de códigos crudos', () => {
+    it('debería mostrar la descripción del asunto y del ubigeo cuando el backend las trae', () => {
+      llenarFiltro();
+      const registroConDescripciones: RegistroCerradoResponse = { ...mockRegistro, descripcionUbigeo: 'Lima - Lima - Lima' };
+      service.buscar.and.returnValue(of({ ...mockPagina, content: [registroConDescripciones] }));
+
+      component.buscar();
+      fixture.detectChanges();
+
+      const texto = fixture.nativeElement.textContent as string;
+      expect(texto).toContain('174 - Consumo excesivo');
+      expect(texto).toContain('Lima - Lima - Lima');
+      expect(texto).not.toContain('150101');
+    });
+
+    it('debería mostrar el código crudo de ubigeo como respaldo cuando no hay descripción', () => {
+      llenarFiltro();
+      service.buscar.and.returnValue(of(mockPagina)); // mockRegistro no trae descripcionUbigeo
+
+      component.buscar();
+      fixture.detectChanges();
+
+      expect((fixture.nativeElement.textContent as string)).toContain('150101');
+    });
+  });
+
   it('buscar debería vaciar los registros si falla la consulta', () => {
     llenarFiltro();
     service.buscar.and.returnValue(throwError(() => ({ error: { message: 'Error del servidor' } })));
@@ -145,7 +186,26 @@ describe('RegistroCerradoListComponent', () => {
 
     component.onPage({ pageIndex: 2, pageSize: 20, length: 100 });
 
-    expect(service.buscar).toHaveBeenCalledWith(jasmine.objectContaining({ page: 2 }));
+    expect(service.buscar).toHaveBeenCalledWith(jasmine.objectContaining({ page: 2, size: 20 }));
+  });
+
+  it('onPage debería recargar con el tamaño de página seleccionado (ej. 100)', () => {
+    llenarFiltro();
+    service.buscar.and.returnValue(of(mockPagina));
+
+    component.onPage({ pageIndex: 0, pageSize: 100, length: 200 });
+
+    expect(service.buscar).toHaveBeenCalledWith(jasmine.objectContaining({ page: 0, size: 100 }));
+  });
+
+  it('un cambio de tamaño de página debería mantenerse en búsquedas posteriores', () => {
+    llenarFiltro();
+    service.buscar.and.returnValue(of(mockPagina));
+
+    component.onPage({ pageIndex: 1, pageSize: 100, length: 200 });
+    component.buscar();
+
+    expect(service.buscar).toHaveBeenCalledWith(jasmine.objectContaining({ page: 0, size: 100 }));
   });
 
   it('exportar no debería llamar al servicio si faltan filtros', () => {
