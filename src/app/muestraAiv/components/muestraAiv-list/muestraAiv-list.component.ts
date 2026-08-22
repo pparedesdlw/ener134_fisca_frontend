@@ -12,6 +12,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -27,7 +28,7 @@ import { DepartamentoService } from '../../../ubigeos/services/departamento.serv
 import { Departamento } from '../../../ubigeos/models/departamento.model';
 import { ProvinciaService } from '../../../ubigeos/services/provincia.service';
 import { DistritoService } from '../../../ubigeos/services/distrito.service';
-import { calcularRangoFechasPeriodo, fechaFueraDeRango } from '../../../shared/utils/periodo-fechas.util';
+import { calcularRangoFechasPeriodo } from '../../../shared/utils/periodo-fechas.util';
 
 @Component({
   selector: 'app-muestra-aiv',
@@ -35,7 +36,7 @@ import { calcularRangoFechasPeriodo, fechaFueraDeRango } from '../../../shared/u
   imports: [
     CommonModule, FormsModule, MatCardModule, MatButtonModule, MatInputModule,
     MatFormFieldModule, MatSelectModule, MatDatepickerModule, MatNativeDateModule,
-    MatTableModule, MatIconModule, MatProgressSpinnerModule
+    MatTableModule, MatPaginatorModule, MatIconModule, MatProgressSpinnerModule
   ],
   templateUrl: './muestraAiv-list.component.html',
   styleUrl: './muestraAiv-list.component.scss'
@@ -75,6 +76,16 @@ export class MuestraAivListComponent implements OnInit {
 
   displayedColumns = ['orden', 'idRegistroCerrado', 'codigoTipoAtencion', 'titular', 'adicional', 'reemplazado', 'acciones'];
 
+  /** Paginado en memoria de "Detalle de la muestra": el arreglo completo ya llega en la
+   * respuesta (puede tener cientos de filas), no hay backend paginado que consultar. */
+  detallePage = 0;
+  detallePageSize = 20;
+
+  onDetallePage(event: PageEvent): void {
+    this.detallePage = event.pageIndex;
+    this.detallePageSize = event.pageSize;
+  }
+
   ngOnInit(): void {
     this.periodoService.listarPorEstado(true).subscribe({ next: (p) => this.periodos.set(p) });
     this.empresaService.listarTodos().subscribe({ next: (e) => this.empresas.set(e) });
@@ -98,15 +109,11 @@ export class MuestraAivListComponent implements OnInit {
     return calcularRangoFechasPeriodo(this.periodoSeleccionado, this.periodos(), this.maxDate).max;
   }
 
-  /** Al cambiar de periodo, limpia las fechas ya elegidas si quedaron fuera del nuevo rango habilitado. */
+  /** Al cambiar de periodo, autocompleta fecha inicio/fin con el rango completo del periodo. */
   onPeriodoChange(): void {
     const rango = calcularRangoFechasPeriodo(this.periodoSeleccionado, this.periodos(), this.maxDate);
-    if (fechaFueraDeRango(this.fechaInicio, rango)) {
-      this.fechaInicio = null;
-    }
-    if (fechaFueraDeRango(this.fechaFin, rango)) {
-      this.fechaFin = null;
-    }
+    this.fechaInicio = rango.min;
+    this.fechaFin = rango.max;
   }
 
   generar(): void {
@@ -128,10 +135,15 @@ export class MuestraAivListComponent implements OnInit {
         }).subscribe({
           next: (m) => {
             this.muestra.set(m);
+            this.detallePage = 0;
             this.cargando.set(false);
             this.snack.open('Muestra generada', 'Cerrar', { duration: 3000 });
           },
           error: (e) => {
+            if (e?.error?.code === 'MUESTRA_DUPLICADA') {
+              this.cargarMuestraExistente();
+              return;
+            }
             this.cargando.set(false);
             this.snack.open(e?.error?.message ?? 'Error generando muestra', 'Cerrar', { duration: 4000 });
           }
@@ -140,6 +152,31 @@ export class MuestraAivListComponent implements OnInit {
       error: () => {
         this.cargando.set(false);
         this.snack.open('Error obteniendo los ubigeos seleccionados', 'Cerrar', { duration: 4000 });
+      }
+    });
+  }
+
+  /**
+   * Si ya existe una muestra activa (409 MUESTRA_DUPLICADA), la carga en vez de
+   * dejar al usuario sin forma de verla ni de continuar a "Iniciar evaluación".
+   */
+  private cargarMuestraExistente(): void {
+    const idEmpresa = this.empresas().find((e) => e.codigoEmpresa === this.empresaSeleccionada)?.id;
+    if (!this.periodoSeleccionado || !idEmpresa) {
+      this.cargando.set(false);
+      this.snack.open('Ya existe una muestra activa, pero no se pudo cargar automáticamente', 'Cerrar', { duration: 4000 });
+      return;
+    }
+    this.service.vigente(this.periodoSeleccionado, idEmpresa).subscribe({
+      next: (m) => {
+        this.muestra.set(m);
+        this.detallePage = 0;
+        this.cargando.set(false);
+        this.snack.open('Ya existía una muestra activa para este periodo y empresa; se cargó a continuación', 'Cerrar', { duration: 4000 });
+      },
+      error: (e) => {
+        this.cargando.set(false);
+        this.snack.open(e?.error?.message ?? 'Ya existe una muestra activa, pero no se pudo cargar', 'Cerrar', { duration: 4000 });
       }
     });
   }
