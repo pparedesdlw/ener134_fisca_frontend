@@ -26,7 +26,7 @@ import { Asunto } from '../../../asuntos/models/asunto.model';
 import { VerEnProcesoDialogComponent } from '../../../evaluacionAiv/components/ver-en-proceso-dialog/ver-en-proceso-dialog.component';
 import { HistoricoPreliminarDialogComponent } from '../../../evaluacionAiv/components/historico-preliminar-dialog/historico-preliminar-dialog.component';
 import { ReabrirEvaluacionDialogComponent } from '../../../evaluacionAiv/components/reabrir-evaluacion-dialog/reabrir-evaluacion-dialog.component';
-import { calcularRangoFechasPeriodo, fechaFueraDeRango } from '../../../shared/utils/periodo-fechas.util';
+import { calcularRangoFechasPeriodo } from '../../../shared/utils/periodo-fechas.util';
 
 @Component({
   selector: 'app-registro-cerrado-list',
@@ -65,8 +65,12 @@ export class RegistroCerradoListComponent implements OnInit {
   cargando = signal<boolean>(false);
   buscoAlMenosUnaVez = signal<boolean>(false);
 
-  private page = 0;
-  private readonly size = 20;
+  /** Expuestos (no private) porque el template los usa para reconstruir el estado del
+   * paginator: al ser recreado tras cada búsqueda (*ngIf de cargando()), Material lo
+   * inicializa siempre en pageIndex 0 salvo que se le indique explícitamente en qué
+   * página/tamaño quedó. */
+  page = 0;
+  size = 20;
 
   displayedColumns = ['codigoAtencion', 'codigoAsunto', 'fechaRecepcion', 'fechaCierre', 'codigoUbigeo'];
 
@@ -84,15 +88,22 @@ export class RegistroCerradoListComponent implements OnInit {
     return calcularRangoFechasPeriodo(this.periodoSeleccionado, this.periodos(), this.maxDate).max;
   }
 
-  /** Al cambiar de periodo, limpia las fechas ya elegidas si quedaron fuera del nuevo rango habilitado. */
+  /**
+   * Resuelve el código de asunto a "código - descripción" usando el catálogo ya cargado;
+   * si no lo encuentra, muestra el código crudo como respaldo. Compara como string porque
+   * el catálogo puede llegar con codigoAsunto numérico en tiempo de ejecución pese al tipo
+   * TS declarado (el JSON del backend no respeta el tipo de la interfaz).
+   */
+  descripcionAsunto(codigoAsunto: string): string {
+    const asunto = this.asuntos().find((a) => String(a.codigoAsunto) === String(codigoAsunto));
+    return asunto ? `${asunto.codigoAsunto} - ${asunto.descripcion}` : codigoAsunto;
+  }
+
+  /** Al cambiar de periodo, autocompleta fecha inicio/fin con el rango completo del periodo. */
   onPeriodoChange(): void {
     const rango = calcularRangoFechasPeriodo(this.periodoSeleccionado, this.periodos(), this.maxDate);
-    if (fechaFueraDeRango(this.fechaInicio, rango)) {
-      this.fechaInicio = null;
-    }
-    if (fechaFueraDeRango(this.fechaFin, rango)) {
-      this.fechaFin = null;
-    }
+    this.fechaInicio = rango.min;
+    this.fechaFin = rango.max;
   }
 
   private construirFiltro(): RegistroCerradoFilterRequest | null {
@@ -141,6 +152,7 @@ export class RegistroCerradoListComponent implements OnInit {
 
   onPage(event: PageEvent): void {
     this.page = event.pageIndex;
+    this.size = event.pageSize;
     this.ejecutarBusqueda();
   }
 

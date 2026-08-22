@@ -5,6 +5,7 @@ export interface RegistroCerradoResponse {
   fechaRecepcion: string;
   fechaCierre: string;
   codigoUbigeo: string;
+  descripcionUbigeo?: string;
   usuarioCreacion: string;
 }
 
