@@ -259,7 +259,7 @@ describe('CalculoCitFormComponent', () => {
   describe('rango de fechas según periodo seleccionado', () => {
     beforeEach(() => {
       component.periodos = [
-        { codigoPeriodo: 'PER-2024-01', descripcion: 'Trimestre 1', fechaInicio: '2024-01-01', fechaFin: '2024-03-31', estadoActivo: true }
+        { codigoPeriodo: 'PER-2024-01', descripcion: 'Trimestre 1', fechaInicio: '01/01/2024', fechaFin: '31/03/2024', estadoActivo: true }
       ];
     });
 
@@ -275,15 +275,15 @@ describe('CalculoCitFormComponent', () => {
       expect(component.periodoMaxDate).toEqual(new Date(2024, 2, 31));
     });
 
-    it('al cambiar de periodo, debería limpiar fechas que quedaron fuera del nuevo rango', () => {
+    it('al cambiar de periodo, debería autocompletar fecha inicio y fecha fin con el rango del periodo', () => {
       component.periodoSeleccionado = 'PER-2024-01';
-      component.fechaInicio = new Date(2025, 0, 1);
-      component.fechaFin = new Date(2024, 1, 1);
+      component.fechaInicio = new Date(2025, 5, 1);
+      component.fechaFin = new Date(2025, 6, 1);
 
       component.onPeriodoChange();
 
-      expect(component.fechaInicio).toBeNull();
-      expect(component.fechaFin).toEqual(new Date(2024, 1, 1));
+      expect(component.fechaInicio).toEqual(new Date(2024, 0, 1));
+      expect(component.fechaFin).toEqual(new Date(2024, 2, 31));
     });
   });
 
