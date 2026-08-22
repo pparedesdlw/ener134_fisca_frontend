@@ -21,6 +21,8 @@
         <input matInput type="number" [(ngModel)]="idEvaluacionAiv" />
       </mat-form-field>
       <input type="file" accept=".zip" (change)="onFileZip($event)" />
+      <input type="file" accept=".csv" (change)="onFileMapeo($event)"
+             title="Opcional: CSV con columnas 'Nombre de archivo' y 'Código único', para archivos que no están nombrados con el código único." />
       <button mat-raised-button color="primary" (click)="cargarMasivo()">Cargar ZIP masivo</button>
     </div>
 
