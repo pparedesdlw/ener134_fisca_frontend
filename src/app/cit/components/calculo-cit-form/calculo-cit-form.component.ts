@@ -23,7 +23,7 @@ import { AccionesAtencionComponent } from '../../../atencionesComerciales/compon
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { EvaluacionCitService } from '../../../evaluacionCit/services/evaluacionCit.service';
 import { HistoricoCitDialogComponent } from '../../../evaluacionCit/components/historico-cit-dialog/historico-cit-dialog.component';
-import { calcularRangoFechasPeriodo, fechaFueraDeRango } from '../../../shared/utils/periodo-fechas.util';
+import { calcularRangoFechasPeriodo } from '../../../shared/utils/periodo-fechas.util';
 
 @Component({
   selector: 'app-calculo-cit-form',
@@ -131,15 +131,11 @@ export class CalculoCitFormComponent implements OnInit {
     return calcularRangoFechasPeriodo(this.periodoSeleccionado, this.periodos, this.maxDate).max;
   }
 
-  /** Al cambiar de periodo, limpia las fechas ya elegidas si quedaron fuera del nuevo rango habilitado. */
+  /** Al cambiar de periodo, autocompleta fecha inicio/fin con el rango completo del periodo. */
   onPeriodoChange(): void {
     const rango = calcularRangoFechasPeriodo(this.periodoSeleccionado, this.periodos, this.maxDate);
-    if (fechaFueraDeRango(this.fechaInicio, rango)) {
-      this.fechaInicio = null;
-    }
-    if (fechaFueraDeRango(this.fechaFin, rango)) {
-      this.fechaFin = null;
-    }
+    this.fechaInicio = rango.min;
+    this.fechaFin = rango.max;
   }
 
   calcularCit(): void {
