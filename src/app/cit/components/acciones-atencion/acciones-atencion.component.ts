@@ -5,6 +5,7 @@ import { MatPaginatorModule, MatPaginator } from '@angular/material/paginator';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { CitService } from '../../services/cit.service';
 import { AccionResponse, InfoTecnicaCierreResponse } from '../../models/cit.model';
 import { InfoTecnicaPanelComponent } from '../info-tecnica-panel/info-tecnica-panel.component';
@@ -19,6 +20,7 @@ import { InfoTecnicaPanelComponent } from '../info-tecnica-panel/info-tecnica-pa
     MatProgressSpinnerModule,
     MatIconModule,
     MatDividerModule,
+    MatTooltipModule,
     InfoTecnicaPanelComponent
   ],
   templateUrl: './acciones-atencion.component.html',

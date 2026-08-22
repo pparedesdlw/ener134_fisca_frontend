@@ -34,7 +34,7 @@
 
       <ng-container matColumnDef="descripcionAccionRealizada">
         <th mat-header-cell *matHeaderCellDef>Descripción de la acción realizada</th>
-        <td mat-cell *matCellDef="let row" class="celda-descripcion">{{ row.descripcionAccionRealizada }}</td>
+        <td mat-cell *matCellDef="let row" class="celda-descripcion" [matTooltip]="row.descripcionAccionRealizada">{{ row.descripcionAccionRealizada }}</td>
       </ng-container>
 
       <ng-container matColumnDef="descripcionEstadoAtencion">

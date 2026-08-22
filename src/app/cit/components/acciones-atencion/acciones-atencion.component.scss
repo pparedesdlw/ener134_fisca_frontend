@@ -1,5 +1,5 @@
 .acciones-container {
-  padding: 12px;
+  padding: var(--space-3);
   background: #fff;
   border-radius: 8px;
   border: 1px solid #e0e0e0;
@@ -9,13 +9,13 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 12px;
+  margin-bottom: var(--space-3);
 }
 
 .acciones-title {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: var(--space-2);
   font-weight: 600;
   font-size: 14px;
   color: #333;
@@ -24,26 +24,26 @@
     font-size: 20px;
     width: 20px;
     height: 20px;
-    color: #1565c0;
+    color: var(--color-info-text);
   }
 }
 
 .total-registros {
   font-size: 12px;
-  color: #666;
-  background: #f5f5f5;
-  padding: 4px 10px;
+  color: var(--color-neutral-text);
+  background: var(--color-neutral-bg);
+  padding: var(--space-1) var(--space-3);
   border-radius: 12px;
 }
 
 .spinner-container {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 16px;
+  gap: var(--space-3);
+  padding: var(--space-4);
 
   span {
-    color: #666;
+    color: var(--color-neutral-text);
     font-size: 13px;
   }
 }
@@ -59,16 +59,16 @@
   }
 
   .badge-estado {
-    padding: 4px 10px;
+    padding: var(--space-1) var(--space-3);
     border-radius: 12px;
     font-size: 12px;
     font-weight: 500;
-    background: #f5f5f5;
-    color: #757575;
+    background: var(--color-neutral-bg);
+    color: var(--color-neutral-text);
 
     &.cerrado {
-      background: #e8f5e9;
-      color: #2e7d32;
+      background: var(--color-success-bg);
+      color: var(--color-success-text);
     }
   }
 }
@@ -80,8 +80,8 @@
 .no-data {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 20px;
+  gap: var(--space-2);
+  padding: var(--space-5);
   color: #999;
   font-size: 13px;
   justify-content: center;
@@ -92,9 +92,9 @@
 }
 
 .divider-rf08 {
-  margin: 16px 0;
+  margin: var(--space-4) 0;
 }
 
 .info-tecnica-section {
-  margin-top: 8px;
+  margin-top: var(--space-2);
 }
