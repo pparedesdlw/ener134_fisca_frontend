@@ -99,4 +99,49 @@ describe('IndicadoresGraficosComponent', () => {
   it('etiquetaEmpresa debería devolver el id como string si no encuentra la empresa', () => {
     expect(component.etiquetaEmpresa(99)).toBe('99');
   });
+
+  it('no debería marcar "sin datos" mientras no se haya realizado una búsqueda', () => {
+    expect(component.sinDatosEvolucion()).toBeFalse();
+    expect(component.sinDatosComparativo()).toBeFalse();
+    expect(component.hayEvolucion()).toBeFalse();
+    expect(component.hayComparativo()).toBeFalse();
+  });
+
+  it('evolución sin puntos debería activar el mensaje "sin datos" y no renderizar gráficos', () => {
+    component.empresaSeleccionada = 1;
+    service.evolucion.and.returnValue(of({ puntos: [], toleranciaAiv: 5, toleranciaCit: 5 }));
+
+    component.cargarEvolucion();
+    fixture.detectChanges();
+
+    expect(component.hayEvolucion()).toBeFalse();
+    expect(component.sinDatosEvolucion()).toBeTrue();
+    const texto: string = fixture.nativeElement.textContent;
+    expect(texto).toContain(component.MENSAJE_SIN_DATOS);
+    expect(fixture.nativeElement.querySelectorAll('app-bar-chart').length).toBe(0);
+  });
+
+  it('comparativo sin puntos debería activar el mensaje "sin datos" y no renderizar gráficos', () => {
+    component.periodoSeleccionado = 'PER-2025-01';
+    service.comparativo.and.returnValue(of({ puntos: [], toleranciaAiv: 5, toleranciaCit: 5 }));
+
+    component.cargarComparativo();
+    fixture.detectChanges();
+
+    expect(component.hayComparativo()).toBeFalse();
+    expect(component.sinDatosComparativo()).toBeTrue();
+    expect(fixture.nativeElement.querySelectorAll('app-bar-chart').length).toBe(0);
+  });
+
+  it('evolución con puntos debería renderizar los gráficos y no mostrar el mensaje', () => {
+    component.empresaSeleccionada = 1;
+    service.evolucion.and.returnValue(of(mockEvolucion));
+
+    component.cargarEvolucion();
+    fixture.detectChanges();
+
+    expect(component.hayEvolucion()).toBeTrue();
+    expect(component.sinDatosEvolucion()).toBeFalse();
+    expect(fixture.nativeElement.querySelectorAll('app-bar-chart').length).toBe(2);
+  });
 });

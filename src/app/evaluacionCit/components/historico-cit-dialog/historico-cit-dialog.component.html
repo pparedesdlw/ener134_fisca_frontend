@@ -5,7 +5,7 @@
   </div>
 
   <p *ngIf="!cargando() && sinInformacion()" class="mensaje-vacio">
-    No existe información disponible para el periodo y empresa seleccionados.
+    {{ mensajeVacio() }}
   </p>
 
   <ng-container *ngIf="!cargando() && evaluacion() as e">
