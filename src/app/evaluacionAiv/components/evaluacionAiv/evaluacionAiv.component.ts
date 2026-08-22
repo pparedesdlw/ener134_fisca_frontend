@@ -11,12 +11,15 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialog } from '@angular/material/dialog';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { EvaluacionAivService } from '../../services/evaluacionAiv.service';
 import { EvaluacionAivResponse, EvaluacionRegistroResponse } from '../../models/evaluacionAiv.model';
 import { MuestraAivService } from '../../../muestraAiv/services/muestraAiv.service';
 import { SustentoAivService } from '../../../sustentoAiv/services/sustentoAiv.service';
+import { MapeoArchivoSustento } from '../../../sustentoAiv/models/sustentoAiv.model';
 import { excedeTamanioMaximo } from '../../../shared/utils/archivo.util';
+import { parsearMapeoCsv } from '../../../shared/utils/mapeoSustentoCsv.util';
 import { VerDetalleDialogComponent } from '../ver-detalle-dialog/ver-detalle-dialog.component';
 import { VerSustentoDialogComponent } from '../ver-sustento-dialog/ver-sustento-dialog.component';
 import { EvaluarItemsDialogComponent } from '../evaluar-items-dialog/evaluar-items-dialog.component';
@@ -28,7 +31,7 @@ import { ResultadoConsolidadoDialogComponent } from '../resultado-consolidado-di
   imports: [
     CommonModule, FormsModule, MatCardModule, MatButtonModule, MatInputModule,
     MatFormFieldModule, MatTableModule, MatTabsModule, MatIconModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule, MatTooltipModule
   ],
   templateUrl: './evaluacionAiv.component.html',
   styleUrl: './evaluacionAiv.component.scss'
@@ -46,6 +49,7 @@ export class EvaluacionAivComponent implements OnInit {
   textoBusqueda = signal('');
   cargando = signal<boolean>(false);
   archivoZip: File | null = null;
+  archivoMapeo: File | null = null;
   tabSeleccionado = 0;
 
   /** RF10: registro de la muestra principal seleccionado para reemplazar; null si no hay selección activa. */
@@ -239,27 +243,68 @@ export class EvaluacionAivComponent implements OnInit {
     this.archivoZip = archivo;
   }
 
-  cargarSustentoMasivo(): void {
+  onArchivoMapeo(ev: Event): void {
+    const input = ev.target as HTMLInputElement;
+    const archivos = input.files;
+    this.archivoMapeo = archivos && archivos.length > 0 ? archivos[0] : null;
+  }
+
+  async cargarSustentoMasivo(): Promise<void> {
     const e = this.evaluacion();
     if (!e || !this.archivoZip) return;
+
+    let mapeo: MapeoArchivoSustento[] | undefined;
+    if (this.archivoMapeo) {
+      try {
+        const contenidoCsv = await this.leerArchivoComoTexto(this.archivoMapeo);
+        const resultado = parsearMapeoCsv(contenidoCsv);
+        if (resultado.filasInvalidas.length) {
+          this.snack.open(
+            `La plantilla de mapeo tiene filas inválidas: ${resultado.filasInvalidas.map((f) => `fila ${f.numeroFila}`).join(', ')}`,
+            'Cerrar', { duration: 6000 }
+          );
+          return;
+        }
+        mapeo = resultado.mapeo;
+      } catch (error) {
+        this.snack.open((error as Error).message, 'Cerrar', { duration: 6000 });
+        return;
+      }
+    }
+
     const archivo = this.archivoZip;
-    const lector = new FileReader();
-    lector.onload = () => {
-      const base64 = (lector.result as string).split(',')[1];
-      this.sustentoService.cargarMasivo({
-        idEvaluacionAiv: e.id, nombreArchivoZip: archivo.name, contenidoZipBase64: base64, usuario: this.usuario
-      }).subscribe({
-        next: (resultado) => {
-          this.archivoZip = null;
-          const mensaje = resultado.rechazados.length
-            ? `Cargados ${resultado.cargados.length}, rechazados ${resultado.rechazados.length}: ${resultado.rechazados.map((r) => r.nombreArchivo + ' (' + r.motivo + ')').join('; ')}`
-            : `Cargados ${resultado.cargados.length} sustentos`;
-          this.snack.open(mensaje, 'Cerrar', { duration: 8000 });
-        },
-        error: (err) => this.snack.open(err?.error?.message ?? 'Error en la carga masiva', 'Cerrar', { duration: 4000 })
-      });
-    };
-    lector.readAsDataURL(archivo);
+    const contenidoZipBase64 = await this.leerArchivoComoBase64(archivo);
+    this.sustentoService.cargarMasivo({
+      idEvaluacionAiv: e.id, nombreArchivoZip: archivo.name, contenidoZipBase64, usuario: this.usuario, mapeo
+    }).subscribe({
+      next: (resultado) => {
+        this.archivoZip = null;
+        this.archivoMapeo = null;
+        const mensaje = resultado.rechazados.length
+          ? `Cargados ${resultado.cargados.length}, rechazados ${resultado.rechazados.length}: ${resultado.rechazados.map((r) => r.nombreArchivo + ' (' + r.motivo + ')').join('; ')}`
+          : `Cargados ${resultado.cargados.length} sustentos`;
+        this.snack.open(mensaje, 'Cerrar', { duration: 8000 });
+      },
+      error: (err) => this.snack.open(err?.error?.message ?? 'Error en la carga masiva', 'Cerrar', { duration: 4000 })
+    });
+  }
+
+  private leerArchivoComoBase64(archivo: File): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const lector = new FileReader();
+      lector.onload = () => resolve((lector.result as string).split(',')[1]);
+      lector.onerror = () => reject(lector.error);
+      lector.readAsDataURL(archivo);
+    });
+  }
+
+  private leerArchivoComoTexto(archivo: File): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const lector = new FileReader();
+      lector.onload = () => resolve(lector.result as string);
+      lector.onerror = () => reject(lector.error);
+      lector.readAsText(archivo);
+    });
   }
 
   exportar(): void {

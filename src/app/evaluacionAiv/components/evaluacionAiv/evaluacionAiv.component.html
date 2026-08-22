@@ -169,6 +169,9 @@
         <button mat-raised-button color="primary" (click)="consolidar()">Consolidar</button>
 
         <input type="file" accept=".zip" (change)="onArchivoZip($event)" />
+        <span class="mapeo-opcional" matTooltip="Opcional: CSV con columnas 'Nombre de archivo' y 'Código único', para cuando los archivos del ZIP no están nombrados con el código único.">
+          <input type="file" accept=".csv" (change)="onArchivoMapeo($event)" />
+        </span>
         <button mat-raised-button (click)="cargarSustentoMasivo()" [disabled]="!archivoZip">Cargar sustento (ZIP)</button>
 
         <button mat-raised-button color="accent" (click)="exportar()">

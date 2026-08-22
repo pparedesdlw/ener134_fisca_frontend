@@ -1,52 +1,52 @@
 .filtros, .acciones-globales {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
-  margin-bottom: 16px;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
   align-items: center;
 }
 .resumen {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  gap: 8px;
-  margin-bottom: 12px;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
 }
 .buscador {
   width: 100%;
   max-width: 420px;
-  margin-bottom: 12px;
+  margin-bottom: var(--space-3);
 }
 .spinner-container {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
-  padding: 24px 0;
+  gap: var(--space-2);
+  padding: var(--space-5) 0;
 }
 .reemplazo-banner {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin: 12px 0;
-  padding: 12px;
+  gap: var(--space-3);
+  margin: var(--space-3) 0;
+  padding: var(--space-3);
   background: #fff8e1;
   border-left: 4px solid #ffb300;
 }
 .reemplazados-panel {
-  margin-top: 12px;
+  margin-top: var(--space-3);
 
   h4 {
-    margin-bottom: 8px;
-    color: #757575;
+    margin-bottom: var(--space-2);
+    color: var(--color-neutral-text);
   }
 }
 table {
   width: 100%;
-  margin-bottom: 16px;
+  margin-bottom: var(--space-4);
 }
 ::ng-deep .fila-evaluada {
-  background-color: #e8f5e9;
+  background-color: var(--color-success-bg);
 }
 ::ng-deep .fila-pendiente {
-  background-color: #ffebee;
+  background-color: var(--color-error-bg);
 }

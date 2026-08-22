@@ -30,7 +30,8 @@ const ITEM_AUTO_INCUMPLE_DESTINO = 'ITEM_01';
     CommonModule, FormsModule, MatDialogModule, MatButtonModule, MatFormFieldModule,
     MatInputModule, MatRadioModule, MatIconModule
   ],
-  templateUrl: './evaluar-items-dialog.component.html'
+  templateUrl: './evaluar-items-dialog.component.html',
+  styleUrl: './evaluar-items-dialog.component.scss'
 })
 export class EvaluarItemsDialogComponent implements OnInit {
   private service = inject(EvaluacionAivService);
