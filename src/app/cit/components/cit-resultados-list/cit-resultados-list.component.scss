@@ -1,14 +1,14 @@
 .resultados-container {
-  padding: 20px;
+  padding: var(--space-5);
 
   h2 {
-    margin-bottom: 20px;
+    margin-bottom: var(--space-5);
   }
 
   mat-form-field {
     width: 100%;
     max-width: 400px;
-    margin-bottom: 30px;
+    margin-bottom: var(--space-6);
   }
 }
 
@@ -17,33 +17,33 @@
 }
 
 .badge-success {
-  padding: 4px 8px;
+  padding: var(--space-1) var(--space-2);
   border-radius: 4px;
   background-color: #c8e6c9;
-  color: #2e7d32;
+  color: var(--color-success-text);
   font-weight: 500;
 }
 
 .badge-error {
-  padding: 4px 8px;
+  padding: var(--space-1) var(--space-2);
   border-radius: 4px;
   background-color: #ffcdd2;
-  color: #c62828;
+  color: var(--color-error-text);
   font-weight: 500;
 }
 
 .nrn-badge {
-  padding: 4px 12px;
+  padding: var(--space-1) var(--space-3);
   border-radius: 50%;
-  background-color: #e3f2fd;
+  background-color: var(--color-info-bg);
   color: #1976d2;
   font-weight: bold;
 }
 
 .no-data {
   text-align: center;
-  padding: 40px;
-  color: #666;
+  padding: var(--space-7);
+  color: var(--color-neutral-text);
   font-style: italic;
 }
 
@@ -51,7 +51,7 @@
   cursor: pointer;
 
   &:hover {
-    background: #f5f5f5;
+    background: var(--color-neutral-bg);
   }
 
   &.expanded-row {
@@ -68,5 +68,5 @@
 }
 
 .detail-content {
-  padding: 12px 16px;
+  padding: var(--space-3) var(--space-4);
 }

@@ -1,8 +1,8 @@
 .info-evaluacion {
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  margin-bottom: 16px;
+  gap: var(--space-1);
+  margin-bottom: var(--space-4);
   color: #616161;
 }
 .campo-completo {
@@ -11,8 +11,8 @@
 .campo-archivo {
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  margin-bottom: 16px;
+  gap: var(--space-1);
+  margin-bottom: var(--space-4);
 
   label {
     font-size: 12px;
