@@ -20,7 +20,7 @@ describe('ReabrirEvaluacionDialogComponent', () => {
   let dialog: jasmine.SpyObj<MatDialog>;
   let dialogRef: jasmine.SpyObj<MatDialogRef<ReabrirEvaluacionDialogComponent>>;
 
-  const mockPeriodos: Periodo[] = [{ codigoPeriodo: 'PER-2025-01', fechaInicio: '2025-01-01', fechaFin: '2025-03-31', estadoActivo: true }];
+  const mockPeriodos: Periodo[] = [{ codigoPeriodo: 'PER-2025-01', fechaInicio: '01/01/2025', fechaFin: '31/03/2025', estadoActivo: true }];
   const mockEmpresas: EmpresaConcesionaria[] = [{ codigoEmpresa: '10', razonSocial: 'Empresa 1' }];
   const mockConsolidadas: EvaluacionAivConsolidadaResponse[] = [
     {

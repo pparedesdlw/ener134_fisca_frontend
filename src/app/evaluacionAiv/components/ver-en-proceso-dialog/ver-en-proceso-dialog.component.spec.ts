@@ -20,7 +20,7 @@ describe('VerEnProcesoDialogComponent', () => {
   let dialogRef: jasmine.SpyObj<MatDialogRef<VerEnProcesoDialogComponent>>;
   let router: jasmine.SpyObj<Router>;
 
-  const mockPeriodos: Periodo[] = [{ codigoPeriodo: 'PER-2025-01', fechaInicio: '2025-01-01', fechaFin: '2025-03-31', estadoActivo: true }];
+  const mockPeriodos: Periodo[] = [{ codigoPeriodo: 'PER-2025-01', fechaInicio: '01/01/2025', fechaFin: '31/03/2025', estadoActivo: true }];
   const mockEmpresas: EmpresaConcesionaria[] = [{ codigoEmpresa: '10', razonSocial: 'Empresa 1' }];
   const mockEvaluaciones: EvaluacionAivResumenResponse[] = [
     { id: 1, codigoPeriodo: 'PER-2025-01', codigoEmpresa: 10, fechaInicio: '2025-01-01', fechaFin: '2025-03-31', estadoEvaluacion: 'EN_PROCESO', fechaModificacion: null, usuarioResponsable: 'admin', avancePorcentaje: 50 }
