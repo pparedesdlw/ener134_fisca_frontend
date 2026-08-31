@@ -36,6 +36,9 @@ export class IndicadoresGraficosComponent implements OnInit {
   empresaSeleccionada: number | null = null;
   periodoSeleccionado: string | null = null;
 
+  /** Mensaje institucional del flujo alterno "sin datos" de RF11. */
+  readonly MENSAJE_SIN_DATOS = 'No existe información disponible para los filtros seleccionados';
+
   evolucion = signal<EvolucionIndicadoresResponse | null>(null);
   comparativo = signal<ComparativoIndicadoresResponse | null>(null);
 
@@ -46,6 +49,14 @@ export class IndicadoresGraficosComponent implements OnInit {
   labelsComparativo = computed(() => this.comparativo()?.puntos.map((p) => this.etiquetaEmpresa(p.codigoEmpresa)) ?? []);
   valoresAivComparativo = computed(() => this.comparativo()?.puntos.map((p) => p.indicadorAiv) ?? []);
   valoresCitComparativo = computed(() => this.comparativo()?.puntos.map((p) => p.indicadorCit) ?? []);
+
+  /** true cuando hay una consulta cargada con al menos un punto → se renderizan los gráficos. */
+  hayEvolucion = computed(() => (this.evolucion()?.puntos.length ?? 0) > 0);
+  hayComparativo = computed(() => (this.comparativo()?.puntos.length ?? 0) > 0);
+
+  /** true solo tras una búsqueda que no devolvió puntos → se muestra el mensaje institucional. */
+  sinDatosEvolucion = computed(() => this.evolucion() != null && this.evolucion()!.puntos.length === 0);
+  sinDatosComparativo = computed(() => this.comparativo() != null && this.comparativo()!.puntos.length === 0);
 
   ngOnInit(): void {
     this.periodoService.listarPorEstado(true).subscribe({ next: (p) => this.periodos.set(p) });

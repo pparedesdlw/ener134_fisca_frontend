@@ -12,3 +12,13 @@ section {
   align-items: center;
   margin-bottom: var(--space-4);
 }
+.mensaje-sin-datos {
+  margin: 8px 0;
+  padding: 16px;
+  color: #757575;
+  font-style: italic;
+  text-align: center;
+  background: #fafafa;
+  border: 1px dashed #e0e0e0;
+  border-radius: 4px;
+}
