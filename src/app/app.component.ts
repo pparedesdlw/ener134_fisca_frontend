@@ -11,7 +11,7 @@ import { LoaderComponent } from './shared/loader/loader.component';
   styleUrl: './app.component.scss'
 })
 export class AppComponent implements OnInit {
-  title = 'tisec-frontend';
+  title = 'tisecweb';
 
   constructor(private authService: AuthService) {}
 

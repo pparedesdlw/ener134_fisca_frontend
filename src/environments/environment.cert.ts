@@ -1,5 +1,8 @@
+const host = "https://srvcerttisecweb.osinergmin.gob.pe";
+const base = `${host}/tisecweb/`;
+
 export const environment = {
-  production: false,
-  urlbase:"https://srvcertpvo.osinergmin.gob.pe/scop-gn/",
-  apiUrl: "https://srvcertpvo.osinergmin.gob.pe/scop-gn/osinergmin/tisecweb"
+  production: true,
+  urlbase: base,
+  apiUrl: `${base}osinergmin/tisecweb`
 };

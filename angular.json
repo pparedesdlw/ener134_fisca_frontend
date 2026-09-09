@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "tisec-frontend": {
+    "tisecweb": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -17,7 +17,10 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/tisec-frontend",
+            "outputPath": {
+              "base": "dist/tisecweb",
+              "browser": ""
+            },
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": [
@@ -38,6 +41,7 @@
           },
           "configurations": {
             "production": {
+              "baseHref": "/tisecweb/",
               "budgets": [
                 {
                   "type": "initial",
@@ -59,6 +63,7 @@
               "outputHashing": "all"
             },
             "certification": {
+              "baseHref": "/tisecweb/",
               "budgets": [
                 {
                   "type": "initial",
@@ -80,6 +85,7 @@
               "outputHashing": "all"
             },
             "development": {
+              "baseHref": "/",
               "optimization": false,
               "extractLicenses": false,
               "sourceMap": true,
@@ -92,10 +98,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "tisec-frontend:build:production"
+              "buildTarget": "tisecweb:build:production"
             },
             "development": {
-              "buildTarget": "tisec-frontend:build:development"
+              "buildTarget": "tisecweb:build:development"
             }
           },
           "defaultConfiguration": "development"
