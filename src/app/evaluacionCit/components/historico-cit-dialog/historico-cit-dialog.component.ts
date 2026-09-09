@@ -22,9 +22,14 @@ export interface HistoricoCitDialogData {
 export class HistoricoCitDialogComponent implements OnInit {
   private service = inject(EvaluacionCitService);
 
+  readonly MENSAJE_SIN_DATOS = 'No existe información disponible para el periodo y empresa seleccionados.';
+  readonly MENSAJE_ERROR = 'Ocurrió un error al consultar el histórico. Intente nuevamente más tarde.';
+
   cargando = signal<boolean>(true);
   evaluacion = signal<EvaluacionCitResponse | null>(null);
   sinInformacion = signal<boolean>(false);
+  /** Mensaje a mostrar cuando no hay evaluación: "sin datos" (404) o error técnico (resto). */
+  mensajeVacio = signal<string>(this.MENSAJE_SIN_DATOS);
 
   constructor(
     public dialogRef: MatDialogRef<HistoricoCitDialogComponent>,
@@ -37,7 +42,9 @@ export class HistoricoCitDialogComponent implements OnInit {
         this.evaluacion.set(e);
         this.cargando.set(false);
       },
-      error: () => {
+      error: (err) => {
+        // 404 = no existe evaluación vigente (caso funcional esperado); el resto = error técnico.
+        this.mensajeVacio.set(err?.status === 404 ? this.MENSAJE_SIN_DATOS : this.MENSAJE_ERROR);
         this.sinInformacion.set(true);
         this.cargando.set(false);
       }

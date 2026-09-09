@@ -18,7 +18,7 @@
         </button>
       </div>
 
-      <ng-container *ngIf="evolucion() as ev">
+      <ng-container *ngIf="hayEvolucion() && evolucion() as ev">
         <app-bar-chart
           titulo="Indicador AIV — Evolución en el tiempo"
           [labels]="labelsEvolucion()"
@@ -34,6 +34,8 @@
           colorBarra="#6a1b9a">
         </app-bar-chart>
       </ng-container>
+
+      <p *ngIf="sinDatosEvolucion()" class="mensaje-sin-datos">{{ MENSAJE_SIN_DATOS }}</p>
     </section>
 
     <section>
@@ -53,7 +55,7 @@
         </button>
       </div>
 
-      <ng-container *ngIf="comparativo() as comp">
+      <ng-container *ngIf="hayComparativo() && comparativo() as comp">
         <app-bar-chart
           titulo="Indicador AIV — Comparativo por empresa"
           [labels]="labelsComparativo()"
@@ -69,6 +71,8 @@
           colorBarra="#6a1b9a">
         </app-bar-chart>
       </ng-container>
+
+      <p *ngIf="sinDatosComparativo()" class="mensaje-sin-datos">{{ MENSAJE_SIN_DATOS }}</p>
     </section>
   </mat-card-content>
 </mat-card>

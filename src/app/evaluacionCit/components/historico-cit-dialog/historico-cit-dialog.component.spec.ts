@@ -51,11 +51,20 @@ describe('HistoricoCitDialogComponent', () => {
     expect(component.cargando()).toBe(false);
   });
 
-  it('debería marcar sinInformacion si el backend no encuentra evaluación', () => {
+  it('debería marcar sinInformacion con mensaje "sin datos" si el backend responde 404', () => {
     service.historico.and.returnValue(throwError(() => ({ status: 404 })));
     crear();
     expect(component.sinInformacion()).toBe(true);
     expect(component.cargando()).toBe(false);
+    expect(component.mensajeVacio()).toBe(component.MENSAJE_SIN_DATOS);
+  });
+
+  it('debería mostrar mensaje de error técnico ante un error distinto de 404', () => {
+    service.historico.and.returnValue(throwError(() => ({ status: 500 })));
+    crear();
+    expect(component.sinInformacion()).toBe(true);
+    expect(component.cargando()).toBe(false);
+    expect(component.mensajeVacio()).toBe(component.MENSAJE_ERROR);
   });
 
   it('salir debería cerrar el diálogo', () => {
