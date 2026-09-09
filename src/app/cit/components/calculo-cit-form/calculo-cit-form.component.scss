@@ -184,7 +184,6 @@
   }
 }
 
-// Atenciones table (RF08)
 .atenciones-container {
   margin-top: var(--space-5);
   padding: 0 20px 20px;
@@ -213,11 +212,10 @@
     }
   }
 
-  .badge-success {
+  .badge-success, .badge-error {
     display: inline-flex;
     align-items: center;
     gap: var(--space-1);
-    color: var(--color-success-text);
     font-size: 13px;
 
     mat-icon {
@@ -227,19 +225,8 @@
     }
   }
 
-  .badge-error {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-1);
-    color: var(--color-error-text);
-    font-size: 13px;
-
-    mat-icon {
-      font-size: 16px;
-      width: 16px;
-      height: 16px;
-    }
-  }
+  .badge-success { color: var(--color-success-text); }
+  .badge-error { color: var(--color-error-text); }
 
   .badge-na {
     color: #999;
