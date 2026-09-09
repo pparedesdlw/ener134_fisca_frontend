@@ -1,5 +1,8 @@
+const host = "http://localhost:8084";
+const base = `${host}/`;
+
 export const environment = {
   production: false,
-  urlbase: "http://localhost:8084/",
-  apiUrl: "http://localhost:8084/osinergmin/tisecweb"
+  urlbase: base,
+  apiUrl: `${base}osinergmin/tisecweb`
 };

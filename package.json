@@ -1,6 +1,6 @@
 {
-  "name": "tisec-frontend",
-  "version": "0.0.0",
+  "name": "tisecweb",
+  "version": "1.0.5",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",

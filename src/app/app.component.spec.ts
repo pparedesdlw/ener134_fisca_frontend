@@ -17,10 +17,10 @@ describe('AppComponent', () => {
     expect(app).toBeTruthy();
   });
 
-  it(`should have the 'tisec-frontend' title`, () => {
+  it(`should have the 'tisecweb' title`, () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.componentInstance;
-    expect(app.title).toEqual('tisec-frontend');
+    expect(app.title).toEqual('tisecweb');
   });
 
   it('should render router-outlet', () => {
