@@ -47,10 +47,10 @@ El proyecto dispone de tres configuraciones de entorno definidas en `src/environ
 
 | Configuración | Archivo                    | URL del backend                                                  |
 |---------------|----------------------------|------------------------------------------------------------------|
-| Local (por defecto) | `environment.ts`     | `http://localhost:8084`                                          |
-| Desarrollo    | `environment.dev.ts`       | `https://srvdesatisecweb.osinergmin.gob.pe/tisecweb`             |
-| Certificación | `environment.cert.ts`      | `https://srvcerttisecweb.osinergmin.gob.pe/tisecweb`             |
-| Producción    | `environment.prod.ts`      | `https://tisecweb.osinergmin.gob.pe/tisecweb`                    |
+| Local (por defecto) | `environment.ts`     | `http://localhost:8084/tisecweb-backend`                         |
+| Desarrollo    | `environment.dev.ts`       | `https://srvdesatisecweb.osinergmin.gob.pe/tisecweb-backend`     |
+| Certificación | `environment.cert.ts`      | `https://srvcerttisecweb.osinergmin.gob.pe/tisecweb-backend`     |
+| Producción    | `environment.prod.ts`      | `https://tisecweb.osinergmin.gob.pe/tisecweb-backend`            |
 
 ### Comandos de build
 

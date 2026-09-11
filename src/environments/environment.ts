@@ -1,5 +1,5 @@
 const host = "http://localhost:8084";
-const base = `${host}/`;
+const base = `${host}/tisecweb-backend/`;
 
 export const environment = {
   production: false,
