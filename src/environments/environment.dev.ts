@@ -1,5 +1,5 @@
 const host = "https://srvdesatisecweb.osinergmin.gob.pe";
-const base = `${host}/tisecweb/`;
+const base = `${host}/tisecweb-backend/`;
 
 export const environment = {
   production: false,

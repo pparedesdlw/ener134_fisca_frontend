@@ -85,7 +85,6 @@
               "outputHashing": "all"
             },
             "development": {
-              "baseHref": "/",
               "optimization": false,
               "extractLicenses": false,
               "sourceMap": true,
@@ -96,6 +95,9 @@
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "servePath": "/tisecweb/"
+          },
           "configurations": {
             "production": {
               "buildTarget": "tisecweb:build:production"
