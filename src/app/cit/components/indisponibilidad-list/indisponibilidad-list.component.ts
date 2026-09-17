@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
@@ -18,6 +19,7 @@ import { IndisponibilidadFormComponent } from '../indisponibilidad-form/indispon
   imports: [
     CommonModule,
     MatTableModule,
+    MatPaginatorModule,
     MatButtonModule,
     MatIconModule,
     MatCardModule,
@@ -39,6 +41,15 @@ export class IndisponibilidadListComponent implements OnInit {
     'acciones'
   ];
   filtroEstado: 'todos' | 'activos' | 'inactivos' = 'todos';
+
+  /** Paginación en memoria (regla institucional: toda grilla que pueda superar 10 filas debe paginar). */
+  paginaIndisponibilidades = 0;
+  tamanioPaginaIndisponibilidades = 20;
+
+  onPaginaIndisponibilidades(event: PageEvent): void {
+    this.paginaIndisponibilidades = event.pageIndex;
+    this.tamanioPaginaIndisponibilidades = event.pageSize;
+  }
 
   constructor(
     private citService: CitService,
@@ -62,6 +73,7 @@ export class IndisponibilidadListComponent implements OnInit {
         } else {
           this.indisponibilidades = data;
         }
+        this.paginaIndisponibilidades = 0;
       },
       error: (error) => {
         this.mostrarError('Error al cargar indisponibilidades', error);

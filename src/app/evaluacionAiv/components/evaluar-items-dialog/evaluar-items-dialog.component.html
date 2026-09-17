@@ -1,5 +1,9 @@
 <h2 mat-dialog-title>Evaluar ítems</h2>
 <mat-dialog-content>
+  <p class="mensaje-consolidada" *ngIf="data.soloLectura">
+    Esta evaluación está consolidada. Reábrala (RF09) para poder modificar los ítems.
+  </p>
+
   <div class="datos-solo-lectura">
     <mat-form-field appearance="outline">
       <mat-label>Código único</mat-label>
@@ -11,14 +15,14 @@
     </mat-form-field>
     <mat-form-field appearance="outline">
       <mat-label>Ap. Usuario</mat-label>
-      <input matInput value="—" readonly />
+      <input matInput [value]="data.registro.usuario ?? '—'" readonly />
     </mat-form-field>
   </div>
 
   <div class="item" *ngFor="let item of catalogo">
     <span class="item-descripcion">{{ item.orden }}. {{ item.descripcion }}</span>
     <mat-radio-group [ngModel]="cumplePorItem[item.codigoItem]"
-                      [disabled]="itemBloqueadoPorAutoIncumple(item.codigoItem)">
+                      [disabled]="data.soloLectura || itemBloqueadoPorAutoIncumple(item.codigoItem)">
       <mat-radio-button [value]="true" (click)="seleccionarCumple(item.codigoItem, true)">Cumple</mat-radio-button>
       <mat-radio-button [value]="false" (click)="seleccionarCumple(item.codigoItem, false)">No cumple</mat-radio-button>
     </mat-radio-group>
@@ -29,7 +33,7 @@
 
   <mat-form-field appearance="outline" class="justificacion-field">
     <mat-label>Justificación *</mat-label>
-    <textarea matInput rows="4" [(ngModel)]="justificacion" placeholder="Ingresar justificación"></textarea>
+    <textarea matInput rows="4" [(ngModel)]="justificacion" [readonly]="data.soloLectura" placeholder="Ingresar justificación"></textarea>
   </mat-form-field>
 
   <button mat-stroked-button color="accent" (click)="abrirSustento()">
@@ -37,6 +41,6 @@
   </button>
 </mat-dialog-content>
 <mat-dialog-actions align="end">
-  <button mat-stroked-button (click)="cancelar()" [disabled]="guardando">Cancelar</button>
-  <button mat-raised-button color="primary" (click)="guardar()" [disabled]="guardando">Guardar</button>
+  <button mat-stroked-button (click)="cancelar()" [disabled]="guardando">{{ data.soloLectura ? 'Cerrar' : 'Cancelar' }}</button>
+  <button mat-raised-button color="primary" (click)="guardar()" [disabled]="guardando || data.soloLectura" *ngIf="!data.soloLectura">Guardar</button>
 </mat-dialog-actions>

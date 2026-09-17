@@ -7,19 +7,27 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialog } from '@angular/material/dialog';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { AuthService } from '../../../auth/services/auth.service';
 import { EvaluacionAivService } from '../../services/evaluacionAiv.service';
 import { EvaluacionAivResponse, EvaluacionRegistroResponse } from '../../models/evaluacionAiv.model';
 import { MuestraAivService } from '../../../muestraAiv/services/muestraAiv.service';
 import { SustentoAivService } from '../../../sustentoAiv/services/sustentoAiv.service';
 import { MapeoArchivoSustento } from '../../../sustentoAiv/models/sustentoAiv.model';
-import { excedeTamanioMaximo } from '../../../shared/utils/archivo.util';
-import { parsearMapeoCsv } from '../../../shared/utils/mapeoSustentoCsv.util';
+import { excedeTamanioMaximo, descargarBlob } from '../../../shared/utils/archivo.util';
+import {
+  parsearMapeoCsv,
+  generarPlantillaCsvMapeo,
+  generarZipEjemploSustentos,
+  NOMBRE_PLANTILLA_CSV_MAPEO,
+  NOMBRE_ZIP_EJEMPLO_SUSTENTOS
+} from '../../../shared/utils/mapeoSustentoCsv.util';
 import { VerDetalleDialogComponent } from '../ver-detalle-dialog/ver-detalle-dialog.component';
 import { VerSustentoDialogComponent } from '../ver-sustento-dialog/ver-sustento-dialog.component';
 import { EvaluarItemsDialogComponent } from '../evaluar-items-dialog/evaluar-items-dialog.component';
@@ -30,7 +38,7 @@ import { ResultadoConsolidadoDialogComponent } from '../resultado-consolidado-di
   standalone: true,
   imports: [
     CommonModule, FormsModule, MatCardModule, MatButtonModule, MatInputModule,
-    MatFormFieldModule, MatTableModule, MatTabsModule, MatIconModule,
+    MatFormFieldModule, MatTableModule, MatPaginatorModule, MatTabsModule, MatIconModule,
     MatProgressSpinnerModule, MatTooltipModule
   ],
   templateUrl: './evaluacionAiv.component.html',
@@ -43,8 +51,11 @@ export class EvaluacionAivComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private dialog = inject(MatDialog);
   private snack = inject(MatSnackBar);
+  private authService = inject(AuthService);
 
-  usuario = 'admin';
+  get usuario(): string {
+    return this.authService.currentUsername;
+  }
   /** Signal (no campo plano): registrosFiltrados() es un computed() y solo se recalcula ante cambios de signals. */
   textoBusqueda = signal('');
   cargando = signal<boolean>(false);
@@ -80,6 +91,37 @@ export class EvaluacionAivComponent implements OnInit {
       reemplazados: filtrados.filter((r) => !r.adicional && r.reemplazado)
     };
   });
+
+  /** Paginación en memoria (RNF04/CLAUDE.md: toda grilla que pueda superar 10 filas debe paginar).
+   * Cada pestaña/grilla pagina de forma independiente, mismo patrón que RF01/RF02 (`| slice`). */
+  paginaPrincipal = signal(0);
+  tamanioPaginaPrincipal = signal(20);
+  paginaAdicional = signal(0);
+  tamanioPaginaAdicional = signal(20);
+  paginaReemplazados = signal(0);
+  tamanioPaginaReemplazados = signal(20);
+
+  onBuscarChange(valor: string): void {
+    this.textoBusqueda.set(valor);
+    this.paginaPrincipal.set(0);
+    this.paginaAdicional.set(0);
+    this.paginaReemplazados.set(0);
+  }
+
+  onPaginaPrincipal(event: PageEvent): void {
+    this.paginaPrincipal.set(event.pageIndex);
+    this.tamanioPaginaPrincipal.set(event.pageSize);
+  }
+
+  onPaginaAdicional(event: PageEvent): void {
+    this.paginaAdicional.set(event.pageIndex);
+    this.tamanioPaginaAdicional.set(event.pageSize);
+  }
+
+  onPaginaReemplazados(event: PageEvent): void {
+    this.paginaReemplazados.set(event.pageIndex);
+    this.tamanioPaginaReemplazados.set(event.pageSize);
+  }
 
   ngOnInit(): void {
     const params = this.route.snapshot.queryParamMap;
@@ -164,7 +206,8 @@ export class EvaluacionAivComponent implements OnInit {
       next: (r) => {
         this.evaluacion.set(r);
         this.dialog.open(ResultadoConsolidadoDialogComponent, {
-          width: '900px',
+          width: '1100px',
+          maxWidth: '95vw',
           data: { evaluacion: r }
         });
       },
@@ -175,7 +218,7 @@ export class EvaluacionAivComponent implements OnInit {
   evaluar(registro: EvaluacionRegistroResponse): void {
     this.dialog.open(EvaluarItemsDialogComponent, {
       width: '800px',
-      data: { registro, usuario: this.usuario }
+      data: { registro, usuario: this.usuario, soloLectura: this.evaluacion()?.estadoEvaluacion === 'CONSOLIDADO_TOTAL' }
     }).afterClosed().subscribe((evaluacion: EvaluacionAivResponse | undefined) => {
       if (evaluacion) {
         this.evaluacion.set(evaluacion);
@@ -247,6 +290,15 @@ export class EvaluacionAivComponent implements OnInit {
     const input = ev.target as HTMLInputElement;
     const archivos = input.files;
     this.archivoMapeo = archivos && archivos.length > 0 ? archivos[0] : null;
+  }
+
+  descargarPlantillaCsvMapeo(): void {
+    const blob = new Blob([generarPlantillaCsvMapeo()], { type: 'text/csv;charset=utf-8' });
+    descargarBlob(blob, NOMBRE_PLANTILLA_CSV_MAPEO);
+  }
+
+  descargarZipEjemplo(): void {
+    descargarBlob(generarZipEjemploSustentos(), NOMBRE_ZIP_EJEMPLO_SUSTENTOS);
   }
 
   async cargarSustentoMasivo(): Promise<void> {

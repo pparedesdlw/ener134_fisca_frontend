@@ -33,7 +33,7 @@
       </div>
     </div>
 
-    <table mat-table [dataSource]="indisponibilidades" class="mat-elevation-z2">
+    <table mat-table [dataSource]="indisponibilidades | slice: paginaIndisponibilidades * tamanioPaginaIndisponibilidades : (paginaIndisponibilidades + 1) * tamanioPaginaIndisponibilidades" class="mat-elevation-z2">
 
       <ng-container matColumnDef="fechaInicioIndisponibilidad">
         <th mat-header-cell *matHeaderCellDef>Fecha Inicio</th>
@@ -84,5 +84,9 @@
         </td>
       </tr>
     </table>
+    <mat-paginator *ngIf="indisponibilidades.length" [length]="indisponibilidades.length"
+                   [pageIndex]="paginaIndisponibilidades" [pageSize]="tamanioPaginaIndisponibilidades"
+                   [pageSizeOptions]="[10, 20, 50, 100]" (page)="onPaginaIndisponibilidades($event)">
+    </mat-paginator>
   </mat-card-content>
 </mat-card>

@@ -3,22 +3,26 @@
   <mat-card-content>
     <section>
       <h3>Evolución de indicadores por empresa</h3>
-      <div class="filtros">
-        <mat-form-field appearance="outline">
-          <mat-label>Empresa</mat-label>
-          <mat-select [(ngModel)]="empresaSeleccionada">
-            <mat-option *ngFor="let empresa of empresas()" [value]="empresa.id">
-              {{ empresa.codigoEmpresa }} - {{ empresa.razonSocial }}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
-        <button mat-raised-button color="primary" (click)="cargarEvolucion()" [disabled]="empresaSeleccionada == null">
-          <mat-icon>bar_chart</mat-icon>
-          Ver evolución
+      <p class="etiqueta-selector">Empresa:</p>
+      <div class="grid-selector" role="listbox" aria-label="Empresa">
+        <button
+          *ngFor="let empresa of empresas()"
+          type="button"
+          class="tile-selector"
+          [class.seleccionado]="empresa.id === empresaSeleccionada"
+          [attr.aria-selected]="empresa.id === empresaSeleccionada"
+          [matTooltip]="empresa.razonSocial"
+          (click)="seleccionarEmpresa(empresa.id)">
+          {{ empresa.codigoEmpresa }}
         </button>
       </div>
+      <p class="ayuda-selector">* Seleccione una empresa para visualizar los resultados.</p>
 
-      <ng-container *ngIf="hayEvolucion() && evolucion() as ev">
+      <div *ngIf="cargandoEvolucion()" class="spinner-container">
+        <mat-spinner diameter="32"></mat-spinner>
+      </div>
+
+      <div class="graficos-lado-a-lado" *ngIf="hayEvolucion() && evolucion() as ev">
         <app-bar-chart
           titulo="Indicador AIV — Evolución en el tiempo"
           [labels]="labelsEvolucion()"
@@ -33,29 +37,33 @@
           [tolerancia]="ev.toleranciaCit"
           colorBarra="#6a1b9a">
         </app-bar-chart>
-      </ng-container>
+      </div>
 
       <p *ngIf="sinDatosEvolucion()" class="mensaje-sin-datos">{{ MENSAJE_SIN_DATOS }}</p>
     </section>
 
     <section>
       <h3>Comparativo de indicadores por periodo</h3>
-      <div class="filtros">
-        <mat-form-field appearance="outline">
-          <mat-label>Periodo</mat-label>
-          <mat-select [(ngModel)]="periodoSeleccionado">
-            <mat-option *ngFor="let periodo of periodos()" [value]="periodo.codigoPeriodo">
-              {{ periodo.codigoPeriodo }} - {{ periodo.descripcion }}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
-        <button mat-raised-button color="primary" (click)="cargarComparativo()" [disabled]="!periodoSeleccionado">
-          <mat-icon>bar_chart</mat-icon>
-          Ver comparativo
+      <p class="etiqueta-selector">Periodo:</p>
+      <div class="grid-selector" role="listbox" aria-label="Periodo">
+        <button
+          *ngFor="let periodo of periodos()"
+          type="button"
+          class="tile-selector"
+          [class.seleccionado]="periodo.codigoPeriodo === periodoSeleccionado"
+          [attr.aria-selected]="periodo.codigoPeriodo === periodoSeleccionado"
+          [matTooltip]="periodo.descripcion ?? ''"
+          (click)="seleccionarPeriodo(periodo.codigoPeriodo)">
+          {{ periodo.codigoPeriodo }}
         </button>
       </div>
+      <p class="ayuda-selector">* Seleccione un periodo para visualizar los resultados.</p>
 
-      <ng-container *ngIf="hayComparativo() && comparativo() as comp">
+      <div *ngIf="cargandoComparativo()" class="spinner-container">
+        <mat-spinner diameter="32"></mat-spinner>
+      </div>
+
+      <div class="graficos-lado-a-lado" *ngIf="hayComparativo() && comparativo() as comp">
         <app-bar-chart
           titulo="Indicador AIV — Comparativo por empresa"
           [labels]="labelsComparativo()"
@@ -70,7 +78,7 @@
           [tolerancia]="comp.toleranciaCit"
           colorBarra="#6a1b9a">
         </app-bar-chart>
-      </ng-container>
+      </div>
 
       <p *ngIf="sinDatosComparativo()" class="mensaje-sin-datos">{{ MENSAJE_SIN_DATOS }}</p>
     </section>

@@ -180,6 +180,15 @@ describe('RegistroCerradoListComponent', () => {
     expect(snackBar.open).toHaveBeenCalledWith('Error del servidor', 'Cerrar', jasmine.any(Object));
   });
 
+  it('buscar debería mostrar el mensaje genérico si el error no trae mensaje del backend', () => {
+    llenarFiltro();
+    service.buscar.and.returnValue(throwError(() => ({})));
+
+    component.buscar();
+
+    expect(snackBar.open).toHaveBeenCalledWith('Error al buscar registros cerrados', 'Cerrar', jasmine.any(Object));
+  });
+
   it('onPage debería recargar con la página seleccionada', () => {
     llenarFiltro();
     service.buscar.and.returnValue(of(mockPagina));
@@ -225,6 +234,15 @@ describe('RegistroCerradoListComponent', () => {
     expect(service.exportar).toHaveBeenCalled();
   });
 
+  it('exportar debería mostrar un error si falla la descarga', () => {
+    llenarFiltro();
+    service.exportar.and.returnValue(throwError(() => ({ status: 500 })));
+
+    component.exportar();
+
+    expect(snackBar.open).toHaveBeenCalledWith('Error al exportar registros cerrados', 'Cerrar', jasmine.any(Object));
+  });
+
   it('obtenerTotal no debería navegar si faltan filtros', () => {
     component.obtenerTotal();
     expect(router.navigate).not.toHaveBeenCalled();
@@ -241,6 +259,11 @@ describe('RegistroCerradoListComponent', () => {
     });
   });
 
+  it('definirMuestra no debería navegar si faltan filtros', () => {
+    component.definirMuestra();
+    expect(router.navigate).not.toHaveBeenCalled();
+  });
+
   it('definirMuestra debería navegar a muestra-aiv con periodo, fechas y empresa', () => {
     llenarFiltro();
     component.definirMuestra();
@@ -254,16 +277,21 @@ describe('RegistroCerradoListComponent', () => {
     expect(dialog.open).toHaveBeenCalled();
   });
 
-  it('abrirReaperturaEvaluaciones debería abrir el diálogo correspondiente', () => {
-    component.abrirReaperturaEvaluaciones();
-    expect(dialog.open).toHaveBeenCalled();
-  });
-
   it('verHistorico debería avisar si faltan periodo o empresa', () => {
     component.periodoSeleccionado = null;
     component.verHistorico();
     expect(snackBar.open).toHaveBeenCalledWith(
       'Seleccione periodo y empresa para ver el histórico', 'Cerrar', jasmine.any(Object)
+    );
+    expect(dialog.open).not.toHaveBeenCalled();
+  });
+
+  it('verHistorico debería avisar si no encuentra la empresa seleccionada en el catálogo', () => {
+    component.periodoSeleccionado = 'PER-2025-01';
+    component.empresaSeleccionada = '99';
+    component.verHistorico();
+    expect(snackBar.open).toHaveBeenCalledWith(
+      'No se pudo determinar la empresa seleccionada', 'Cerrar', jasmine.any(Object)
     );
     expect(dialog.open).not.toHaveBeenCalled();
   });

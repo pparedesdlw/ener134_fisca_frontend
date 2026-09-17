@@ -2,7 +2,7 @@
   <mat-card-title>Selección de registros cerrados</mat-card-title>
   <mat-card-content>
     <div class="filtros">
-      <mat-form-field appearance="outline">
+      <mat-form-field appearance="outline" class="campo-combo-ancho">
         <mat-label>Periodo *</mat-label>
         <mat-select [(ngModel)]="periodoSeleccionado" [disabled]="cargando()" (selectionChange)="onPeriodoChange()">
           <mat-option *ngFor="let periodo of periodos()" [value]="periodo.codigoPeriodo">
@@ -25,7 +25,7 @@
         <mat-datepicker #pickerFin></mat-datepicker>
       </mat-form-field>
 
-      <mat-form-field appearance="outline">
+      <mat-form-field appearance="outline" class="campo-combo-ancho">
         <mat-label>Asunto *</mat-label>
         <mat-select [(ngModel)]="asuntoSeleccionado" [disabled]="cargando()">
           <mat-option *ngFor="let asunto of asuntos()" [value]="asunto.codigoAsunto">
@@ -34,7 +34,7 @@
         </mat-select>
       </mat-form-field>
 
-      <mat-form-field appearance="outline">
+      <mat-form-field appearance="outline" class="campo-combo-ancho">
         <mat-label>Empresa *</mat-label>
         <mat-select [(ngModel)]="empresaSeleccionada" [disabled]="cargando()">
           <mat-option *ngFor="let empresa of empresas()" [value]="empresa.codigoEmpresa">
@@ -53,9 +53,6 @@
       </button>
       <button mat-stroked-button (click)="verEnProceso()">
         <mat-icon>pending_actions</mat-icon> Ver en proceso
-      </button>
-      <button mat-stroked-button (click)="abrirReaperturaEvaluaciones()">
-        <mat-icon>lock_reset</mat-icon> Reapertura de evaluaciones
       </button>
       <button mat-stroked-button (click)="verHistorico()">
         <mat-icon>history</mat-icon> Ver histórico - Periodo en evaluación

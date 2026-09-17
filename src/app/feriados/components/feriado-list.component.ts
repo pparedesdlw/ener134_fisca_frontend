@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
@@ -19,6 +20,7 @@ import { FeriadoFormComponent } from './feriado-form.component';
   imports: [
     CommonModule,
     MatTableModule,
+    MatPaginatorModule,
     MatButtonModule,
     MatIconModule,
     MatCardModule,
@@ -44,6 +46,15 @@ export class FeriadoListComponent implements OnInit {
   ];
   filtroEstado: 'todos' | 'activos' | 'inactivos' = 'todos';
 
+  /** Paginación en memoria (regla institucional: toda grilla que pueda superar 10 filas debe paginar). */
+  paginaFeriados = 0;
+  tamanioPaginaFeriados = 20;
+
+  onPaginaFeriados(event: PageEvent): void {
+    this.paginaFeriados = event.pageIndex;
+    this.tamanioPaginaFeriados = event.pageSize;
+  }
+
   constructor(
     private feriadoService: FeriadoService,
     private dialog: MatDialog,
@@ -62,6 +73,7 @@ export class FeriadoListComponent implements OnInit {
     observable.subscribe({
       next: (data) => {
         this.feriados = data;
+        this.paginaFeriados = 0;
       },
       error: (error) => {
         this.mostrarError('Error al cargar feriados', error);

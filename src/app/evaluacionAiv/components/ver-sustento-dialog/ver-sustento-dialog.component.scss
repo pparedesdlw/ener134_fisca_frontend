@@ -1,0 +1,16 @@
+/* RF04: contiene el scroll horizontal a la tabla (no a todo el diálogo) y fija la
+   columna "Acciones" para que Descargar/Eliminar nunca queden ocultos sin que el
+   usuario lo note. */
+.tabla-scroll {
+  overflow-x: auto;
+  border: 1px solid var(--color-neutral-bg, #e0e0e0);
+  border-radius: 4px;
+}
+table {
+  width: 100%;
+  min-width: 500px;
+}
+::ng-deep .mat-mdc-table .mat-mdc-cell.cdk-column-acciones,
+::ng-deep .mat-mdc-table .mat-mdc-header-cell.cdk-column-acciones {
+  background-color: #fff;
+}

@@ -9,6 +9,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatInputModule } from '@angular/material/input';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialog } from '@angular/material/dialog';
@@ -21,6 +22,7 @@ import { Periodo } from '../../../periodos/models/periodo.model';
 import { CitResultadoResponse, Motivo, AtencionResponse } from '../../models/cit.model';
 import { AccionesAtencionComponent } from '../../../atencionesComerciales/components/acciones-atencion/acciones-atencion.component';
 import { animate, state, style, transition, trigger } from '@angular/animations';
+import { AuthService } from '../../../auth/services/auth.service';
 import { EvaluacionCitService } from '../../../evaluacionCit/services/evaluacionCit.service';
 import { HistoricoCitDialogComponent } from '../../../evaluacionCit/components/historico-cit-dialog/historico-cit-dialog.component';
 import { calcularRangoFechasPeriodo } from '../../../shared/utils/periodo-fechas.util';
@@ -39,6 +41,7 @@ import { calcularRangoFechasPeriodo } from '../../../shared/utils/periodo-fechas
     MatInputModule,
     MatNativeDateModule,
     MatTableModule,
+    MatPaginatorModule,
     MatProgressSpinnerModule,
     MatIconModule,
     AccionesAtencionComponent
@@ -72,8 +75,15 @@ export class CalculoCitFormComponent implements OnInit {
   atencionesColumns = ['codigoAtencion', 'codigoAsunto', 'descripcionAsunto', 'estadoAtencion', 'tieneCierre', 'expandir'];
   expandedAtencion: AtencionResponse | null = null;
 
+  /** Paginación en memoria (regla institucional: toda grilla que pueda superar 10 filas debe paginar). */
+  paginaAtenciones = 0;
+  tamanioPaginaAtenciones = 20;
+
   finalizando = false;
-  usuario = 'admin';
+
+  get usuario(): string {
+    return this.authService.currentUsername;
+  }
 
   constructor(
     private citService: CitService,
@@ -81,7 +91,8 @@ export class CalculoCitFormComponent implements OnInit {
     private periodoService: PeriodoService,
     private evaluacionCitService: EvaluacionCitService,
     private dialog: MatDialog,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
@@ -230,12 +241,14 @@ export class CalculoCitFormComponent implements OnInit {
     if (!this.empresaSeleccionada || !this.fechaInicio || !this.fechaFin) return;
     this.atenciones = [];
     this.expandedAtencion = null;
+    this.paginaAtenciones = 0;
 
     this.citService.listarAtenciones(
       this.empresaSeleccionada,
       this.formatDate(this.fechaInicio),
       this.formatDate(this.fechaFin),
-      this.motivoSeleccionado || undefined
+      this.motivoSeleccionado || undefined,
+      this.periodoSeleccionado || undefined
     ).subscribe({
       next: (atenciones) => {
         this.atenciones = atenciones;
@@ -248,5 +261,10 @@ export class CalculoCitFormComponent implements OnInit {
 
   toggleAtencion(atencion: AtencionResponse): void {
     this.expandedAtencion = this.expandedAtencion === atencion ? null : atencion;
+  }
+
+  onPaginaAtenciones(event: PageEvent): void {
+    this.paginaAtenciones = event.pageIndex;
+    this.tamanioPaginaAtenciones = event.pageSize;
   }
 }

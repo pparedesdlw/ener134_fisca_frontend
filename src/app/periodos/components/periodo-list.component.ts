@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
@@ -20,6 +21,7 @@ import { AuthService } from '../../auth/services/auth.service';
   imports: [
     CommonModule,
     MatTableModule,
+    MatPaginatorModule,
     MatButtonModule,
     MatIconModule,
     MatCardModule,
@@ -42,6 +44,15 @@ export class PeriodoListComponent implements OnInit {
   ];
   filtroEstado: 'todos' | 'activos' | 'inactivos' = 'todos';
 
+  /** Paginación en memoria (regla institucional: toda grilla que pueda superar 10 filas debe paginar). */
+  paginaPeriodos = 0;
+  tamanioPaginaPeriodos = 20;
+
+  onPaginaPeriodos(event: PageEvent): void {
+    this.paginaPeriodos = event.pageIndex;
+    this.tamanioPaginaPeriodos = event.pageSize;
+  }
+
   constructor(
     private periodoService: PeriodoService,
     private authService: AuthService,
@@ -61,6 +72,7 @@ export class PeriodoListComponent implements OnInit {
     observable.subscribe({
       next: (data) => {
         this.periodos = data;
+        this.paginaPeriodos = 0;
       },
       error: (error) => {
         this.mostrarError('Error al cargar periodos', error);

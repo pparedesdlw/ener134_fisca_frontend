@@ -104,7 +104,8 @@ export class MainLayoutComponent implements OnInit {
             { label: 'Evaluación AIV', path: '/evaluacion-aiv', disabled: false },
             { label: 'Sustentos', path: '/sustento-aiv', disabled: false },
             { label: 'Histórico AIV', path: '/historico-aiv', disabled: false },
-            { label: 'Indicadores y gráficos', path: '/indicadores-graficos', disabled: false }
+            { label: 'Indicadores y gráficos', path: '/indicadores-graficos', disabled: false },
+            { label: 'Reapertura de evaluaciones', path: '/reapertura-aiv', disabled: false }
           ]
         }
       ]

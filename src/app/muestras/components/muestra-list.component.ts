@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
@@ -19,6 +20,7 @@ import { MuestraFormComponent } from './muestra-form.component';
   imports: [
     CommonModule,
     MatTableModule,
+    MatPaginatorModule,
     MatButtonModule,
     MatIconModule,
     MatCardModule,
@@ -43,6 +45,15 @@ export class MuestraListComponent implements OnInit {
   ];
   filtroEstado: 'todos' | 'activos' | 'inactivos' = 'todos';
 
+  /** Paginación en memoria (regla institucional: toda grilla que pueda superar 10 filas debe paginar). */
+  paginaMuestras = 0;
+  tamanioPaginaMuestras = 20;
+
+  onPaginaMuestras(event: PageEvent): void {
+    this.paginaMuestras = event.pageIndex;
+    this.tamanioPaginaMuestras = event.pageSize;
+  }
+
   constructor(
     private muestraService: MuestraService,
     private dialog: MatDialog,
@@ -61,6 +72,7 @@ export class MuestraListComponent implements OnInit {
     observable.subscribe({
       next: (data) => {
         this.muestras = data;
+        this.paginaMuestras = 0;
       },
       error: (error) => {
         this.mostrarError('Error al cargar muestras', error);

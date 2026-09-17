@@ -10,7 +10,7 @@
     </div>
 
     <h3>Versiones preliminares</h3>
-    <table mat-table [dataSource]="preliminares()" class="mat-elevation-z2">
+    <table mat-table [dataSource]="preliminares() | slice: paginaPrelim() * tamanioPaginaPrelim() : (paginaPrelim() + 1) * tamanioPaginaPrelim()" class="mat-elevation-z2">
       <ng-container matColumnDef="version">
         <th mat-header-cell *matHeaderCellDef>v</th>
         <td mat-cell *matCellDef="let h">{{ h.version }}</td>
@@ -42,9 +42,13 @@
       <tr mat-header-row *matHeaderRowDef="colsPrelim"></tr>
       <tr mat-row *matRowDef="let row; columns: colsPrelim"></tr>
     </table>
+    <mat-paginator *ngIf="preliminares().length" [length]="preliminares().length"
+                   [pageIndex]="paginaPrelim()" [pageSize]="tamanioPaginaPrelim()"
+                   [pageSizeOptions]="[10, 20, 50, 100]" (page)="onPaginaPrelim($event)">
+    </mat-paginator>
 
     <h3>Trazabilidad de acciones</h3>
-    <table mat-table [dataSource]="acciones()" class="mat-elevation-z2">
+    <table mat-table [dataSource]="acciones() | slice: paginaAcc() * tamanioPaginaAcc() : (paginaAcc() + 1) * tamanioPaginaAcc()" class="mat-elevation-z2">
       <ng-container matColumnDef="version">
         <th mat-header-cell *matHeaderCellDef>v</th>
         <td mat-cell *matCellDef="let h">{{ h.version }}</td>
@@ -68,5 +72,9 @@
       <tr mat-header-row *matHeaderRowDef="colsAcc"></tr>
       <tr mat-row *matRowDef="let row; columns: colsAcc"></tr>
     </table>
+    <mat-paginator *ngIf="acciones().length" [length]="acciones().length"
+                   [pageIndex]="paginaAcc()" [pageSize]="tamanioPaginaAcc()"
+                   [pageSizeOptions]="[10, 20, 50, 100]" (page)="onPaginaAcc($event)">
+    </mat-paginator>
   </mat-card-content>
 </mat-card>

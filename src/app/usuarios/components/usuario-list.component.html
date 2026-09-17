@@ -34,7 +34,7 @@
 
     </div>
 
-    <table mat-table [dataSource]="usuarios" class="mat-elevation-z2">
+    <table mat-table [dataSource]="usuarios | slice: paginaUsuarios * tamanioPaginaUsuarios : (paginaUsuarios + 1) * tamanioPaginaUsuarios" class="mat-elevation-z2">
       <ng-container matColumnDef="codigoUsuario">
         <th mat-header-cell *matHeaderCellDef>Código</th>
         <td mat-cell *matCellDef="let usuario"><strong>{{usuario.codigoUsuario}}</strong></td>
@@ -102,5 +102,9 @@
         </td>
       </tr>
     </table>
+    <mat-paginator *ngIf="usuarios.length" [length]="usuarios.length"
+                   [pageIndex]="paginaUsuarios" [pageSize]="tamanioPaginaUsuarios"
+                   [pageSizeOptions]="[10, 20, 50, 100]" (page)="onPaginaUsuarios($event)">
+    </mat-paginator>
   </mat-card-content>
 </mat-card>

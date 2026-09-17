@@ -70,10 +70,17 @@ export class CitService {
     return this.http.get<InfoTecnicaCierreResponse>(`${this.apiUrl}/info-tecnica/${codigoEmpresa}/${codigoAtencion}`);
   }
 
-  listarAtenciones(codigoEmpresa: string, fechaInicio: string, fechaFin: string, descripcionMotivo?: string): Observable<AtencionResponse[]> {
+  listarAtenciones(
+    codigoEmpresa: string, fechaInicio: string, fechaFin: string, descripcionMotivo?: string, codigoPeriodo?: string
+  ): Observable<AtencionResponse[]> {
     let params = `codigoEmpresa=${codigoEmpresa}&fechaInicio=${fechaInicio}&fechaFin=${fechaFin}`;
     if (descripcionMotivo) {
       params += `&descripcionMotivo=${encodeURIComponent(descripcionMotivo)}`;
+    }
+    // RF12: se envía el periodo seleccionado en el filtro para trazabilidad, igual que en
+    // calcularCit — el rango de fechas ya viene acotado a su vigencia.
+    if (codigoPeriodo) {
+      params += `&codigoPeriodo=${encodeURIComponent(codigoPeriodo)}`;
     }
     return this.http.get<AtencionResponse[]>(`${this.apiUrl}/info-tecnica/atenciones?${params}`);
   }

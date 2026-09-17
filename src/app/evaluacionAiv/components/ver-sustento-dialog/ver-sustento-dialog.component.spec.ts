@@ -75,6 +75,12 @@ describe('VerSustentoDialogComponent', () => {
     );
   });
 
+  it('onArchivoSeleccionado debería dejar el archivo en null si no se seleccionó ninguno', () => {
+    const event = { target: { files: null } } as unknown as Event;
+    component.onArchivoSeleccionado(event);
+    expect(component.archivoSeleccionado).toBeNull();
+  });
+
   it('cargar no debería hacer nada si no hay archivo seleccionado', () => {
     component.archivoSeleccionado = null;
     component.cargar();
@@ -110,6 +116,33 @@ describe('VerSustentoDialogComponent', () => {
     }, 50);
   });
 
+  it('cargar debería mostrar el mensaje genérico si el error no trae mensaje del backend', (done) => {
+    component.archivoSeleccionado = new File(['contenido'], 'evidencia.pdf', { type: 'application/pdf' });
+    service.cargarIndividual.and.returnValue(throwError(() => ({})));
+
+    component.cargar();
+
+    setTimeout(() => {
+      expect(snackBar.open).toHaveBeenCalledWith('Error al cargar el sustento', 'Cerrar', jasmine.any(Object));
+      done();
+    }, 50);
+  });
+
+  it('descargar debería disparar la descarga del sustento con su nombre de archivo', () => {
+    const enlace = jasmine.createSpyObj('a', ['click']);
+    spyOn(document, 'createElement').and.returnValue(enlace);
+    spyOn(URL, 'createObjectURL').and.returnValue('blob:mock');
+    spyOn(URL, 'revokeObjectURL');
+    const blob = new Blob(['contenido']);
+    service.descargar.and.returnValue(of(blob));
+
+    component.descargar(mockSustentos[0]);
+
+    expect(service.descargar).toHaveBeenCalledWith(1);
+    expect(enlace.download).toBe('sustento1.pdf');
+    expect(enlace.click).toHaveBeenCalled();
+  });
+
   it('eliminar debería refrescar la lista al eliminar correctamente', () => {
     service.eliminar.and.returnValue(of(void 0));
     component.eliminar(mockSustentos[0]);
@@ -121,6 +154,12 @@ describe('VerSustentoDialogComponent', () => {
     service.eliminar.and.returnValue(throwError(() => ({ error: { message: 'No se pudo eliminar' } })));
     component.eliminar(mockSustentos[0]);
     expect(snackBar.open).toHaveBeenCalledWith('No se pudo eliminar', 'Cerrar', jasmine.any(Object));
+  });
+
+  it('eliminar debería mostrar el mensaje genérico si el error no trae mensaje del backend', () => {
+    service.eliminar.and.returnValue(throwError(() => ({})));
+    component.eliminar(mockSustentos[0]);
+    expect(snackBar.open).toHaveBeenCalledWith('Error al eliminar', 'Cerrar', jasmine.any(Object));
   });
 
   it('cerrar debería cerrar el diálogo', () => {

@@ -4,8 +4,10 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { of, throwError } from 'rxjs';
+import { of, throwError, Subject } from 'rxjs';
+import { By } from '@angular/platform-browser';
 import { CalculoCitFormComponent } from './calculo-cit-form.component';
+import { AuthService } from '../../../auth/services/auth.service';
 import { CitService } from '../../services/cit.service';
 import { EmpresaConcesionariaService } from '../../../empresas/services/empresa-concesionaria.service';
 import { PeriodoService } from '../../../periodos/services/periodo.service';
@@ -70,7 +72,8 @@ describe('CalculoCitFormComponent', () => {
         { provide: PeriodoService, useValue: periodoServiceSpy },
         { provide: EvaluacionCitService, useValue: evaluacionCitServiceSpy },
         { provide: MatDialog, useValue: dialogSpy },
-        { provide: MatSnackBar, useValue: snackBarSpy }
+        { provide: MatSnackBar, useValue: snackBarSpy },
+        { provide: AuthService, useValue: { currentUsername: 'fdiaz' } }
       ]
     }).compileComponents();
 
@@ -87,6 +90,10 @@ describe('CalculoCitFormComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('usuario debería tomarse del usuario autenticado real, no un valor fijo', () => {
+    expect(component.usuario).toBe('fdiaz');
   });
 
   it('should initialize with default values', () => {
@@ -188,6 +195,19 @@ describe('CalculoCitFormComponent', () => {
     expect(component.error).toContain('Error');
   });
 
+  it('RF12: cargarAtenciones debería enviar el periodo seleccionado junto con empresa y fechas', () => {
+    component.periodoSeleccionado = 'PER-2024-01';
+    component.fechaInicio = new Date(2024, 0, 1);
+    component.fechaFin = new Date(2024, 2, 31);
+    component.empresaSeleccionada = '0010';
+
+    component.cargarAtenciones();
+
+    expect(citService.listarAtenciones).toHaveBeenCalledWith(
+      '0010', '2024-01-01', '2024-03-31', undefined, 'PER-2024-01'
+    );
+  });
+
   describe('finalizarEvaluacion (RF13)', () => {
     const mockEvaluacion: EvaluacionCitResponse = {
       id: 1,
@@ -236,7 +256,7 @@ describe('CalculoCitFormComponent', () => {
         fechaInicio: '2024-01-01',
         fechaFin: '2024-03-31',
         descripcionMotivo: null,
-        usuario: 'admin'
+        usuario: 'fdiaz'
       });
       expect(component.finalizando).toBe(false);
       expect(snackBar.open).toHaveBeenCalledWith(
@@ -255,6 +275,27 @@ describe('CalculoCitFormComponent', () => {
       expect(snackBar.open).toHaveBeenCalledWith(
         'Ya existe una evaluación consolidada vigente para el periodo y empresa seleccionados.', 'Cerrar', jasmine.any(Object)
       );
+    });
+
+    it('debería mostrar el spinner y deshabilitar el botón "Eval. Finalizada" en el DOM mientras se procesa (RNF04)', () => {
+      const finalizar$ = new Subject<EvaluacionCitResponse>();
+      evaluacionCitService.finalizar.and.returnValue(finalizar$.asObservable());
+
+      component.finalizarEvaluacion();
+      fixture.detectChanges();
+
+      const boton = fixture.debugElement.query(
+        By.css('[title="Persiste el cálculo mostrado como evaluación consolidada"]')
+      ).nativeElement as HTMLButtonElement;
+      expect(boton.disabled).toBe(true);
+      expect((fixture.nativeElement as HTMLElement).textContent).toContain('Guardando evaluación consolidada...');
+
+      finalizar$.next(mockEvaluacion);
+      finalizar$.complete();
+      fixture.detectChanges();
+
+      expect(boton.disabled).toBe(false);
+      expect((fixture.nativeElement as HTMLElement).textContent).not.toContain('Guardando evaluación consolidada...');
     });
   });
 

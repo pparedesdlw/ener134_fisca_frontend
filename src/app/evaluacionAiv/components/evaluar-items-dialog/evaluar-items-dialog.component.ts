@@ -17,6 +17,8 @@ import { VerSustentoDialogComponent } from '../ver-sustento-dialog/ver-sustento-
 export interface EvaluarItemsDialogData {
   registro: EvaluacionRegistroResponse;
   usuario: string;
+  /** RF05: true cuando la evaluación está CONSOLIDADO_TOTAL — el backend rechaza el guardado igual, pero se refleja en la UI para no dejar completar un formulario que va a fallar. */
+  soloLectura?: boolean;
 }
 
 const ITEM_BLOQUEANTE_ORIGEN = 'ITEM_02';

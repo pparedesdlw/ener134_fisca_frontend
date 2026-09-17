@@ -3,6 +3,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { of, throwError } from 'rxjs';
 import { SustentoAivComponent } from './sustentoAiv.component';
+import { AuthService } from '../../../auth/services/auth.service';
 import { SustentoAivService } from '../../services/sustentoAiv.service';
 import { SustentoAivResponse, SustentoMasivoResultado } from '../../models/sustentoAiv.model';
 
@@ -24,7 +25,8 @@ describe('SustentoAivComponent', () => {
       imports: [SustentoAivComponent, NoopAnimationsModule],
       providers: [
         { provide: SustentoAivService, useValue: serviceSpy },
-        { provide: MatSnackBar, useValue: snackBarSpy }
+        { provide: MatSnackBar, useValue: snackBarSpy },
+        { provide: AuthService, useValue: { currentUsername: 'fdiaz' } }
       ]
     }).compileComponents();
 
@@ -38,6 +40,34 @@ describe('SustentoAivComponent', () => {
 
   it('debería crear el componente', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('usuario debería tomarse del usuario autenticado real, no un valor fijo', () => {
+    expect(component.usuario).toBe('fdiaz');
+  });
+
+  it('onPaginaSustentos debería actualizar la página y el tamaño de página', () => {
+    component.onPaginaSustentos({ pageIndex: 2, pageSize: 50, length: 120 });
+    expect(component.paginaSustentos()).toBe(2);
+    expect(component.tamanioPaginaSustentos()).toBe(50);
+  });
+
+  it('onFileIndividual debería dejar el archivo en null si no se seleccionó ninguno', () => {
+    const event = { target: { files: null } } as unknown as Event;
+    component.onFileIndividual(event);
+    expect(component.archivoIndividual).toBeNull();
+  });
+
+  it('onFileZip debería dejar el archivo en null si no se seleccionó ninguno', () => {
+    const event = { target: { files: null } } as unknown as Event;
+    component.onFileZip(event);
+    expect(component.archivoZip).toBeNull();
+  });
+
+  it('onFileMapeo debería dejar el archivo en null si no se seleccionó ninguno', () => {
+    const event = { target: { files: null } } as unknown as Event;
+    component.onFileMapeo(event);
+    expect(component.archivoMapeo).toBeNull();
   });
 
   it('onFileIndividual debería fijar el archivo elegido', () => {
@@ -138,6 +168,19 @@ describe('SustentoAivComponent', () => {
     }, 50);
   });
 
+  it('cargarIndividual debería mostrar el mensaje genérico si el error no trae mensaje del backend', (done) => {
+    component.idEvaluacionRegistro = 1;
+    component.archivoIndividual = new File(['contenido'], 'evidencia.pdf', { type: 'application/pdf' });
+    service.cargarIndividual.and.returnValue(throwError(() => ({})));
+
+    component.cargarIndividual();
+
+    setTimeout(() => {
+      expect(snackBar.open).toHaveBeenCalledWith('Error al cargar', 'OK', jasmine.any(Object));
+      done();
+    }, 50);
+  });
+
   it('cargarMasivo no debería hacer nada sin archivo o sin idEvaluacionAiv', () => {
     component.archivoZip = null;
     component.idEvaluacionAiv = 1;
@@ -169,6 +212,33 @@ describe('SustentoAivComponent', () => {
 
     setTimeout(() => {
       expect(snackBar.open).toHaveBeenCalledWith('ZIP inválido', 'OK', jasmine.any(Object));
+      done();
+    }, 50);
+  });
+
+  it('cargarMasivo debería mostrar el mensaje genérico si el error no trae mensaje del backend', (done) => {
+    component.idEvaluacionAiv = 1;
+    component.archivoZip = new File(['contenido'], 'sustentos.zip', { type: 'application/zip' });
+    service.cargarMasivo.and.returnValue(throwError(() => ({})));
+
+    component.cargarMasivo();
+
+    setTimeout(() => {
+      expect(snackBar.open).toHaveBeenCalledWith('Error masivo', 'OK', jasmine.any(Object));
+      done();
+    }, 50);
+  });
+
+  it('cargarMasivo debería mostrar el detalle de rechazados cuando existan', (done) => {
+    component.idEvaluacionAiv = 1;
+    component.archivoZip = new File(['contenido'], 'sustentos.zip', { type: 'application/zip' });
+    const resultado: SustentoMasivoResultado = { cargados: mockSustentos, rechazados: [{ nombreArchivo: 'x.pdf', motivo: 'no encontrado' } as any] };
+    service.cargarMasivo.and.returnValue(of(resultado));
+
+    component.cargarMasivo();
+
+    setTimeout(() => {
+      expect(snackBar.open).toHaveBeenCalledWith('Cargados 1, rechazados 1', 'OK', jasmine.any(Object));
       done();
     }, 50);
   });
@@ -216,6 +286,24 @@ describe('SustentoAivComponent', () => {
     }, 50);
   });
 
+  it('cargarMasivo debería avisar y no llamar al servicio si la plantilla CSV tiene filas inválidas', (done) => {
+    component.idEvaluacionAiv = 1;
+    component.archivoZip = new File(['contenido'], 'sustentos.zip', { type: 'application/zip' });
+    component.archivoMapeo = new File(
+      ['Nombre de archivo,Código único\nfactura1.pdf,'], 'plantilla.csv'
+    );
+
+    component.cargarMasivo();
+
+    setTimeout(() => {
+      expect(service.cargarMasivo).not.toHaveBeenCalled();
+      expect(snackBar.open).toHaveBeenCalledWith(
+        jasmine.stringMatching(/plantilla de mapeo tiene filas inválidas/), 'OK', jasmine.any(Object)
+      );
+      done();
+    }, 50);
+  });
+
   it('eliminar debería refrescar la lista al eliminar correctamente', () => {
     component.idEvaluacionRegistro = 1;
     service.eliminar.and.returnValue(of(void 0));
@@ -223,7 +311,7 @@ describe('SustentoAivComponent', () => {
 
     component.eliminar(mockSustentos[0]);
 
-    expect(service.eliminar).toHaveBeenCalledWith(1, 'admin');
+    expect(service.eliminar).toHaveBeenCalledWith(1, 'fdiaz');
     expect(service.listarPorRegistro).toHaveBeenCalled();
   });
 
@@ -231,5 +319,49 @@ describe('SustentoAivComponent', () => {
     service.eliminar.and.returnValue(throwError(() => ({ error: { message: 'No se pudo eliminar' } })));
     component.eliminar(mockSustentos[0]);
     expect(snackBar.open).toHaveBeenCalledWith('No se pudo eliminar', 'OK', jasmine.any(Object));
+  });
+
+  it('eliminar debería mostrar el mensaje genérico si el error no trae mensaje del backend', () => {
+    service.eliminar.and.returnValue(throwError(() => ({})));
+    component.eliminar(mockSustentos[0]);
+    expect(snackBar.open).toHaveBeenCalledWith('Error', 'OK', jasmine.any(Object));
+  });
+
+  it('descargar debería disparar la descarga del sustento con su nombre de archivo', () => {
+    const enlace = jasmine.createSpyObj('a', ['click']);
+    spyOn(document, 'createElement').and.returnValue(enlace);
+    spyOn(URL, 'createObjectURL').and.returnValue('blob:mock');
+    spyOn(URL, 'revokeObjectURL');
+    service.descargar.and.returnValue(of(new Blob(['contenido'])));
+
+    component.descargar(mockSustentos[0]);
+
+    expect(service.descargar).toHaveBeenCalledWith(1);
+    expect(enlace.download).toBe('sustento1.pdf');
+    expect(enlace.click).toHaveBeenCalled();
+  });
+
+  it('descargarPlantillaCsvMapeo debería disparar la descarga de un CSV con el nombre esperado', () => {
+    const enlace = jasmine.createSpyObj('a', ['click']);
+    spyOn(document, 'createElement').and.returnValue(enlace);
+    spyOn(URL, 'createObjectURL').and.returnValue('blob:mock');
+    spyOn(URL, 'revokeObjectURL');
+
+    component.descargarPlantillaCsvMapeo();
+
+    expect(enlace.download).toBe('plantilla_mapeo_sustentos.csv');
+    expect(enlace.click).toHaveBeenCalled();
+  });
+
+  it('descargarZipEjemplo debería disparar la descarga de un ZIP con el nombre esperado', () => {
+    const enlace = jasmine.createSpyObj('a', ['click']);
+    spyOn(document, 'createElement').and.returnValue(enlace);
+    spyOn(URL, 'createObjectURL').and.returnValue('blob:mock');
+    spyOn(URL, 'revokeObjectURL');
+
+    component.descargarZipEjemplo();
+
+    expect(enlace.download).toBe('ejemplo_carga_masiva_sustentos.zip');
+    expect(enlace.click).toHaveBeenCalled();
   });
 });

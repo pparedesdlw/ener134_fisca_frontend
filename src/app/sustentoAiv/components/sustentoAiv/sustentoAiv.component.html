@@ -24,9 +24,11 @@
       <input type="file" accept=".csv" (change)="onFileMapeo($event)"
              title="Opcional: CSV con columnas 'Nombre de archivo' y 'Código único', para archivos que no están nombrados con el código único." />
       <button mat-raised-button color="primary" (click)="cargarMasivo()">Cargar ZIP masivo</button>
+      <button mat-stroked-button (click)="descargarZipEjemplo()" title="Descarga un ZIP de ejemplo con la convención de nombrado esperada">ZIP de ejemplo</button>
+      <button mat-stroked-button (click)="descargarPlantillaCsvMapeo()" title="Descarga la plantilla CSV de mapeo (Nombre de archivo / Código único)">Plantilla CSV de mapeo</button>
     </div>
 
-    <table mat-table [dataSource]="sustentos()" class="mat-elevation-z2">
+    <table mat-table [dataSource]="sustentos() | slice: paginaSustentos() * tamanioPaginaSustentos() : (paginaSustentos() + 1) * tamanioPaginaSustentos()" class="mat-elevation-z2">
       <ng-container matColumnDef="nombreArchivo">
         <th mat-header-cell *matHeaderCellDef>Archivo</th>
         <td mat-cell *matCellDef="let s">{{ s.nombreArchivo }}</td>
@@ -53,5 +55,9 @@
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
     </table>
+    <mat-paginator *ngIf="sustentos().length" [length]="sustentos().length"
+                   [pageIndex]="paginaSustentos()" [pageSize]="tamanioPaginaSustentos()"
+                   [pageSizeOptions]="[10, 20, 50, 100]" (page)="onPaginaSustentos($event)">
+    </mat-paginator>
   </mat-card-content>
 </mat-card>

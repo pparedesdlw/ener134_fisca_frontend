@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { of, throwError } from 'rxjs';
 import { ReabrirEvaluacionDialogComponent } from './reabrir-evaluacion-dialog.component';
@@ -18,7 +18,6 @@ describe('ReabrirEvaluacionDialogComponent', () => {
   let periodoService: jasmine.SpyObj<PeriodoService>;
   let empresaService: jasmine.SpyObj<EmpresaConcesionariaService>;
   let dialog: jasmine.SpyObj<MatDialog>;
-  let dialogRef: jasmine.SpyObj<MatDialogRef<ReabrirEvaluacionDialogComponent>>;
 
   const mockPeriodos: Periodo[] = [{ codigoPeriodo: 'PER-2025-01', fechaInicio: '01/01/2025', fechaFin: '31/03/2025', estadoActivo: true }];
   const mockEmpresas: EmpresaConcesionaria[] = [{ codigoEmpresa: '10', razonSocial: 'Empresa 1' }];
@@ -36,7 +35,6 @@ describe('ReabrirEvaluacionDialogComponent', () => {
     const periodoServiceSpy = jasmine.createSpyObj('PeriodoService', ['listarPorEstado']);
     const empresaServiceSpy = jasmine.createSpyObj('EmpresaConcesionariaService', ['listarTodos']);
     const dialogSpy = jasmine.createSpyObj('MatDialog', ['open']);
-    const dialogRefSpy = jasmine.createSpyObj('MatDialogRef', ['close']);
 
     periodoServiceSpy.listarPorEstado.and.returnValue(of(mockPeriodos));
     empresaServiceSpy.listarTodos.and.returnValue(of(mockEmpresas));
@@ -49,21 +47,14 @@ describe('ReabrirEvaluacionDialogComponent', () => {
         { provide: PeriodoService, useValue: periodoServiceSpy },
         { provide: EmpresaConcesionariaService, useValue: empresaServiceSpy },
         { provide: MatDialog, useValue: dialogSpy },
-        { provide: MatDialogRef, useValue: dialogRefSpy },
-        { provide: AuthService, useValue: { isTisecAdmin: true } }
+        { provide: AuthService, useValue: { isTisecAdmin: true, currentUsername: 'fdiaz' } }
       ]
     }).compileComponents();
-
-    // MatDialogModule es requerido por el propio template (mat-dialog-title/content/actions) y re-provee
-    // MatDialog a nivel de componente, por lo que el override de `providers` es ignorado por TestBed;
-    // overrideProvider sí lo respeta.
-    TestBed.overrideProvider(MatDialog, { useValue: dialogSpy });
 
     service = TestBed.inject(EvaluacionAivService) as jasmine.SpyObj<EvaluacionAivService>;
     periodoService = TestBed.inject(PeriodoService) as jasmine.SpyObj<PeriodoService>;
     empresaService = TestBed.inject(EmpresaConcesionariaService) as jasmine.SpyObj<EmpresaConcesionariaService>;
     dialog = TestBed.inject(MatDialog) as jasmine.SpyObj<MatDialog>;
-    dialogRef = TestBed.inject(MatDialogRef) as jasmine.SpyObj<MatDialogRef<ReabrirEvaluacionDialogComponent>>;
 
     fixture = TestBed.createComponent(ReabrirEvaluacionDialogComponent);
     component = fixture.componentInstance;
@@ -139,21 +130,32 @@ describe('ReabrirEvaluacionDialogComponent', () => {
     expect(component.registrosSeleccionados()).toBeNull();
   });
 
-  it('reabrirEvaluacion debería cerrar esta ventana y abrir el diálogo de confirmación', () => {
+  it('reabrirEvaluacion debería abrir el diálogo de confirmación y refrescar la grilla al cerrarse', () => {
+    const dialogRefAbierto = jasmine.createSpyObj('MatDialogRef', ['afterClosed']);
+    dialogRefAbierto.afterClosed.and.returnValue(of(undefined));
+    dialog.open.and.returnValue(dialogRefAbierto);
+    service.listarConsolidadas.calls.reset();
+
+    component.reabrirEvaluacion(mockConsolidadas[0]);
+
+    expect(dialog.open).toHaveBeenCalled();
+    const dataEnviada = dialog.open.calls.first().args[1] as any;
+    expect(dataEnviada.data.evaluacion).toEqual(mockConsolidadas[0]);
+    expect(service.listarConsolidadas).toHaveBeenCalled();
+  });
+
+  it('usuario debería tomarse del usuario autenticado real, no un valor fijo', () => {
+    expect(component.usuario).toBe('fdiaz');
+  });
+
+  it('reabrirEvaluacion debería enviar el usuario autenticado real, no un valor hardcodeado', () => {
     const dialogRefAbierto = jasmine.createSpyObj('MatDialogRef', ['afterClosed']);
     dialogRefAbierto.afterClosed.and.returnValue(of(undefined));
     dialog.open.and.returnValue(dialogRefAbierto);
 
     component.reabrirEvaluacion(mockConsolidadas[0]);
 
-    expect(dialogRef.close).toHaveBeenCalled();
-    expect(dialog.open).toHaveBeenCalled();
-    const dataEnviada = dialog.open.calls.first().args[1] as any;
-    expect(dataEnviada.data.evaluacion).toEqual(mockConsolidadas[0]);
-  });
-
-  it('cerrar debería cerrar el diálogo', () => {
-    component.cerrar();
-    expect(dialogRef.close).toHaveBeenCalled();
+    const dataEnviada = dialog.open.calls.mostRecent().args[1] as any;
+    expect(dataEnviada.data.usuario).toBe('fdiaz');
   });
 });

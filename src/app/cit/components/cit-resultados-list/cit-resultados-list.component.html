@@ -12,7 +12,9 @@
 
   <mat-card *ngIf="indicadores.length > 0">
     <mat-card-content>
-      <table mat-table [dataSource]="indicadores" multiTemplateDataRows class="mat-elevation-z8">
+      <table mat-table
+             [dataSource]="indicadores | slice: paginaIndicadores * tamanioPaginaIndicadores : (paginaIndicadores + 1) * tamanioPaginaIndicadores"
+             multiTemplateDataRows class="mat-elevation-z8">
 
         <ng-container matColumnDef="codigoEmpresa">
           <th mat-header-cell *matHeaderCellDef>Código Empresa</th>
@@ -88,6 +90,10 @@
         </tr>
         <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="detail-row-def"></tr>
       </table>
+      <mat-paginator *ngIf="indicadores.length" [length]="indicadores.length"
+                     [pageIndex]="paginaIndicadores" [pageSize]="tamanioPaginaIndicadores"
+                     [pageSizeOptions]="[10, 20, 50, 100]" (page)="onPaginaIndicadores($event)">
+      </mat-paginator>
     </mat-card-content>
   </mat-card>
 
