@@ -205,6 +205,8 @@ describe('CalculoCitFormComponent', () => {
       incumplimientosItem4: 3,
       detalleItem4: { sinDetalleTh3: 1, sinDetalleTh4: 0, sinDetalleTh5: 1, sinDetalleTh6: 0, sinDetalleTh7: 1, sinDetalleTh8: 0 },
       tipoConsolidacion: 'CONSOLIDADO_TOTAL',
+      toleranciaAplicable: 5,
+      superaTolerancia: false,
       fechaConsolidado: '31/07/2026 10:00:00',
       usuario: 'admin'
     };

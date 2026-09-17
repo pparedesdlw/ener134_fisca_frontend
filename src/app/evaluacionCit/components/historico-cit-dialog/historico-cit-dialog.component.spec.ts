@@ -17,7 +17,8 @@ describe('HistoricoCitDialogComponent', () => {
     motivo: null, nta: 100, nmd: 40, nrn: 3, indicadorCit: 1.5,
     incumplimientosItem1: 1, incumplimientosItem3: 1, incumplimientosItem4: 1,
     detalleItem4: { sinDetalleTh3: 0, sinDetalleTh4: 0, sinDetalleTh5: 0, sinDetalleTh6: 0, sinDetalleTh7: 0, sinDetalleTh8: 1 },
-    tipoConsolidacion: 'CONSOLIDADO_TOTAL', fechaConsolidado: '2025-04-01', usuario: 'admin'
+    tipoConsolidacion: 'CONSOLIDADO_TOTAL', toleranciaAplicable: 5, superaTolerancia: false,
+    fechaConsolidado: '2025-04-01', usuario: 'admin'
   };
 
   function crear(): void {
@@ -72,5 +73,22 @@ describe('HistoricoCitDialogComponent', () => {
     crear();
     component.salir();
     expect(dialogRef.close).toHaveBeenCalled();
+  });
+
+  it('debería mostrar Existentes/Fiscalizados (=NMD) por ítem y la tolerancia aplicable', () => {
+    service.historico.and.returnValue(of(mockEvaluacion));
+    crear();
+    const texto = (fixture.nativeElement as HTMLElement).textContent ?? '';
+    expect(texto).toContain('Existentes');
+    expect(texto).toContain('Fiscalizados');
+    expect(texto).toContain('Tolerancia aplicable');
+    expect(texto).toContain('5%');
+  });
+
+  it('debería resaltar el resultado cuando el CIT supera la tolerancia', () => {
+    service.historico.and.returnValue(of({ ...mockEvaluacion, indicadorCit: 8, superaTolerancia: true }));
+    crear();
+    const resaltado = (fixture.nativeElement as HTMLElement).querySelector('.supera-tolerancia');
+    expect(resaltado).toBeTruthy();
   });
 });

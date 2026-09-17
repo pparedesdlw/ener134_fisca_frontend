@@ -24,6 +24,8 @@ export interface EvaluacionCitResponse {
   incumplimientosItem4: number;
   detalleItem4: DetalleItem4Response;
   tipoConsolidacion: 'CONSOLIDADO_PARCIAL' | 'CONSOLIDADO_TOTAL';
+  toleranciaAplicable: number | null;
+  superaTolerancia: boolean | null;
   fechaConsolidado: string;
   usuario: string;
 }
