@@ -32,6 +32,15 @@ export interface MuestraAivResponse {
   distribucion: DistribucionTipoResponse[];
 }
 
+/** RF02: previsualización sin persistir (recálculo automático al ajustar Asunto/Ubigeo). */
+export interface SimulacionMuestraAivResponse {
+  poblacion: number;
+  tamanioBase: number;
+  tamanioFinal: number;
+  porcentajeAdicional: number;
+  distribucion: DistribucionTipoResponse[];
+}
+
 export interface GenerarMuestraAivRequest {
   codigoPeriodo: string;
   fechaInicio: string;

@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { IndicadoresGraficosComponent } from './indicadoresGraficos.component';
 import { IndicadoresGraficosService } from '../../services/indicadoresGraficos.service';
 import { ComparativoIndicadoresResponse, EvolucionIndicadoresResponse } from '../../models/indicadores.model';
@@ -13,6 +14,7 @@ describe('IndicadoresGraficosComponent', () => {
   let component: IndicadoresGraficosComponent;
   let fixture: ComponentFixture<IndicadoresGraficosComponent>;
   let service: jasmine.SpyObj<IndicadoresGraficosService>;
+  let snackBar: jasmine.SpyObj<MatSnackBar>;
 
   const mockPeriodos: Periodo[] = [{ codigoPeriodo: 'PER-2025-01', fechaInicio: '2025-01-01', fechaFin: '2025-03-31', estadoActivo: true }];
   const mockEmpresas: EmpresaConcesionaria[] = [{ id: 1, codigoEmpresa: '10', razonSocial: 'Empresa 1' }];
@@ -29,6 +31,7 @@ describe('IndicadoresGraficosComponent', () => {
     const serviceSpy = jasmine.createSpyObj('IndicadoresGraficosService', ['evolucion', 'comparativo']);
     const periodoServiceSpy = jasmine.createSpyObj('PeriodoService', ['listarPorEstado']);
     const empresaServiceSpy = jasmine.createSpyObj('EmpresaConcesionariaService', ['listarTodos']);
+    const snackBarSpy = jasmine.createSpyObj('MatSnackBar', ['open']);
 
     periodoServiceSpy.listarPorEstado.and.returnValue(of(mockPeriodos));
     empresaServiceSpy.listarTodos.and.returnValue(of(mockEmpresas));
@@ -38,11 +41,13 @@ describe('IndicadoresGraficosComponent', () => {
       providers: [
         { provide: IndicadoresGraficosService, useValue: serviceSpy },
         { provide: PeriodoService, useValue: periodoServiceSpy },
-        { provide: EmpresaConcesionariaService, useValue: empresaServiceSpy }
+        { provide: EmpresaConcesionariaService, useValue: empresaServiceSpy },
+        { provide: MatSnackBar, useValue: snackBarSpy }
       ]
     }).compileComponents();
 
     service = TestBed.inject(IndicadoresGraficosService) as jasmine.SpyObj<IndicadoresGraficosService>;
+    snackBar = TestBed.inject(MatSnackBar) as jasmine.SpyObj<MatSnackBar>;
 
     fixture = TestBed.createComponent(IndicadoresGraficosComponent);
     component = fixture.componentInstance;
@@ -143,5 +148,70 @@ describe('IndicadoresGraficosComponent', () => {
     expect(component.hayEvolucion()).toBeTrue();
     expect(component.sinDatosEvolucion()).toBeFalse();
     expect(fixture.nativeElement.querySelectorAll('app-bar-chart').length).toBe(2);
+  });
+
+  it('cargarEvolucion debería mostrar un mensaje de error y no dejar el spinner encendido si falla el servicio', () => {
+    component.empresaSeleccionada = 1;
+    service.evolucion.and.returnValue(throwError(() => new Error('fallo de red')));
+
+    component.cargarEvolucion();
+
+    expect(component.evolucion()).toBeNull();
+    expect(component.cargandoEvolucion()).toBeFalse();
+    expect(snackBar.open).toHaveBeenCalledWith(
+      'No se pudo cargar la evolución de indicadores', 'Cerrar', jasmine.any(Object)
+    );
+  });
+
+  it('cargarComparativo debería mostrar un mensaje de error y no dejar el spinner encendido si falla el servicio', () => {
+    component.periodoSeleccionado = 'PER-2025-01';
+    service.comparativo.and.returnValue(throwError(() => new Error('fallo de red')));
+
+    component.cargarComparativo();
+
+    expect(component.comparativo()).toBeNull();
+    expect(component.cargandoComparativo()).toBeFalse();
+    expect(snackBar.open).toHaveBeenCalledWith(
+      'No se pudo cargar el comparativo de indicadores', 'Cerrar', jasmine.any(Object)
+    );
+  });
+
+  it('RF11: el filtro de empresa debe ser una grilla de tiles (selección única), no un combo', () => {
+    // El diseño de RF11 muestra "Empresa" y "Periodo" como grillas de botones seleccionables,
+    // no un mat-select desplegable.
+    expect(fixture.nativeElement.querySelector('mat-select')).toBeNull();
+    const tilesEmpresa: NodeListOf<HTMLButtonElement> = fixture.nativeElement.querySelectorAll(
+      '.grid-selector[aria-label="Empresa"] .tile-selector'
+    );
+    expect(tilesEmpresa.length).toBe(mockEmpresas.length);
+    expect(tilesEmpresa[0].textContent?.trim()).toBe('10');
+  });
+
+  it('RF11: clic en un tile de empresa debería seleccionarla y disparar la carga automáticamente', () => {
+    service.evolucion.and.returnValue(of(mockEvolucion));
+
+    const tile: HTMLButtonElement = fixture.nativeElement.querySelector(
+      '.grid-selector[aria-label="Empresa"] .tile-selector'
+    );
+    tile.click();
+    fixture.detectChanges();
+
+    expect(component.empresaSeleccionada).toBe(1);
+    expect(service.evolucion).toHaveBeenCalledWith(1);
+    expect(tile.classList).toContain('seleccionado');
+  });
+
+  it('RF11: clic en un tile de periodo debería seleccionarlo y disparar la carga automáticamente', () => {
+    service.comparativo.and.returnValue(of(mockComparativo));
+
+    const tile: HTMLButtonElement = fixture.nativeElement.querySelector(
+      '.grid-selector[aria-label="Periodo"] .tile-selector'
+    );
+    tile.click();
+    fixture.detectChanges();
+
+    expect(component.periodoSeleccionado).toBe('PER-2025-01');
+    expect(service.comparativo).toHaveBeenCalledWith('PER-2025-01');
+    expect(tile.classList).toContain('seleccionado');
   });
 });

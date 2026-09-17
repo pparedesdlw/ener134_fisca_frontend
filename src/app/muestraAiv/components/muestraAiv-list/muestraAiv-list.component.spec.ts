@@ -4,8 +4,9 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute, Router, convertToParamMap } from '@angular/router';
 import { of, throwError } from 'rxjs';
 import { MuestraAivListComponent } from './muestraAiv-list.component';
+import { AuthService } from '../../../auth/services/auth.service';
 import { MuestraAivService } from '../../services/muestraAiv.service';
-import { MuestraAivResponse } from '../../models/muestraAiv.model';
+import { MuestraAivResponse, SimulacionMuestraAivResponse } from '../../models/muestraAiv.model';
 import { PeriodoService } from '../../../periodos/services/periodo.service';
 import { EmpresaConcesionariaService } from '../../../empresas/services/empresa-concesionaria.service';
 import { AsuntoService } from '../../../asuntos/services/asunto.service';
@@ -35,6 +36,9 @@ describe('MuestraAivListComponent', () => {
     porcentajeAdicional: 10, tamanioFinal: 44, estadoMuestra: 'GENERADA', seedAleatorio: 123,
     fechaGeneracion: '2025-01-05T10:00:00', detalle: [], distribucion: []
   };
+  const mockSimulacion: SimulacionMuestraAivResponse = {
+    poblacion: 100, tamanioBase: 40, tamanioFinal: 44, porcentajeAdicional: 10, distribucion: []
+  };
 
   const routeStub: { snapshot: { queryParamMap: ReturnType<typeof convertToParamMap> } } = {
     snapshot: { queryParamMap: convertToParamMap({}) }
@@ -48,7 +52,7 @@ describe('MuestraAivListComponent', () => {
   }
 
   beforeEach(async () => {
-    const serviceSpy = jasmine.createSpyObj('MuestraAivService', ['generar', 'reemplazar', 'vigente']);
+    const serviceSpy = jasmine.createSpyObj('MuestraAivService', ['generar', 'reemplazar', 'vigente', 'simular']);
     const periodoServiceSpy = jasmine.createSpyObj('PeriodoService', ['listarPorEstado']);
     const empresaServiceSpy = jasmine.createSpyObj('EmpresaConcesionariaService', ['listarTodos']);
     const asuntoServiceSpy = jasmine.createSpyObj('AsuntoService', ['listarPorEstado']);
@@ -62,6 +66,7 @@ describe('MuestraAivListComponent', () => {
     empresaServiceSpy.listarTodos.and.returnValue(of(mockEmpresas));
     asuntoServiceSpy.listarPorEstado.and.returnValue(of(mockAsuntos));
     departamentoServiceSpy.listarTodos.and.returnValue(of(mockDepartamentos));
+    serviceSpy.simular.and.returnValue(of(mockSimulacion));
 
     await TestBed.configureTestingModule({
       imports: [MuestraAivListComponent, NoopAnimationsModule],
@@ -75,7 +80,8 @@ describe('MuestraAivListComponent', () => {
         { provide: DistritoService, useValue: distritoServiceSpy },
         { provide: Router, useValue: routerSpy },
         { provide: MatSnackBar, useValue: snackBarSpy },
-        { provide: ActivatedRoute, useValue: routeStub }
+        { provide: ActivatedRoute, useValue: routeStub },
+        { provide: AuthService, useValue: { currentUsername: 'fdiaz' } }
       ]
     }).compileComponents();
 
@@ -84,6 +90,11 @@ describe('MuestraAivListComponent', () => {
     distritoService = TestBed.inject(DistritoService) as jasmine.SpyObj<DistritoService>;
     router = TestBed.inject(Router) as jasmine.SpyObj<Router>;
     snackBar = TestBed.inject(MatSnackBar) as jasmine.SpyObj<MatSnackBar>;
+  });
+
+  it('usuario debería tomarse del usuario autenticado real, no un valor fijo', () => {
+    crearComponente();
+    expect(component.usuario).toBe('fdiaz');
   });
 
   it('debería cargar catálogos y precargar filtros desde los query params', () => {
@@ -124,6 +135,134 @@ describe('MuestraAivListComponent', () => {
     });
   });
 
+  describe('recalcular (RF02: previsualización sin persistir)', () => {
+    it('no debería llamar al servicio si faltan filtros obligatorios', () => {
+      crearComponente();
+      service.simular.calls.reset();
+
+      component.recalcular();
+
+      expect(service.simular).not.toHaveBeenCalled();
+      expect(component.simulacion()).toBeNull();
+    });
+
+    it('debería llamar a simular con los filtros actuales y guardar el resultado', () => {
+      crearComponente();
+      component.periodoSeleccionado = 'PER-2025-01';
+      component.fechaInicio = new Date('2025-01-01T12:00:00');
+      component.fechaFin = new Date('2025-01-31T12:00:00');
+      component.empresaSeleccionada = '10';
+      service.simular.calls.reset();
+      service.simular.and.returnValue(of(mockSimulacion));
+
+      component.recalcular();
+
+      expect(service.simular).toHaveBeenCalledWith(jasmine.objectContaining({
+        codigoPeriodo: 'PER-2025-01', fechaInicio: '2025-01-01', fechaFin: '2025-01-31', codigoEmpresa: '10'
+      }));
+      expect(component.simulacion()).toEqual(mockSimulacion);
+      expect(component.simulando()).toBe(false);
+    });
+
+    it('debería avisar y limpiar la simulación si el backend falla', () => {
+      crearComponente();
+      component.periodoSeleccionado = 'PER-2025-01';
+      component.fechaInicio = new Date('2025-01-01T12:00:00');
+      component.fechaFin = new Date('2025-01-31T12:00:00');
+      component.empresaSeleccionada = '10';
+      service.simular.and.returnValue(throwError(() => ({ error: { message: 'No hay universo' } })));
+
+      component.recalcular();
+
+      expect(snackBar.open).toHaveBeenCalledWith('No hay universo', 'Cerrar', jasmine.any(Object));
+      expect(component.simulacion()).toBeNull();
+      expect(component.simulando()).toBe(false);
+    });
+
+    it('onPeriodoChange debería disparar recalcular tras autocompletar fechas', () => {
+      crearComponente();
+      component.periodoSeleccionado = 'PER-2025-01';
+      component.empresaSeleccionada = '10';
+      service.simular.calls.reset();
+      service.simular.and.returnValue(of(mockSimulacion));
+
+      component.onPeriodoChange();
+
+      expect(service.simular).toHaveBeenCalled();
+    });
+
+    it('debería mostrar el mensaje genérico si el error de simular no trae mensaje del backend', () => {
+      crearComponente();
+      component.periodoSeleccionado = 'PER-2025-01';
+      component.fechaInicio = new Date('2025-01-01T12:00:00');
+      component.fechaFin = new Date('2025-01-31T12:00:00');
+      component.empresaSeleccionada = '10';
+      service.simular.and.returnValue(throwError(() => ({})));
+
+      component.recalcular();
+
+      expect(snackBar.open).toHaveBeenCalledWith('Error calculando la muestra', 'Cerrar', jasmine.any(Object));
+    });
+
+    it('debería avisar si falla la expansión de departamentos a ubigeos', () => {
+      crearComponente();
+      component.periodoSeleccionado = 'PER-2025-01';
+      component.fechaInicio = new Date('2025-01-01T12:00:00');
+      component.fechaFin = new Date('2025-01-31T12:00:00');
+      component.empresaSeleccionada = '10';
+      component.departamentosSeleccionados = ['15'];
+      provinciaService.listarTodos.and.returnValue(throwError(() => ({ status: 500 })));
+
+      component.recalcular();
+
+      expect(snackBar.open).toHaveBeenCalledWith(
+        'Error obteniendo los ubigeos seleccionados', 'Cerrar', jasmine.any(Object)
+      );
+      expect(component.simulando()).toBe(false);
+    });
+
+    it('debería incluir codigosAsunto y codigosUbigeo cuando hay asuntos y departamentos seleccionados', () => {
+      crearComponente();
+      component.periodoSeleccionado = 'PER-2025-01';
+      component.fechaInicio = new Date('2025-01-01T12:00:00');
+      component.fechaFin = new Date('2025-01-31T12:00:00');
+      component.empresaSeleccionada = '10';
+      component.asuntosSeleccionados = ['174'];
+      component.departamentosSeleccionados = ['15'];
+      provinciaService.listarTodos.and.returnValue(of([{ codigoProvincia: '01', descripcionProvincia: 'Lima' } as any]));
+      distritoService.listarTodos.and.returnValue(of([{ codigoDistrito: '01', descripcionDistrito: 'Cercado' } as any]));
+      service.simular.and.returnValue(of(mockSimulacion));
+
+      component.recalcular();
+
+      expect(service.simular).toHaveBeenCalledWith(jasmine.objectContaining({
+        codigosAsunto: ['174'], codigosUbigeo: ['150101']
+      }));
+    });
+
+    it('debería tratar un departamento sin provincias como sin ubigeos que expandir', () => {
+      crearComponente();
+      component.periodoSeleccionado = 'PER-2025-01';
+      component.fechaInicio = new Date('2025-01-01T12:00:00');
+      component.fechaFin = new Date('2025-01-31T12:00:00');
+      component.empresaSeleccionada = '10';
+      component.departamentosSeleccionados = ['15'];
+      provinciaService.listarTodos.and.returnValue(of([]));
+      service.simular.and.returnValue(of(mockSimulacion));
+
+      component.recalcular();
+
+      expect(distritoService.listarTodos).not.toHaveBeenCalled();
+      expect(service.simular).toHaveBeenCalledWith(jasmine.objectContaining({ codigosUbigeo: undefined }));
+    });
+  });
+
+  it('cancelar debería navegar a la pantalla de registros cerrados (RF02, flujo alterno)', () => {
+    crearComponente();
+    component.cancelar();
+    expect(router.navigate).toHaveBeenCalledWith(['/registros-cerrados']);
+  });
+
   it('generar debería avisar si faltan filtros obligatorios', () => {
     crearComponente();
     component.generar();
@@ -156,6 +295,7 @@ describe('MuestraAivListComponent', () => {
     component.fechaInicio = new Date('2025-01-01T12:00:00');
     component.fechaFin = new Date('2025-01-31T12:00:00');
     component.empresaSeleccionada = '10';
+    component.asuntosSeleccionados = ['174'];
     component.departamentosSeleccionados = ['15'];
     provinciaService.listarTodos.and.returnValue(of([{ codigoProvincia: '01', descripcionProvincia: 'Lima' } as any]));
     distritoService.listarTodos.and.returnValue(of([{ codigoDistrito: '01', descripcionDistrito: 'Cercado' } as any]));
@@ -164,7 +304,9 @@ describe('MuestraAivListComponent', () => {
     component.generar();
 
     expect(distritoService.listarTodos).toHaveBeenCalledWith('15', '01');
-    expect(service.generar).toHaveBeenCalledWith(jasmine.objectContaining({ codigosUbigeo: ['150101'] }));
+    expect(service.generar).toHaveBeenCalledWith(jasmine.objectContaining({
+      codigosAsunto: ['174'], codigosUbigeo: ['150101']
+    }));
   });
 
   it('generar debería mostrar el error del backend si falla', () => {
@@ -178,6 +320,36 @@ describe('MuestraAivListComponent', () => {
     component.generar();
 
     expect(snackBar.open).toHaveBeenCalledWith('Sin registros disponibles', 'Cerrar', jasmine.any(Object));
+    expect(component.cargando()).toBe(false);
+  });
+
+  it('generar debería mostrar el mensaje genérico si el error no trae mensaje del backend', () => {
+    crearComponente();
+    component.periodoSeleccionado = 'PER-2025-01';
+    component.fechaInicio = new Date('2025-01-01T12:00:00');
+    component.fechaFin = new Date('2025-01-31T12:00:00');
+    component.empresaSeleccionada = '10';
+    service.generar.and.returnValue(throwError(() => ({})));
+
+    component.generar();
+
+    expect(snackBar.open).toHaveBeenCalledWith('Error generando muestra', 'Cerrar', jasmine.any(Object));
+  });
+
+  it('generar debería avisar si falla la expansión de departamentos a ubigeos', () => {
+    crearComponente();
+    component.periodoSeleccionado = 'PER-2025-01';
+    component.fechaInicio = new Date('2025-01-01T12:00:00');
+    component.fechaFin = new Date('2025-01-31T12:00:00');
+    component.empresaSeleccionada = '10';
+    component.departamentosSeleccionados = ['15'];
+    provinciaService.listarTodos.and.returnValue(throwError(() => ({ status: 500 })));
+
+    component.generar();
+
+    expect(snackBar.open).toHaveBeenCalledWith(
+      'Error obteniendo los ubigeos seleccionados', 'Cerrar', jasmine.any(Object)
+    );
     expect(component.cargando()).toBe(false);
   });
 
@@ -231,6 +403,22 @@ describe('MuestraAivListComponent', () => {
     expect(component.cargando()).toBe(false);
   });
 
+  it('generar, ante MUESTRA_DUPLICADA, debería mostrar el mensaje genérico si la carga tampoco trae mensaje', () => {
+    crearComponente();
+    component.periodoSeleccionado = 'PER-2025-01';
+    component.fechaInicio = new Date('2025-01-01T12:00:00');
+    component.fechaFin = new Date('2025-01-31T12:00:00');
+    component.empresaSeleccionada = '10';
+    service.generar.and.returnValue(throwError(() => ({ error: { code: 'MUESTRA_DUPLICADA' } })));
+    service.vigente.and.returnValue(throwError(() => ({})));
+
+    component.generar();
+
+    expect(snackBar.open).toHaveBeenCalledWith(
+      'Ya existe una muestra activa, pero no se pudo cargar', 'Cerrar', jasmine.any(Object)
+    );
+  });
+
   it('reemplazar debería fijar el id en edición y limpiar el motivo', () => {
     crearComponente();
     component.reemplazar(5);
@@ -243,6 +431,12 @@ describe('MuestraAivListComponent', () => {
     component.reemplazar(5);
     component.cancelarReemplazo();
     expect(component.reemplazandoId()).toBeNull();
+  });
+
+  it('confirmarReemplazo no debería hacer nada si no hay un detalle en edición', () => {
+    crearComponente();
+    component.confirmarReemplazo();
+    expect(service.reemplazar).not.toHaveBeenCalled();
   });
 
   it('confirmarReemplazo debería rechazar si falta el motivo', () => {
@@ -262,9 +456,31 @@ describe('MuestraAivListComponent', () => {
 
     component.confirmarReemplazo();
 
-    expect(service.reemplazar).toHaveBeenCalledWith({ idMuestraDetalle: 5, motivo: 'Registro no disponible', usuario: 'admin' });
+    expect(service.reemplazar).toHaveBeenCalledWith({ idMuestraDetalle: 5, motivo: 'Registro no disponible', usuario: 'fdiaz' });
     expect(component.muestra()).toEqual(mockMuestra);
     expect(component.reemplazandoId()).toBeNull();
+  });
+
+  it('confirmarReemplazo debería mostrar el error del backend si falla', () => {
+    crearComponente();
+    component.reemplazar(5);
+    component.motivoReemplazo = 'Registro no disponible';
+    service.reemplazar.and.returnValue(throwError(() => ({ error: { message: 'Detalle ya reemplazado' } })));
+
+    component.confirmarReemplazo();
+
+    expect(snackBar.open).toHaveBeenCalledWith('Detalle ya reemplazado', 'Cerrar', jasmine.any(Object));
+  });
+
+  it('confirmarReemplazo debería mostrar el mensaje genérico si el error no trae mensaje del backend', () => {
+    crearComponente();
+    component.reemplazar(5);
+    component.motivoReemplazo = 'Registro no disponible';
+    service.reemplazar.and.returnValue(throwError(() => ({})));
+
+    component.confirmarReemplazo();
+
+    expect(snackBar.open).toHaveBeenCalledWith('Error en reemplazo', 'Cerrar', jasmine.any(Object));
   });
 
   it('onDetallePage debería actualizar la página y el tamaño de página del detalle', () => {
@@ -294,6 +510,14 @@ describe('MuestraAivListComponent', () => {
 
   it('iniciarEvaluacion no debería navegar si no hay muestra generada', () => {
     crearComponente();
+    component.iniciarEvaluacion();
+    expect(router.navigate).not.toHaveBeenCalled();
+  });
+
+  it('iniciarEvaluacion no debería navegar si hay muestra pero no hay periodo seleccionado', () => {
+    crearComponente();
+    component.periodoSeleccionado = null;
+    component.muestra.set(mockMuestra);
     component.iniciarEvaluacion();
     expect(router.navigate).not.toHaveBeenCalled();
   });

@@ -6,18 +6,26 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { AuthService } from '../../../auth/services/auth.service';
 import { SustentoAivService } from '../../services/sustentoAiv.service';
 import { SustentoAivResponse, MapeoArchivoSustento } from '../../models/sustentoAiv.model';
-import { excedeTamanioMaximo } from '../../../shared/utils/archivo.util';
-import { parsearMapeoCsv } from '../../../shared/utils/mapeoSustentoCsv.util';
+import { excedeTamanioMaximo, descargarBlob } from '../../../shared/utils/archivo.util';
+import {
+  parsearMapeoCsv,
+  generarPlantillaCsvMapeo,
+  generarZipEjemploSustentos,
+  NOMBRE_PLANTILLA_CSV_MAPEO,
+  NOMBRE_ZIP_EJEMPLO_SUSTENTOS
+} from '../../../shared/utils/mapeoSustentoCsv.util';
 
 @Component({
   selector: 'app-sustento-aiv',
   standalone: true,
   imports: [
     CommonModule, FormsModule, MatCardModule, MatButtonModule, MatInputModule,
-    MatFormFieldModule, MatTableModule
+    MatFormFieldModule, MatTableModule, MatPaginatorModule
   ],
   templateUrl: './sustentoAiv.component.html',
   styleUrl: './sustentoAiv.component.scss'
@@ -25,16 +33,29 @@ import { parsearMapeoCsv } from '../../../shared/utils/mapeoSustentoCsv.util';
 export class SustentoAivComponent {
   private service = inject(SustentoAivService);
   private snack = inject(MatSnackBar);
+  private authService = inject(AuthService);
 
   idEvaluacionRegistro: number | null = null;
   idEvaluacionAiv: number | null = null;
   codigoUnicoAtencion = '';
-  usuario = 'admin';
+
+  get usuario(): string {
+    return this.authService.currentUsername;
+  }
   archivoIndividual: File | null = null;
   archivoZip: File | null = null;
   archivoMapeo: File | null = null;
   sustentos = signal<SustentoAivResponse[]>([]);
   displayedColumns = ['nombreArchivo', 'tamanioBytes', 'origen', 'fechaCarga', 'acciones'];
+
+  /** Paginación en memoria (regla institucional: toda grilla que pueda superar 10 filas debe paginar). */
+  paginaSustentos = signal(0);
+  tamanioPaginaSustentos = signal(20);
+
+  onPaginaSustentos(event: PageEvent): void {
+    this.paginaSustentos.set(event.pageIndex);
+    this.tamanioPaginaSustentos.set(event.pageSize);
+  }
 
   onFileIndividual(ev: Event): void {
     const input = ev.target as HTMLInputElement;
@@ -68,8 +89,18 @@ export class SustentoAivComponent {
     this.archivoMapeo = f && f.length > 0 ? f[0] : null;
   }
 
+  descargarPlantillaCsvMapeo(): void {
+    const blob = new Blob([generarPlantillaCsvMapeo()], { type: 'text/csv;charset=utf-8' });
+    descargarBlob(blob, NOMBRE_PLANTILLA_CSV_MAPEO);
+  }
+
+  descargarZipEjemplo(): void {
+    descargarBlob(generarZipEjemploSustentos(), NOMBRE_ZIP_EJEMPLO_SUSTENTOS);
+  }
+
   listar(): void {
     if (this.idEvaluacionRegistro == null) return;
+    this.paginaSustentos.set(0);
     this.service.listarPorRegistro(this.idEvaluacionRegistro).subscribe({
       next: (l) => this.sustentos.set(l),
       error: () => this.sustentos.set([])
@@ -156,12 +187,7 @@ export class SustentoAivComponent {
   }
 
   descargar(s: SustentoAivResponse): void {
-    this.service.descargar(s.id).subscribe(blob => {
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url; a.download = s.nombreArchivo; a.click();
-      URL.revokeObjectURL(url);
-    });
+    this.service.descargar(s.id).subscribe(blob => descargarBlob(blob, s.nombreArchivo));
   }
 
   eliminar(s: SustentoAivResponse): void {

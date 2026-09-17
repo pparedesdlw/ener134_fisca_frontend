@@ -1,11 +1,9 @@
 import { Component, OnInit, signal, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
-import { MatButtonModule } from '@angular/material/button';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatSelectModule } from '@angular/material/select';
-import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { IndicadoresGraficosService } from '../../services/indicadoresGraficos.service';
 import { EvolucionIndicadoresResponse, ComparativoIndicadoresResponse } from '../../models/indicadores.model';
 import { PeriodoService } from '../../../periodos/services/periodo.service';
@@ -19,8 +17,7 @@ import { BarChartComponent } from '../bar-chart/bar-chart.component';
   selector: 'app-indicadores-graficos',
   standalone: true,
   imports: [
-    CommonModule, FormsModule, MatCardModule, MatButtonModule,
-    MatFormFieldModule, MatSelectModule, MatIconModule, BarChartComponent
+    CommonModule, MatCardModule, MatProgressSpinnerModule, MatTooltipModule, BarChartComponent
   ],
   templateUrl: './indicadoresGraficos.component.html',
   styleUrl: './indicadoresGraficos.component.scss'
@@ -29,6 +26,7 @@ export class IndicadoresGraficosComponent implements OnInit {
   private service = inject(IndicadoresGraficosService);
   private periodoService = inject(PeriodoService);
   private empresaService = inject(EmpresaConcesionariaService);
+  private snack = inject(MatSnackBar);
 
   periodos = signal<Periodo[]>([]);
   empresas = signal<EmpresaConcesionaria[]>([]);
@@ -41,6 +39,8 @@ export class IndicadoresGraficosComponent implements OnInit {
 
   evolucion = signal<EvolucionIndicadoresResponse | null>(null);
   comparativo = signal<ComparativoIndicadoresResponse | null>(null);
+  cargandoEvolucion = signal(false);
+  cargandoComparativo = signal(false);
 
   labelsEvolucion = computed(() => this.evolucion()?.puntos.map((p) => p.codigoPeriodo) ?? []);
   valoresAivEvolucion = computed(() => this.evolucion()?.puntos.map((p) => p.indicadorAiv) ?? []);
@@ -63,14 +63,51 @@ export class IndicadoresGraficosComponent implements OnInit {
     this.empresaService.listarTodos().subscribe({ next: (e) => this.empresas.set(e) });
   }
 
-  cargarEvolucion(): void {
-    if (this.empresaSeleccionada == null) return;
-    this.service.evolucion(this.empresaSeleccionada).subscribe({ next: (r) => this.evolucion.set(r) });
+  /** RF11: la empresa se elige con clic en una grilla de tiles (selección única), no con un combo. */
+  seleccionarEmpresa(idEmpresa: number | undefined): void {
+    if (idEmpresa == null) return;
+    this.empresaSeleccionada = idEmpresa;
+    this.cargarEvolucion();
   }
 
+  /** RF11: el periodo se elige con clic en una grilla de tiles (selección única), no con un combo. */
+  seleccionarPeriodo(codigoPeriodo: string): void {
+    this.periodoSeleccionado = codigoPeriodo;
+    this.cargarComparativo();
+  }
+
+  /** RF11: se ejecuta automáticamente al seleccionar la empresa (selectionChange del filtro). */
+  cargarEvolucion(): void {
+    if (this.empresaSeleccionada == null) return;
+    this.cargandoEvolucion.set(true);
+    this.service.evolucion(this.empresaSeleccionada).subscribe({
+      next: (r) => {
+        this.evolucion.set(r);
+        this.cargandoEvolucion.set(false);
+      },
+      error: () => {
+        this.evolucion.set(null);
+        this.cargandoEvolucion.set(false);
+        this.snack.open('No se pudo cargar la evolución de indicadores', 'Cerrar', { duration: 4000 });
+      }
+    });
+  }
+
+  /** RF11: se ejecuta automáticamente al seleccionar el periodo (selectionChange del filtro). */
   cargarComparativo(): void {
     if (!this.periodoSeleccionado) return;
-    this.service.comparativo(this.periodoSeleccionado).subscribe({ next: (r) => this.comparativo.set(r) });
+    this.cargandoComparativo.set(true);
+    this.service.comparativo(this.periodoSeleccionado).subscribe({
+      next: (r) => {
+        this.comparativo.set(r);
+        this.cargandoComparativo.set(false);
+      },
+      error: () => {
+        this.comparativo.set(null);
+        this.cargandoComparativo.set(false);
+        this.snack.open('No se pudo cargar el comparativo de indicadores', 'Cerrar', { duration: 4000 });
+      }
+    });
   }
 
   etiquetaEmpresa(codigoEmpresa: number): string {

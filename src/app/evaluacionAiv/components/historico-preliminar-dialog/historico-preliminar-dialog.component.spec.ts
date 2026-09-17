@@ -60,4 +60,17 @@ describe('HistoricoPreliminarDialogComponent', () => {
     component.salir();
     expect(dialogRef.close).toHaveBeenCalled();
   });
+
+  it('RF08: la tabla de resumen debe quedar envuelta en un contenedor con scroll horizontal, no truncarse', () => {
+    const evaluacionConItems = {
+      id: 1,
+      itemsResumen: [{ descripcion: 'Descripción larga de ejemplo', existentes: 306, fiscalizados: 306, incumplimientos: 0 }]
+    } as unknown as EvaluacionAivResponse;
+    service.obtenerHistoricoPreliminar.and.returnValue(of(evaluacionConItems));
+    crear();
+
+    const contenedor: HTMLElement = fixture.nativeElement.querySelector('.tabla-scroll');
+    expect(contenedor).toBeTruthy();
+    expect(contenedor.querySelector('table')).toBeTruthy();
+  });
 });

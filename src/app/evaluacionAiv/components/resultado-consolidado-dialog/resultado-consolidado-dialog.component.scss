@@ -18,9 +18,32 @@ h4 {
   margin-top: var(--space-5);
   margin-bottom: var(--space-2);
 }
+/* RF06: solo 5 columnas — el diálogo (1100px, ver evaluacionAiv.component.ts) se ensancha
+   lo suficiente para mostrarlas todas de una vez, sin depender de scroll horizontal.
+   .tabla-scroll queda como red de seguridad para viewports angostos (< 1100px), no como
+   mecanismo principal. */
+.tabla-scroll {
+  overflow-x: auto;
+  border: 1px solid var(--color-neutral-bg, #e0e0e0);
+  border-radius: 4px;
+  margin-bottom: var(--space-2);
+}
 table {
   width: 100%;
-  margin-bottom: var(--space-2);
+  min-width: 900px;
+  table-layout: fixed;
+}
+::ng-deep .mat-mdc-table {
+  .cdk-column-item { width: 60px; }
+  .cdk-column-descripcion {
+    width: 480px;
+    white-space: normal;
+  }
+  .cdk-column-existentes,
+  .cdk-column-fiscalizados,
+  .cdk-column-incumplimientos {
+    width: 120px;
+  }
 }
 .formula {
   font-family: 'Courier New', monospace;

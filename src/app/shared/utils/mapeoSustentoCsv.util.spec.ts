@@ -1,4 +1,4 @@
-import { parsearMapeoCsv } from './mapeoSustentoCsv.util';
+import { parsearMapeoCsv, generarPlantillaCsvMapeo, generarZipEjemploSustentos } from './mapeoSustentoCsv.util';
 
 describe('parsearMapeoCsv', () => {
   it('debería parsear filas válidas con encabezados exactos', () => {
@@ -54,5 +54,23 @@ describe('parsearMapeoCsv', () => {
 
     expect(resultado.mapeo).toEqual([]);
     expect(resultado.filasInvalidas).toEqual([]);
+  });
+});
+
+describe('generarPlantillaCsvMapeo', () => {
+  it('debería producir un CSV que el propio parsearMapeoCsv acepta sin filas inválidas', () => {
+    const resultado = parsearMapeoCsv(generarPlantillaCsvMapeo());
+
+    expect(resultado.filasInvalidas).toEqual([]);
+    expect(resultado.mapeo.length).toBe(2);
+  });
+});
+
+describe('generarZipEjemploSustentos', () => {
+  it('debería devolver un Blob de tipo application/zip no vacío', () => {
+    const blob = generarZipEjemploSustentos();
+
+    expect(blob.type).toBe('application/zip');
+    expect(blob.size).toBeGreaterThan(0);
   });
 });

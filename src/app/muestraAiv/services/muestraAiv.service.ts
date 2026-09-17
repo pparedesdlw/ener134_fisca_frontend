@@ -5,7 +5,8 @@ import { environment } from '../../../environments/environment';
 import {
   GenerarMuestraAivRequest,
   MuestraAivResponse,
-  ReemplazoMuestraRequest
+  ReemplazoMuestraRequest,
+  SimulacionMuestraAivResponse
 } from '../models/muestraAiv.model';
 
 @Injectable({ providedIn: 'root' })
@@ -15,6 +16,11 @@ export class MuestraAivService {
 
   generar(request: GenerarMuestraAivRequest): Observable<MuestraAivResponse> {
     return this.http.post<MuestraAivResponse>(`${this.apiUrl}/generar`, request);
+  }
+
+  /** RF02: previsualiza tamaño/distribución sin persistir, para recalcular al ajustar filtros. */
+  simular(request: GenerarMuestraAivRequest): Observable<SimulacionMuestraAivResponse> {
+    return this.http.post<SimulacionMuestraAivResponse>(`${this.apiUrl}/simular`, request);
   }
 
   vigente(codigoPeriodo: string, codigoEmpresa: number): Observable<MuestraAivResponse> {

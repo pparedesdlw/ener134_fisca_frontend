@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
@@ -20,6 +21,7 @@ import { ResponsableFormComponent } from './responsable-form.component';
   imports: [
     CommonModule,
     MatTableModule,
+    MatPaginatorModule,
     MatButtonModule,
     MatIconModule,
     MatCardModule,
@@ -43,6 +45,15 @@ export class ResponsableListComponent implements OnInit {
   ];
   filtroEstado: 'todos' | 'activos' | 'inactivos' = 'todos';
 
+  /** Paginación en memoria (regla institucional: toda grilla que pueda superar 10 filas debe paginar). */
+  paginaResponsables = 0;
+  tamanioPaginaResponsables = 20;
+
+  onPaginaResponsables(event: PageEvent): void {
+    this.paginaResponsables = event.pageIndex;
+    this.tamanioPaginaResponsables = event.pageSize;
+  }
+
   constructor(
     private responsableService: ResponsableService,
     private dialog: MatDialog,
@@ -61,6 +72,7 @@ export class ResponsableListComponent implements OnInit {
     observable.subscribe({
       next: (data) => {
         this.responsables = data;
+        this.paginaResponsables = 0;
       },
       error: (error) => {
         this.mostrarError('Error al cargar responsables', error);

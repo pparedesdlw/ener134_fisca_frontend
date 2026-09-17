@@ -16,8 +16,9 @@ import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { AuthService } from '../../../auth/services/auth.service';
 import { MuestraAivService } from '../../services/muestraAiv.service';
-import { MuestraAivResponse } from '../../models/muestraAiv.model';
+import { MuestraAivResponse, SimulacionMuestraAivResponse } from '../../models/muestraAiv.model';
 import { PeriodoService } from '../../../periodos/services/periodo.service';
 import { Periodo } from '../../../periodos/models/periodo.model';
 import { EmpresaConcesionariaService } from '../../../empresas/services/empresa-concesionaria.service';
@@ -52,6 +53,7 @@ export class MuestraAivListComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private snack = inject(MatSnackBar);
+  private authService = inject(AuthService);
 
   periodos = signal<Periodo[]>([]);
   empresas = signal<EmpresaConcesionaria[]>([]);
@@ -66,13 +68,20 @@ export class MuestraAivListComponent implements OnInit {
   asuntosSeleccionados: string[] = [];
   /** Vacío = todos los departamentos/ubigeos (comportamiento por defecto del RF02). */
   departamentosSeleccionados: string[] = [];
-  usuario = 'admin';
+
+  get usuario(): string {
+    return this.authService.currentUsername;
+  }
   maxDate: Date = new Date();
 
   muestra = signal<MuestraAivResponse | null>(null);
   cargando = signal<boolean>(false);
   reemplazandoId = signal<number | null>(null);
   motivoReemplazo = '';
+
+  /** RF02: previsualización sin persistir, recalculada automáticamente al ajustar filtros. */
+  simulacion = signal<SimulacionMuestraAivResponse | null>(null);
+  simulando = signal<boolean>(false);
 
   displayedColumns = ['orden', 'idRegistroCerrado', 'codigoTipoAtencion', 'titular', 'adicional', 'reemplazado', 'acciones'];
 
@@ -99,6 +108,8 @@ export class MuestraAivListComponent implements OnInit {
     const fechaFin = params.get('fechaFin');
     this.fechaInicio = fechaInicio ? new Date(fechaInicio) : null;
     this.fechaFin = fechaFin ? new Date(fechaFin) : null;
+
+    this.recalcular();
   }
 
   get periodoMinDate(): Date | null {
@@ -114,6 +125,53 @@ export class MuestraAivListComponent implements OnInit {
     const rango = calcularRangoFechasPeriodo(this.periodoSeleccionado, this.periodos(), this.maxDate);
     this.fechaInicio = rango.min;
     this.fechaFin = rango.max;
+    this.recalcular();
+  }
+
+  /**
+   * RF02, flujo principal: "el usuario puede ajustar filtros (Asunto/Ubigeo) y el sistema
+   * recalcula automáticamente" universo/tamaño/distribución — se dispara al cambiar cualquier
+   * filtro (Periodo/Fechas/Empresa/Asunto/Ubigeo). Solo previsualiza (endpoint /simular, no
+   * persiste); recién "Generar muestra" hace la selección aleatoria real.
+   */
+  recalcular(): void {
+    if (!this.periodoSeleccionado || !this.fechaInicio || !this.fechaFin || !this.empresaSeleccionada) {
+      this.simulacion.set(null);
+      return;
+    }
+    this.simulando.set(true);
+    this.expandirDepartamentosADistritos().subscribe({
+      next: (codigosUbigeo) => {
+        this.service.simular({
+          codigoPeriodo: this.periodoSeleccionado!,
+          fechaInicio: this.formatDate(this.fechaInicio!),
+          fechaFin: this.formatDate(this.fechaFin!),
+          codigoEmpresa: this.empresaSeleccionada!,
+          codigosAsunto: this.asuntosSeleccionados.length ? this.asuntosSeleccionados : undefined,
+          codigosUbigeo: codigosUbigeo.length ? codigosUbigeo : undefined,
+          usuario: this.usuario
+        }).subscribe({
+          next: (sim) => {
+            this.simulacion.set(sim);
+            this.simulando.set(false);
+          },
+          error: (e) => {
+            this.simulacion.set(null);
+            this.simulando.set(false);
+            this.snack.open(e?.error?.message ?? 'Error calculando la muestra', 'Cerrar', { duration: 4000 });
+          }
+        });
+      },
+      error: () => {
+        this.simulando.set(false);
+        this.snack.open('Error obteniendo los ubigeos seleccionados', 'Cerrar', { duration: 4000 });
+      }
+    });
+  }
+
+  /** RF02, flujo alterno "Cancelar": retorna a la pantalla de selección inicial (RF01). */
+  cancelar(): void {
+    this.router.navigate(['/registros-cerrados']);
   }
 
   generar(): void {

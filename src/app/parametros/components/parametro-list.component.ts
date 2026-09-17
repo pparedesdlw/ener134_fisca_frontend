@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
@@ -19,6 +20,7 @@ import { ParametroFormComponent } from './parametro-form.component';
   imports: [
     CommonModule,
     MatTableModule,
+    MatPaginatorModule,
     MatButtonModule,
     MatIconModule,
     MatCardModule,
@@ -43,6 +45,15 @@ export class ParametroListComponent implements OnInit {
   ];
   filtroEstado: 'todos' | 'activos' | 'inactivos' = 'todos';
 
+  /** Paginación en memoria (regla institucional: toda grilla que pueda superar 10 filas debe paginar). */
+  paginaParametros = 0;
+  tamanioPaginaParametros = 20;
+
+  onPaginaParametros(event: PageEvent): void {
+    this.paginaParametros = event.pageIndex;
+    this.tamanioPaginaParametros = event.pageSize;
+  }
+
   constructor(
     private parametroService: ParametroService,
     private dialog: MatDialog,
@@ -61,6 +72,7 @@ export class ParametroListComponent implements OnInit {
     observable.subscribe({
       next: (data) => {
         this.parametros = data;
+        this.paginaParametros = 0;
       },
       error: (error) => {
         this.mostrarError('Error al cargar parámetros', error);

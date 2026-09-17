@@ -85,6 +85,11 @@
       <p>Calculando CIT...</p>
     </div>
 
+    <div *ngIf="finalizando" class="spinner-container">
+      <mat-spinner diameter="40"></mat-spinner>
+      <p>Guardando evaluación consolidada...</p>
+    </div>
+
     <div *ngIf="resultado" class="resultado-container">
       <h3>Resultado del Cálculo</h3>
 
@@ -206,7 +211,9 @@
 
     <div *ngIf="atenciones.length > 0" class="atenciones-container">
       <h3>Detalle de Atenciones</h3>
-      <table mat-table [dataSource]="atenciones" multiTemplateDataRows class="tabla-atenciones">
+      <table mat-table
+             [dataSource]="atenciones | slice: paginaAtenciones * tamanioPaginaAtenciones : (paginaAtenciones + 1) * tamanioPaginaAtenciones"
+             multiTemplateDataRows class="tabla-atenciones">
 
         <ng-container matColumnDef="codigoAtencion">
           <th mat-header-cell *matHeaderCellDef>Cód. Atención</th>
@@ -275,6 +282,10 @@
         </tr>
         <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="detail-row-def"></tr>
       </table>
+      <mat-paginator *ngIf="atenciones.length" [length]="atenciones.length"
+                     [pageIndex]="paginaAtenciones" [pageSize]="tamanioPaginaAtenciones"
+                     [pageSizeOptions]="[10, 20, 50, 100]" (page)="onPaginaAtenciones($event)">
+      </mat-paginator>
     </div>
   </mat-card-content>
 </mat-card>

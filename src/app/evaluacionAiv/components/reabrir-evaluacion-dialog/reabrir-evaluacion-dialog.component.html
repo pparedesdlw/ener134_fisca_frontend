@@ -1,9 +1,10 @@
-<h2 mat-dialog-title>Reapertura de evaluaciones</h2>
-<mat-dialog-content>
+<mat-card>
+  <mat-card-title>Reapertura de evaluaciones</mat-card-title>
+  <mat-card-content>
   <p>Busque evaluaciones consolidadas y seleccione "Reabrir" para habilitar nuevamente su evaluación.</p>
 
   <div class="filtros">
-    <mat-form-field appearance="outline">
+    <mat-form-field appearance="outline" class="campo-combo-ancho">
       <mat-label>Periodo</mat-label>
       <mat-select [(ngModel)]="periodoSeleccionado" (selectionChange)="onPeriodoChange()">
         <mat-option [value]="null">Todos</mat-option>
@@ -20,7 +21,7 @@
       <mat-datepicker #picker></mat-datepicker>
     </mat-form-field>
 
-    <mat-form-field appearance="outline">
+    <mat-form-field appearance="outline" class="campo-combo-ancho">
       <mat-label>Empresa</mat-label>
       <mat-select [(ngModel)]="empresaSeleccionada">
         <mat-option [value]="null">Todas</mat-option>
@@ -28,6 +29,11 @@
           {{ empresa.codigoEmpresa }} - {{ empresa.razonSocial }}
         </mat-option>
       </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" matTooltip="Este módulo solo gestiona el indicador AIV">
+      <mat-label>Indicador</mat-label>
+      <input matInput value="AIV" readonly />
     </mat-form-field>
 
     <mat-form-field appearance="outline">
@@ -53,7 +59,10 @@
       No hay evaluaciones consolidadas para los filtros indicados.
     </p>
 
-    <table *ngIf="evaluaciones().length" mat-table [dataSource]="evaluaciones()" class="mat-elevation-z1">
+    <div *ngIf="evaluaciones().length" class="tabla-scroll">
+    <table mat-table
+           [dataSource]="evaluaciones() | slice: paginaEvaluaciones() * tamanioPaginaEvaluaciones() : (paginaEvaluaciones() + 1) * tamanioPaginaEvaluaciones()"
+           class="mat-elevation-z1">
       <ng-container matColumnDef="id">
         <th mat-header-cell *matHeaderCellDef>ID Eval.</th>
         <td mat-cell *matCellDef="let e">{{ e.id }}</td>
@@ -94,7 +103,7 @@
         <th mat-header-cell *matHeaderCellDef>Nro. Registros evaluados</th>
         <td mat-cell *matCellDef="let e">{{ e.numeroRegistrosEvaluados }}</td>
       </ng-container>
-      <ng-container matColumnDef="accion">
+      <ng-container matColumnDef="accion" stickyEnd>
         <th mat-header-cell *matHeaderCellDef>Acción</th>
         <td mat-cell *matCellDef="let e">
           <button mat-stroked-button (click)="verRegistros(e)">Ver Reg.</button>
@@ -104,12 +113,19 @@
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
     </table>
+    </div>
+    <mat-paginator *ngIf="evaluaciones().length" [length]="evaluaciones().length"
+                   [pageIndex]="paginaEvaluaciones()" [pageSize]="tamanioPaginaEvaluaciones()"
+                   [pageSizeOptions]="[10, 20, 50, 100]" (page)="onPaginaEvaluaciones($event)">
+    </mat-paginator>
   </ng-container>
 
   <div *ngIf="registrosSeleccionados() as registros" class="registros-seleccionados">
     <h3>Registros evaluados</h3>
     <p *ngIf="!registros.length" class="mensaje-vacio">Esta evaluación no tiene registros.</p>
-    <table *ngIf="registros.length" mat-table [dataSource]="registros" class="mat-elevation-z1">
+    <table *ngIf="registros.length" mat-table
+           [dataSource]="registros | slice: paginaRegistros() * tamanioPaginaRegistros() : (paginaRegistros() + 1) * tamanioPaginaRegistros()"
+           class="mat-elevation-z1">
       <ng-container matColumnDef="orden">
         <th mat-header-cell *matHeaderCellDef>Ítem</th>
         <td mat-cell *matCellDef="let r; let i = index">{{ i + 1 }}</td>
@@ -137,9 +153,11 @@
       <tr mat-header-row *matHeaderRowDef="displayedColumnsRegistros"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumnsRegistros"></tr>
     </table>
+    <mat-paginator *ngIf="registros.length" [length]="registros.length"
+                   [pageIndex]="paginaRegistros()" [pageSize]="tamanioPaginaRegistros()"
+                   [pageSizeOptions]="[10, 20, 50, 100]" (page)="onPaginaRegistros($event)">
+    </mat-paginator>
     <button mat-stroked-button (click)="cerrarRegistros()">Cerrar registros</button>
   </div>
-</mat-dialog-content>
-<mat-dialog-actions align="end">
-  <button mat-stroked-button (click)="cerrar()">Cerrar</button>
-</mat-dialog-actions>
+  </mat-card-content>
+</mat-card>

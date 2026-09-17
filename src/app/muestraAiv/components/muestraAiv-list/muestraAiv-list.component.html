@@ -13,21 +13,21 @@
 
       <mat-form-field appearance="outline">
         <mat-label>Fecha inicio *</mat-label>
-        <input matInput [matDatepicker]="pickerInicio" [(ngModel)]="fechaInicio" [min]="periodoMinDate" [max]="periodoMaxDate" [disabled]="cargando()">
+        <input matInput [matDatepicker]="pickerInicio" [(ngModel)]="fechaInicio" [min]="periodoMinDate" [max]="periodoMaxDate" [disabled]="cargando()" (dateChange)="recalcular()">
         <mat-datepicker-toggle matIconSuffix [for]="pickerInicio"></mat-datepicker-toggle>
         <mat-datepicker #pickerInicio></mat-datepicker>
       </mat-form-field>
 
       <mat-form-field appearance="outline">
         <mat-label>Fecha fin *</mat-label>
-        <input matInput [matDatepicker]="pickerFin" [(ngModel)]="fechaFin" [min]="periodoMinDate" [max]="periodoMaxDate" [disabled]="cargando()">
+        <input matInput [matDatepicker]="pickerFin" [(ngModel)]="fechaFin" [min]="periodoMinDate" [max]="periodoMaxDate" [disabled]="cargando()" (dateChange)="recalcular()">
         <mat-datepicker-toggle matIconSuffix [for]="pickerFin"></mat-datepicker-toggle>
         <mat-datepicker #pickerFin></mat-datepicker>
       </mat-form-field>
 
       <mat-form-field appearance="outline">
         <mat-label>Empresa *</mat-label>
-        <mat-select [(ngModel)]="empresaSeleccionada" [disabled]="cargando()">
+        <mat-select [(ngModel)]="empresaSeleccionada" [disabled]="cargando()" (selectionChange)="recalcular()">
           <mat-option *ngFor="let empresa of empresas()" [value]="empresa.codigoEmpresa">
             {{ empresa.codigoEmpresa }} - {{ empresa.razonSocial }}
           </mat-option>
@@ -38,7 +38,7 @@
     <div class="filtros">
       <mat-form-field appearance="outline" class="filtro-multiselect">
         <mat-label>Asunto (todos por defecto)</mat-label>
-        <mat-select [(ngModel)]="asuntosSeleccionados" multiple [disabled]="cargando()">
+        <mat-select [(ngModel)]="asuntosSeleccionados" multiple [disabled]="cargando()" (selectionChange)="recalcular()">
           <mat-option *ngFor="let asunto of asuntos()" [value]="asunto.codigoAsunto">
             {{ asunto.codigoAsunto }} - {{ asunto.descripcion }}
           </mat-option>
@@ -47,7 +47,7 @@
 
       <mat-form-field appearance="outline" class="filtro-multiselect">
         <mat-label>Ubigeo — Departamento (todos por defecto)</mat-label>
-        <mat-select [(ngModel)]="departamentosSeleccionados" multiple [disabled]="cargando()">
+        <mat-select [(ngModel)]="departamentosSeleccionados" multiple [disabled]="cargando()" (selectionChange)="recalcular()">
           <mat-option *ngFor="let dpto of departamentos()" [value]="dpto.codigoDepartamento">
             {{ dpto.descripcionDepartamento }}
           </mat-option>
@@ -55,8 +55,54 @@
       </mat-form-field>
     </div>
 
+    <div *ngIf="simulando()" class="spinner-container">
+      <mat-spinner diameter="28"></mat-spinner>
+      <p>Calculando tamaño de muestra...</p>
+    </div>
+
+    <ng-container *ngIf="simulacion() as sim; else sinSimulacion">
+      <ng-container *ngIf="!muestra()">
+        <div class="resumen">
+          <div><strong>Población (N):</strong> {{ sim.poblacion }}</div>
+          <div><strong>Tamaño muestra (n):</strong> {{ sim.tamanioBase }}</div>
+          <div><strong>% adicional:</strong> {{ sim.porcentajeAdicional }}</div>
+          <div><strong>Tamaño total:</strong> {{ sim.tamanioFinal }}</div>
+        </div>
+
+        <h3>Distribución por tipo de requerimiento</h3>
+        <table class="tabla-distribucion">
+          <thead>
+            <tr>
+              <th>Requerimiento</th>
+              <th>Universo (Nci)</th>
+              <th>%</th>
+              <th>Muestra principal (nj)</th>
+              <th>Muestra adicional (10%)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let d of sim.distribucion">
+              <td>{{ d.tipoRequerimiento }}</td>
+              <td>{{ d.universo }}</td>
+              <td>{{ d.porcentaje }}%</td>
+              <td>{{ d.muestraPrincipal }}</td>
+              <td>{{ d.muestraAdicional }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </ng-container>
+    </ng-container>
+    <ng-template #sinSimulacion>
+      <p *ngIf="!simulando()" class="mensaje-vacio">
+        Seleccione periodo, fechas y empresa para calcular el tamaño de muestra.
+      </p>
+    </ng-template>
+
     <div class="acciones-generacion">
-      <button mat-raised-button color="accent" (click)="generar()" [disabled]="cargando()">
+      <button mat-stroked-button (click)="cancelar()" [disabled]="cargando()">
+        <mat-icon>close</mat-icon> Cancelar
+      </button>
+      <button mat-raised-button color="accent" (click)="generar()" [disabled]="cargando() || simulando() || !simulacion()">
         <mat-icon>casino</mat-icon> Generar muestra
       </button>
     </div>

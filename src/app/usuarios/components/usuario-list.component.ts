@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
@@ -20,6 +21,7 @@ import { UsuarioFormComponent } from './usuario-form.component';
   imports: [
     CommonModule,
     MatTableModule,
+    MatPaginatorModule,
     MatButtonModule,
     MatIconModule,
     MatCardModule,
@@ -47,6 +49,15 @@ export class UsuarioListComponent implements OnInit {
   ];
   filtroEstado: 'todos' | 'activos' | 'inactivos' = 'todos';
 
+  /** Paginación en memoria (regla institucional: toda grilla que pueda superar 10 filas debe paginar). */
+  paginaUsuarios = 0;
+  tamanioPaginaUsuarios = 20;
+
+  onPaginaUsuarios(event: PageEvent): void {
+    this.paginaUsuarios = event.pageIndex;
+    this.tamanioPaginaUsuarios = event.pageSize;
+  }
+
   constructor(
     private usuarioService: UsuarioService,
     private dialog: MatDialog,
@@ -65,6 +76,7 @@ export class UsuarioListComponent implements OnInit {
     observable.subscribe({
       next: (data) => {
         this.usuarios = data;
+        this.paginaUsuarios = 0;
       },
       error: (error) => {
         this.mostrarError('Error al cargar usuarios', error);

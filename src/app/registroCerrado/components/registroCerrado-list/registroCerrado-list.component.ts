@@ -25,7 +25,6 @@ import { AsuntoService } from '../../../asuntos/services/asunto.service';
 import { Asunto } from '../../../asuntos/models/asunto.model';
 import { VerEnProcesoDialogComponent } from '../../../evaluacionAiv/components/ver-en-proceso-dialog/ver-en-proceso-dialog.component';
 import { HistoricoPreliminarDialogComponent } from '../../../evaluacionAiv/components/historico-preliminar-dialog/historico-preliminar-dialog.component';
-import { ReabrirEvaluacionDialogComponent } from '../../../evaluacionAiv/components/reabrir-evaluacion-dialog/reabrir-evaluacion-dialog.component';
 import { calcularRangoFechasPeriodo } from '../../../shared/utils/periodo-fechas.util';
 
 @Component({
@@ -210,11 +209,7 @@ export class RegistroCerradoListComponent implements OnInit {
   }
 
   verEnProceso(): void {
-    this.dialog.open(VerEnProcesoDialogComponent, { width: '1100px' });
-  }
-
-  abrirReaperturaEvaluaciones(): void {
-    this.dialog.open(ReabrirEvaluacionDialogComponent, { width: '1200px' });
+    this.dialog.open(VerEnProcesoDialogComponent, { width: '1300px', maxWidth: '95vw' });
   }
 
   verHistorico(): void {
@@ -228,7 +223,8 @@ export class RegistroCerradoListComponent implements OnInit {
       return;
     }
     this.dialog.open(HistoricoPreliminarDialogComponent, {
-      width: '900px',
+      width: '1100px',
+      maxWidth: '95vw',
       data: { codigoPeriodo: this.periodoSeleccionado, codigoEmpresa: empresa.id }
     });
   }

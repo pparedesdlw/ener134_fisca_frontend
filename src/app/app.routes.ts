@@ -16,6 +16,7 @@ import { CalculoCitFormComponent } from './cit/components/calculo-cit-form/calcu
 import { AtencionComercialListComponent } from './atencionesComerciales/components/atencionComercial-list.component';
 import { IndisponibilidadListComponent } from './cit/components/indisponibilidad-list/indisponibilidad-list.component';
 import { RegistroCerradoListComponent } from './registroCerrado/components/registroCerrado-list/registroCerrado-list.component';
+import { ReabrirEvaluacionDialogComponent } from './evaluacionAiv/components/reabrir-evaluacion-dialog/reabrir-evaluacion-dialog.component';
 import { MuestraAivListComponent } from './muestraAiv/components/muestraAiv-list/muestraAiv-list.component';
 import { EvaluacionAivComponent } from './evaluacionAiv/components/evaluacionAiv/evaluacionAiv.component';
 import { SustentoAivComponent } from './sustentoAiv/components/sustentoAiv/sustentoAiv.component';
@@ -43,6 +44,7 @@ export const routes: Routes = [
       { path: 'atencionesComerciales', component: AtencionComercialListComponent },
       { path: 'indisponibilidades', component: IndisponibilidadListComponent },
       { path: 'registros-cerrados', component: RegistroCerradoListComponent },
+      { path: 'reapertura-aiv', component: ReabrirEvaluacionDialogComponent },
       { path: 'muestra-aiv', component: MuestraAivListComponent },
       { path: 'evaluacion-aiv', component: EvaluacionAivComponent },
       { path: 'sustento-aiv', component: SustentoAivComponent },

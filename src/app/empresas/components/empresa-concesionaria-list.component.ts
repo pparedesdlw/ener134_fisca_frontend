@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
@@ -19,6 +20,7 @@ import { EmpresaConcesionariaFormComponent } from './empresa-concesionaria-form.
   imports: [
     CommonModule,
     MatTableModule,
+    MatPaginatorModule,
     MatButtonModule,
     MatIconModule,
     MatCardModule,
@@ -44,6 +46,15 @@ export class EmpresaConcesionariaListComponent implements OnInit {
   ];
   filtroEstado: 'todos' | 'activos' | 'inactivos' = 'todos';
 
+  /** Paginación en memoria (regla institucional: toda grilla que pueda superar 10 filas debe paginar). */
+  paginaEmpresas = 0;
+  tamanioPaginaEmpresas = 20;
+
+  onPaginaEmpresas(event: PageEvent): void {
+    this.paginaEmpresas = event.pageIndex;
+    this.tamanioPaginaEmpresas = event.pageSize;
+  }
+
   constructor(
     private empresaConcesionariaService: EmpresaConcesionariaService,
     private dialog: MatDialog,
@@ -62,6 +73,7 @@ export class EmpresaConcesionariaListComponent implements OnInit {
     observable.subscribe({
       next: (data) => {
         this.empresas = data;
+        this.paginaEmpresas = 0;
       },
       error: (error) => {
         this.mostrarError('Error al cargar empresas', error);

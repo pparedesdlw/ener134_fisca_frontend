@@ -10,6 +10,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatInputModule } from '@angular/material/input';
 import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { EvaluacionAivService } from '../../services/evaluacionAiv.service';
@@ -27,7 +28,7 @@ import { calcularRangoFechasPeriodo, fechaFueraDeRango } from '../../../shared/u
   imports: [
     CommonModule, FormsModule, MatDialogModule, MatButtonModule, MatFormFieldModule,
     MatSelectModule, MatDatepickerModule, MatNativeDateModule, MatInputModule, MatTableModule,
-    MatIconModule, MatProgressSpinnerModule
+    MatPaginatorModule, MatIconModule, MatProgressSpinnerModule
   ],
   templateUrl: './ver-en-proceso-dialog.component.html',
   styleUrl: './ver-en-proceso-dialog.component.scss'
@@ -50,6 +51,15 @@ export class VerEnProcesoDialogComponent implements OnInit {
   maxDate: Date = new Date();
 
   displayedColumns = ['id', 'codigoPeriodo', 'codigoEmpresa', 'rangoEvaluado', 'estado', 'fechaModificacion', 'usuarioResponsable', 'avance', 'accion'];
+
+  /** Paginación en memoria (regla institucional: toda grilla que pueda superar 10 filas debe paginar). */
+  paginaEvaluaciones = signal(0);
+  tamanioPaginaEvaluaciones = signal(10);
+
+  onPaginaEvaluaciones(event: PageEvent): void {
+    this.paginaEvaluaciones.set(event.pageIndex);
+    this.tamanioPaginaEvaluaciones.set(event.pageSize);
+  }
 
   constructor(public dialogRef: MatDialogRef<VerEnProcesoDialogComponent>) {}
 
@@ -77,6 +87,7 @@ export class VerEnProcesoDialogComponent implements OnInit {
 
   buscar(): void {
     this.cargando.set(true);
+    this.paginaEvaluaciones.set(0);
     const fecha = this.fechaEvaluada ? this.formatDate(this.fechaEvaluada) : undefined;
     this.service.listarEnProcesoOReabiertas(this.periodoSeleccionado ?? undefined, this.empresaSeleccionada ?? undefined, fecha)
       .subscribe({

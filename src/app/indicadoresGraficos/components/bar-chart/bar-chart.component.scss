@@ -5,9 +5,13 @@
     margin: 0 0 8px;
   }
 }
-.scroll-wrapper {
-  overflow-x: auto;
-  padding-bottom: var(--space-1);
+.canvas-wrapper {
+  width: 100%;
+
+  canvas {
+    display: block;
+    max-width: 100%;
+  }
 }
 .mensaje-vacio {
   color: var(--color-neutral-text);

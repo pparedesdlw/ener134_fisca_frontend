@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
@@ -24,6 +25,7 @@ import { AccionesAtencionComponent } from '../acciones-atencion/acciones-atencio
     MatFormFieldModule,
     MatSelectModule,
     MatTableModule,
+    MatPaginatorModule,
     MatCardModule,
     MatIconModule,
     MatButtonModule,
@@ -48,6 +50,10 @@ export class CitResultadosListComponent implements OnInit {
   cargando = false;
 
   expandedIndicador: IndicadorCit | null = null;
+
+  /** Paginación en memoria (regla institucional: toda grilla que pueda superar 10 filas debe paginar). */
+  paginaIndicadores = 0;
+  tamanioPaginaIndicadores = 20;
 
   constructor(
     private citService: CitService,
@@ -75,6 +81,7 @@ export class CitResultadosListComponent implements OnInit {
     }
 
     this.cargando = true;
+    this.paginaIndicadores = 0;
     this.citService.listarIndicadoresPorPeriodo(this.periodoSeleccionado).subscribe({
       next: (indicadores) => {
         this.indicadores = indicadores;
@@ -89,5 +96,10 @@ export class CitResultadosListComponent implements OnInit {
 
   toggleIndicador(indicador: IndicadorCit): void {
     this.expandedIndicador = this.expandedIndicador === indicador ? null : indicador;
+  }
+
+  onPaginaIndicadores(event: PageEvent): void {
+    this.paginaIndicadores = event.pageIndex;
+    this.tamanioPaginaIndicadores = event.pageSize;
   }
 }

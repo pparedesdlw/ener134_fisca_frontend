@@ -20,7 +20,8 @@ export interface VerSustentoDialogData {
   selector: 'app-ver-sustento-dialog',
   standalone: true,
   imports: [CommonModule, MatDialogModule, MatButtonModule, MatTableModule, MatIconModule],
-  templateUrl: './ver-sustento-dialog.component.html'
+  templateUrl: './ver-sustento-dialog.component.html',
+  styleUrl: './ver-sustento-dialog.component.scss'
 })
 export class VerSustentoDialogComponent implements OnInit {
   private service = inject(SustentoAivService);

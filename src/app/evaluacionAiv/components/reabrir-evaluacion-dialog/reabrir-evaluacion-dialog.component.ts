@@ -1,7 +1,8 @@
 import { Component, OnInit, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
+import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
@@ -9,8 +10,10 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatInputModule } from '@angular/material/input';
 import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { EvaluacionAivService } from '../../services/evaluacionAiv.service';
 import { EstadoEvaluacionAiv, EvaluacionAivConsolidadaResponse, EvaluacionRegistroResponse } from '../../models/evaluacionAiv.model';
 import { PeriodoService } from '../../../periodos/services/periodo.service';
@@ -26,9 +29,9 @@ import { calcularRangoFechasPeriodo, fechaFueraDeRango } from '../../../shared/u
   selector: 'app-reabrir-evaluacion-dialog',
   standalone: true,
   imports: [
-    CommonModule, FormsModule, MatDialogModule, MatButtonModule, MatFormFieldModule,
+    CommonModule, FormsModule, MatCardModule, MatButtonModule, MatFormFieldModule,
     MatSelectModule, MatDatepickerModule, MatNativeDateModule, MatInputModule, MatTableModule,
-    MatIconModule, MatProgressSpinnerModule
+    MatPaginatorModule, MatIconModule, MatProgressSpinnerModule, MatTooltipModule
   ],
   templateUrl: './reabrir-evaluacion-dialog.component.html',
   styleUrl: './reabrir-evaluacion-dialog.component.scss'
@@ -40,7 +43,10 @@ export class ReabrirEvaluacionDialogComponent implements OnInit {
   private dialog = inject(MatDialog);
   private authService = inject(AuthService);
 
-  usuario = 'admin';
+  get usuario(): string {
+    return this.authService.currentUsername;
+  }
+
   periodos = signal<Periodo[]>([]);
   empresas = signal<EmpresaConcesionaria[]>([]);
   evaluaciones = signal<EvaluacionAivConsolidadaResponse[]>([]);
@@ -62,7 +68,21 @@ export class ReabrirEvaluacionDialogComponent implements OnInit {
   /** RF09, alt flow "Ver Reg.": grilla secundaria con los registros de la evaluación seleccionada. */
   registrosSeleccionados = signal<EvaluacionRegistroResponse[] | null>(null);
 
-  constructor(public dialogRef: MatDialogRef<ReabrirEvaluacionDialogComponent>) {}
+  /** Paginación en memoria (regla institucional: toda grilla que pueda superar 10 filas debe paginar). */
+  paginaEvaluaciones = signal(0);
+  tamanioPaginaEvaluaciones = signal(10);
+  paginaRegistros = signal(0);
+  tamanioPaginaRegistros = signal(20);
+
+  onPaginaEvaluaciones(event: PageEvent): void {
+    this.paginaEvaluaciones.set(event.pageIndex);
+    this.tamanioPaginaEvaluaciones.set(event.pageSize);
+  }
+
+  onPaginaRegistros(event: PageEvent): void {
+    this.paginaRegistros.set(event.pageIndex);
+    this.tamanioPaginaRegistros.set(event.pageSize);
+  }
 
   get puedeReabrir(): boolean {
     return this.authService.isTisecAdmin;
@@ -92,6 +112,7 @@ export class ReabrirEvaluacionDialogComponent implements OnInit {
 
   buscar(): void {
     this.cargando.set(true);
+    this.paginaEvaluaciones.set(0);
     const fecha = this.fechaEvaluada ? this.formatDate(this.fechaEvaluada) : undefined;
     this.service.listarConsolidadas(
       this.periodoSeleccionado ?? undefined,
@@ -117,6 +138,7 @@ export class ReabrirEvaluacionDialogComponent implements OnInit {
    * filtros (mat-select) siguen montados, que en pruebas provocaba que el diálogo anidado nunca
    * completara su inicialización. */
   verRegistros(evaluacion: EvaluacionAivConsolidadaResponse): void {
+    this.paginaRegistros.set(0);
     this.service.obtenerPorId(evaluacion.id).subscribe({
       next: (detalle) => this.registrosSeleccionados.set(detalle.registros),
       error: () => this.registrosSeleccionados.set([])
@@ -127,20 +149,13 @@ export class ReabrirEvaluacionDialogComponent implements OnInit {
     this.registrosSeleccionados.set(null);
   }
 
-  /** RF09: se cierra esta pantalla antes de abrir la ventana emergente de reapertura (por el mismo motivo
-   * que verRegistros) y se vuelve a abrir al finalizar, para continuar gestionando otras evaluaciones. */
+  /** RF09: abre la ventana emergente de confirmación de reapertura; al cerrarse, refresca la grilla
+   * de esta pantalla para reflejar el nuevo estado de la evaluación. */
   reabrirEvaluacion(evaluacion: EvaluacionAivConsolidadaResponse): void {
-    this.dialogRef.close();
     this.dialog.open(ConfirmarReaperturaDialogComponent, {
       width: '600px',
       data: { evaluacion, usuario: this.usuario }
-    }).afterClosed().subscribe(() => {
-      this.dialog.open(ReabrirEvaluacionDialogComponent, { width: '1200px' });
-    });
-  }
-
-  cerrar(): void {
-    this.dialogRef.close();
+    }).afterClosed().subscribe(() => this.buscar());
   }
 
   private formatDate(date: Date): string {

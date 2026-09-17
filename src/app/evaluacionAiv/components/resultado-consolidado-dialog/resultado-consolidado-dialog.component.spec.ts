@@ -47,4 +47,17 @@ describe('ResultadoConsolidadoDialogComponent', () => {
     component.salir();
     expect(dialogRef.close).toHaveBeenCalled();
   });
+
+  it('RF06: la tabla de ítems debe quedar envuelta en un contenedor con scroll horizontal, no truncarse', async () => {
+    await crear({
+      estadoEvaluacion: 'CONSOLIDADO_TOTAL',
+      itemsResumen: [
+        { descripcion: 'Descripción larga de ejemplo para el ítem evaluado número uno', existentes: 306, fiscalizados: 306, incumplimientos: 0 }
+      ] as any
+    });
+
+    const contenedor: HTMLElement = fixture.nativeElement.querySelector('.tabla-scroll');
+    expect(contenedor).toBeTruthy();
+    expect(contenedor.querySelector('table')).toBeTruthy();
+  });
 });
