@@ -22,6 +22,7 @@ import { EvaluacionAivComponent } from './evaluacionAiv/components/evaluacionAiv
 import { SustentoAivComponent } from './sustentoAiv/components/sustentoAiv/sustentoAiv.component';
 import { HistoricoAivComponent } from './historicoAiv/components/historicoAiv/historicoAiv.component';
 import { IndicadoresGraficosComponent } from './indicadoresGraficos/components/indicadoresGraficos/indicadoresGraficos.component';
+import { ToleranciaVigenciaListComponent } from './toleranciaVigencia/components/toleranciaVigencia-list.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -50,6 +51,7 @@ export const routes: Routes = [
       { path: 'sustento-aiv', component: SustentoAivComponent },
       { path: 'historico-aiv', component: HistoricoAivComponent },
       { path: 'indicadores-graficos', component: IndicadoresGraficosComponent },
+      { path: 'tolerancia-vigencia', component: ToleranciaVigenciaListComponent },
       { path: '', redirectTo: '/home', pathMatch: 'full' }
     ]
   },

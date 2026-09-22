@@ -1,0 +1,85 @@
+<mat-card>
+  <mat-card-header>
+    <mat-card-title>
+      <h2>Tolerancia vigente por periodo</h2>
+    </mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content>
+    <p class="ayuda">
+      Tolerancia (%) aplicable a cada indicador, según el ERS ("tolerancia vigente aplicable al periodo evaluado").
+      Al registrar una nueva vigencia, la anterior se cierra automáticamente el día previo.
+    </p>
+
+    <div class="toolbar">
+      <button mat-button
+              [color]="indicadorSeleccionado === 'AIV' ? 'primary' : ''"
+              (click)="seleccionarIndicador('AIV')">
+        Indicador AIV
+      </button>
+      <button mat-button
+              [color]="indicadorSeleccionado === 'CIT' ? 'primary' : ''"
+              (click)="seleccionarIndicador('CIT')">
+        Indicador CIT
+      </button>
+    </div>
+
+    <div *ngIf="cargando" class="spinner-container">
+      <mat-spinner diameter="32"></mat-spinner>
+    </div>
+
+    <div *ngIf="!cargando && vigenciaActual" class="vigente-actual">
+      Tolerancia vigente actual: <strong>{{ vigenciaActual.tolerancia }}%</strong>
+      desde {{ vigenciaActual.fechaVigenciaDesde }}
+    </div>
+
+    <table *ngIf="!cargando" mat-table [dataSource]="historico" class="mat-elevation-z1">
+      <ng-container matColumnDef="tolerancia">
+        <th mat-header-cell *matHeaderCellDef>Tolerancia</th>
+        <td mat-cell *matCellDef="let v">{{ v.tolerancia }}%</td>
+      </ng-container>
+
+      <ng-container matColumnDef="fechaVigenciaDesde">
+        <th mat-header-cell *matHeaderCellDef>Vigente desde</th>
+        <td mat-cell *matCellDef="let v">{{ v.fechaVigenciaDesde }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="fechaVigenciaHasta">
+        <th mat-header-cell *matHeaderCellDef>Vigente hasta</th>
+        <td mat-cell *matCellDef="let v">{{ v.fechaVigenciaHasta ?? '(actual)' }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="usuarioCreacion">
+        <th mat-header-cell *matHeaderCellDef>Registrado por</th>
+        <td mat-cell *matCellDef="let v">{{ v.usuarioCreacion }}</td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    </table>
+
+    <h3>Registrar nueva vigencia</h3>
+    <div class="form-nueva-vigencia">
+      <mat-form-field appearance="outline">
+        <mat-label>Tolerancia (%)</mat-label>
+        <input matInput type="number" min="0" step="0.5" [(ngModel)]="nuevaTolerancia" [disabled]="guardando">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Vigente desde</mat-label>
+        <input matInput [matDatepicker]="picker" [(ngModel)]="nuevaFechaDesde" [disabled]="guardando">
+        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+
+      <button mat-raised-button color="primary" (click)="registrarNuevaVigencia()" [disabled]="guardando">
+        <mat-icon>add</mat-icon>
+        Registrar
+      </button>
+    </div>
+
+    <div *ngIf="guardando" class="spinner-container">
+      <mat-spinner diameter="24"></mat-spinner>
+    </div>
+  </mat-card-content>
+</mat-card>

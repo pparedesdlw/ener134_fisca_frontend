@@ -1,0 +1,53 @@
+.mat-mdc-table {
+  width: 100%;
+}
+
+mat-card {
+  margin: var(--space-5);
+}
+
+mat-card-header {
+  margin-bottom: var(--space-4);
+}
+
+h2 {
+  margin: 0;
+}
+
+.ayuda {
+  color: var(--color-neutral-text-secondary, #666);
+  margin-bottom: var(--space-4);
+}
+
+.toolbar {
+  display: flex;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  background: var(--color-neutral-bg);
+  border-radius: 4px;
+  margin-bottom: var(--space-4);
+}
+
+.spinner-container {
+  display: flex;
+  justify-content: center;
+  padding: var(--space-4);
+}
+
+.vigente-actual {
+  padding: var(--space-3) var(--space-4);
+  margin-bottom: var(--space-4);
+  background: var(--color-success-bg, #e8f5e9);
+  border-radius: 4px;
+}
+
+h3 {
+  margin-top: var(--space-5);
+}
+
+.form-nueva-vigencia {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
