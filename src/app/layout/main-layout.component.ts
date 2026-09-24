@@ -40,8 +40,7 @@ export class MainLayoutComponent implements OnInit {
         {
           label: 'Fiscalización',
           items: [
-            { label: 'Acceso a la información', path: '', disabled: true },
-            { label: 'Cálculo CIT', path: '/cit/calculo', disabled: false }
+            { label: 'Acceso a la información', path: '', disabled: true }
           ]
         },
         {
@@ -97,13 +96,10 @@ export class MainLayoutComponent implements OnInit {
       expanded: true,
       subsections: [
         {
-          label: 'AIV',
+          label: '',
           items: [
+            { label: 'Cálculo CIT', path: '/cit/calculo', disabled: false },
             { label: 'Registros cerrados', path: '/registros-cerrados', disabled: false },
-            { label: 'Muestra AIV', path: '/muestra-aiv', disabled: false },
-            { label: 'Evaluación AIV', path: '/evaluacion-aiv', disabled: false },
-            { label: 'Sustentos', path: '/sustento-aiv', disabled: false },
-            { label: 'Histórico AIV', path: '/historico-aiv', disabled: false },
             { label: 'Indicadores y gráficos', path: '/indicadores-graficos', disabled: false },
             { label: 'Reapertura de evaluaciones', path: '/reapertura-aiv', disabled: false },
             { label: 'Tolerancia vigente', path: '/tolerancia-vigencia', disabled: false }

@@ -94,7 +94,7 @@
 
           <ng-container matColumnDef="fechaRecepcion">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha de recepción</th>
-            <td mat-cell *matCellDef="let atencionComercial">{{atencionComercial.fechaRecepcion | date: 'dd/MM/yyyy HH:mm:ss'}}</td>
+            <td mat-cell *matCellDef="let atencionComercial">{{atencionComercial.fechaRecepcion}}</td>
           </ng-container>
 
           <ng-container matColumnDef="descripcionCanal">
@@ -161,7 +161,7 @@
 
           <ng-container matColumnDef="fechaMaxima">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha Máxima</th>
-            <td mat-cell *matCellDef="let atencionComercial">{{atencionComercial.fechaMaxima | date: 'dd/MM/yyyy'}}</td>
+            <td mat-cell *matCellDef="let atencionComercial">{{atencionComercial.fechaMaxima}}</td>
           </ng-container>
 
           <ng-container matColumnDef="observacion">
@@ -182,7 +182,9 @@
           
           <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true" ></tr>
           <tr mat-row *matRowDef="let atencionComercial; columns: displayedColumns;"
+                      tabindex="0"
                       (click)="detalles(atencionComercial, atencionComercial)"
+                      (keydown.enter)="detalles(atencionComercial, atencionComercial)"
                       [class.font-bold]="atencionComercial === selectedRow"
           ></tr>
           <tr class="mat-row" *matNoDataRow>

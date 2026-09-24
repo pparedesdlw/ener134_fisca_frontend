@@ -22,9 +22,10 @@
   <div class="item" *ngFor="let item of catalogo">
     <span class="item-descripcion">{{ item.orden }}. {{ item.descripcion }}</span>
     <mat-radio-group [ngModel]="cumplePorItem[item.codigoItem]"
-                      [disabled]="data.soloLectura || itemBloqueadoPorAutoIncumple(item.codigoItem)">
-      <mat-radio-button [value]="true" (click)="seleccionarCumple(item.codigoItem, true)">Cumple</mat-radio-button>
-      <mat-radio-button [value]="false" (click)="seleccionarCumple(item.codigoItem, false)">No cumple</mat-radio-button>
+                      [disabled]="data.soloLectura || itemBloqueadoPorAutoIncumple(item.codigoItem)"
+                      (change)="seleccionarCumple(item.codigoItem, $event.value)">
+      <mat-radio-button [value]="true">Cumple</mat-radio-button>
+      <mat-radio-button [value]="false">No cumple</mat-radio-button>
     </mat-radio-group>
     <span class="auto-incumple" *ngIf="itemBloqueadoPorAutoIncumple(item.codigoItem)">
       Incumplimiento automático por ITEM_02

@@ -169,4 +169,16 @@ describe('ResponsableService', () => {
       req.flush(null);
     });
   });
+
+  describe('cambiarEstado', () => {
+    it('debería cambiar el estado de un responsable por ID', () => {
+      service.cambiarEstado(1).subscribe(response => {
+        expect(response).toBeNull();
+      });
+
+      const req = httpMock.expectOne(`${apiUrl}/1/estado`);
+      expect(req.request.method).toBe('PATCH');
+      req.flush(null);
+    });
+  });
 });

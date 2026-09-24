@@ -29,7 +29,7 @@ import { DepartamentoService } from '../../../ubigeos/services/departamento.serv
 import { Departamento } from '../../../ubigeos/models/departamento.model';
 import { ProvinciaService } from '../../../ubigeos/services/provincia.service';
 import { DistritoService } from '../../../ubigeos/services/distrito.service';
-import { calcularRangoFechasPeriodo } from '../../../shared/utils/periodo-fechas.util';
+import { calcularRangoFechasPeriodo, parseFechaIsoLocal } from '../../../shared/utils/periodo-fechas.util';
 
 @Component({
   selector: 'app-muestra-aiv',
@@ -106,8 +106,8 @@ export class MuestraAivListComponent implements OnInit {
     this.empresaSeleccionada = params.get('empresa');
     const fechaInicio = params.get('fechaInicio');
     const fechaFin = params.get('fechaFin');
-    this.fechaInicio = fechaInicio ? new Date(fechaInicio) : null;
-    this.fechaFin = fechaFin ? new Date(fechaFin) : null;
+    this.fechaInicio = fechaInicio ? parseFechaIsoLocal(fechaInicio) : null;
+    this.fechaFin = fechaFin ? parseFechaIsoLocal(fechaFin) : null;
 
     this.recalcular();
   }

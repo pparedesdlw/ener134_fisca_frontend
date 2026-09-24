@@ -2,7 +2,7 @@ export interface AtencionComercial {
   codigoAtencion: string;
   codigoEmpresa: string;
   codigoAsunto: string;
-  fechaRecepcion: Date;
+  fechaRecepcion: string;
   fechaCreacion: Date;
   canalRecepcion: string;
   tipoDocumentoCliente: string;
@@ -16,7 +16,7 @@ export interface AtencionComercial {
   direccion: string;
   ubigeo: string;
   descripcionUbigeo: string;
-  fechaMaxima: Date;
+  fechaMaxima: string;
   observacion: string;
   descripcionAsunto: string;
   descripcionCanal: string;

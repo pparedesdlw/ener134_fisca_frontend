@@ -277,8 +277,10 @@
         <tr mat-header-row *matHeaderRowDef="atencionesColumns"></tr>
         <tr mat-row *matRowDef="let row; columns: atencionesColumns;"
             class="atencion-row"
+            tabindex="0"
             [class.expanded-row]="expandedAtencion === row"
-            (click)="toggleAtencion(row)">
+            (click)="toggleAtencion(row)"
+            (keydown.enter)="toggleAtencion(row)">
         </tr>
         <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="detail-row-def"></tr>
       </table>

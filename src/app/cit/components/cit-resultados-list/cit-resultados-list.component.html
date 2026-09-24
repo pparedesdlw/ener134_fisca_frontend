@@ -85,8 +85,10 @@
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
         <tr mat-row *matRowDef="let row; columns: displayedColumns;"
             class="indicador-row"
+            tabindex="0"
             [class.expanded-row]="expandedIndicador === row"
-            (click)="toggleIndicador(row)">
+            (click)="toggleIndicador(row)"
+            (keydown.enter)="toggleIndicador(row)">
         </tr>
         <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="detail-row-def"></tr>
       </table>

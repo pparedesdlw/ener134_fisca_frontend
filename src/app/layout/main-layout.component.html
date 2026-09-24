@@ -17,7 +17,7 @@
 
           <mat-nav-list>
             <ng-container *ngFor="let sub of section.subsections">
-              <div class="subsection-header">{{sub.label}}</div>
+              <div class="subsection-header" *ngIf="sub.label">{{sub.label}}</div>
               <ng-container *ngFor="let item of sub.items">
                 <a mat-list-item *ngIf="!item.disabled" [routerLink]="item.path" routerLinkActive="active"
                   class="menu-item">

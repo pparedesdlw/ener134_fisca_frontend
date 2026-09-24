@@ -2,7 +2,7 @@
   <mat-card-title>Generación de muestra aleatoria AIV</mat-card-title>
   <mat-card-content>
     <div class="filtros">
-      <mat-form-field appearance="outline">
+      <mat-form-field appearance="outline" class="filtro-campo">
         <mat-label>Periodo *</mat-label>
         <mat-select [(ngModel)]="periodoSeleccionado" [disabled]="cargando()" (selectionChange)="onPeriodoChange()">
           <mat-option *ngFor="let periodo of periodos()" [value]="periodo.codigoPeriodo">
@@ -11,21 +11,21 @@
         </mat-select>
       </mat-form-field>
 
-      <mat-form-field appearance="outline">
+      <mat-form-field appearance="outline" class="filtro-campo">
         <mat-label>Fecha inicio *</mat-label>
         <input matInput [matDatepicker]="pickerInicio" [(ngModel)]="fechaInicio" [min]="periodoMinDate" [max]="periodoMaxDate" [disabled]="cargando()" (dateChange)="recalcular()">
         <mat-datepicker-toggle matIconSuffix [for]="pickerInicio"></mat-datepicker-toggle>
         <mat-datepicker #pickerInicio></mat-datepicker>
       </mat-form-field>
 
-      <mat-form-field appearance="outline">
+      <mat-form-field appearance="outline" class="filtro-campo">
         <mat-label>Fecha fin *</mat-label>
         <input matInput [matDatepicker]="pickerFin" [(ngModel)]="fechaFin" [min]="periodoMinDate" [max]="periodoMaxDate" [disabled]="cargando()" (dateChange)="recalcular()">
         <mat-datepicker-toggle matIconSuffix [for]="pickerFin"></mat-datepicker-toggle>
         <mat-datepicker #pickerFin></mat-datepicker>
       </mat-form-field>
 
-      <mat-form-field appearance="outline">
+      <mat-form-field appearance="outline" class="filtro-campo">
         <mat-label>Empresa *</mat-label>
         <mat-select [(ngModel)]="empresaSeleccionada" [disabled]="cargando()" (selectionChange)="recalcular()">
           <mat-option *ngFor="let empresa of empresas()" [value]="empresa.codigoEmpresa">

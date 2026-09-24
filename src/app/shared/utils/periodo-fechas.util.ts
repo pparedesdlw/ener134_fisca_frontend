@@ -37,3 +37,14 @@ export function fechaFueraDeRango(fecha: Date | null, rango: RangoFechasPeriodo)
   if (rango.min && fecha < rango.min) return true;
   return fecha > rango.max;
 }
+
+/**
+ * Parsea un string "yyyy-MM-dd" (ej. query param de navegación entre pantallas) como fecha
+ * local, sin el corrimiento de un día que produce `new Date("yyyy-MM-dd")`: ese formato lo
+ * interpreta como medianoche UTC, que en un huso horario negativo (Perú, UTC-5) cae en el día
+ * anterior al leerlo con getFullYear/getMonth/getDate (locales).
+ */
+export function parseFechaIsoLocal(fecha: string): Date {
+  const [anio, mes, dia] = fecha.split('-').map(Number);
+  return new Date(anio, mes - 1, dia);
+}
