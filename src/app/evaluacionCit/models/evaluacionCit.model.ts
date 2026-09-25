@@ -1,3 +1,5 @@
+import { CitResultadoResponse } from '../../cit/models/cit.model';
+
 export interface DetalleItem4Response {
   sinDetalleTh3: number;
   sinDetalleTh4: number;
@@ -26,6 +28,16 @@ export interface EvaluacionCitResponse {
   tipoConsolidacion: 'CONSOLIDADO_PARCIAL' | 'CONSOLIDADO_TOTAL';
   fechaConsolidado: string;
   usuario: string;
+}
+
+/**
+ * RF14: histórico preliminar CIT del trimestre — combina la última consolidación vigente
+ * (null si todavía no se finalizó ninguna) con el cálculo actual recalculado en vivo para el
+ * rango completo del periodo (siempre presente, sin importar si ya se finalizó o no).
+ */
+export interface HistoricoPreliminarCitResponse {
+  consolidadoVigente: EvaluacionCitResponse | null;
+  calculoActual: CitResultadoResponse;
 }
 
 /** RF13: solicitud para el botón "Eval. Finalizada". */

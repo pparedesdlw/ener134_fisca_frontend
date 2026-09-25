@@ -3,7 +3,7 @@
   <mat-card-content>
   <p>Busque evaluaciones consolidadas y seleccione "Reabrir" para habilitar nuevamente su evaluación.</p>
 
-  <div class="filtros">
+  <div class="tisec-filtros">
     <mat-form-field appearance="outline" class="campo-combo-ancho">
       <mat-label>Periodo</mat-label>
       <mat-select [(ngModel)]="periodoSeleccionado" (selectionChange)="onPeriodoChange()">
@@ -45,6 +45,9 @@
       </mat-select>
     </mat-form-field>
 
+  </div>
+
+  <div class="tisec-acciones">
     <button mat-raised-button color="primary" (click)="buscar()" [disabled]="cargando()">
       <mat-icon>search</mat-icon> Buscar
     </button>

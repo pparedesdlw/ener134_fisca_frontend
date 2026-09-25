@@ -4,14 +4,18 @@ import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/materia
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { EvaluacionCitService } from '../../services/evaluacionCit.service';
-import { EvaluacionCitResponse } from '../../models/evaluacionCit.model';
+import { HistoricoPreliminarCitResponse } from '../../models/evaluacionCit.model';
 
 export interface HistoricoCitDialogData {
   codigoPeriodo: string;
   codigoEmpresa: string;
 }
 
-/** RF14: ventana "Ver histórico" de evaluaciones CIT del trimestre (estructura alineada a RF08). */
+/**
+ * RF14: ventana "Ver histórico" de evaluaciones CIT del trimestre (estructura alineada a RF08).
+ * Muestra la última consolidación vigente (si existe) y, siempre, el cálculo actual recalculado
+ * en vivo para el rango completo del periodo -- ver Javadoc de EvaluacionCitService.obtenerHistorico.
+ */
 @Component({
   selector: 'app-historico-cit-dialog',
   standalone: true,
@@ -26,9 +30,9 @@ export class HistoricoCitDialogComponent implements OnInit {
   readonly MENSAJE_ERROR = 'Ocurrió un error al consultar el histórico. Intente nuevamente más tarde.';
 
   cargando = signal<boolean>(true);
-  evaluacion = signal<EvaluacionCitResponse | null>(null);
+  historico = signal<HistoricoPreliminarCitResponse | null>(null);
   sinInformacion = signal<boolean>(false);
-  /** Mensaje a mostrar cuando no hay evaluación: "sin datos" (404) o error técnico (resto). */
+  /** Mensaje a mostrar cuando no hay nada que consultar: "sin datos" (404) o error técnico (resto). */
   mensajeVacio = signal<string>(this.MENSAJE_SIN_DATOS);
 
   constructor(
@@ -38,12 +42,12 @@ export class HistoricoCitDialogComponent implements OnInit {
 
   ngOnInit(): void {
     this.service.historico(this.data.codigoPeriodo, this.data.codigoEmpresa).subscribe({
-      next: (e) => {
-        this.evaluacion.set(e);
+      next: (h) => {
+        this.historico.set(h);
         this.cargando.set(false);
       },
       error: (err) => {
-        // 404 = no existe evaluación vigente (caso funcional esperado); el resto = error técnico.
+        // 404 = periodo ya consolidado total, o periodo inexistente; el resto = error técnico.
         this.mensajeVacio.set(err?.status === 404 ? this.MENSAJE_SIN_DATOS : this.MENSAJE_ERROR);
         this.sinInformacion.set(true);
         this.cargando.set(false);

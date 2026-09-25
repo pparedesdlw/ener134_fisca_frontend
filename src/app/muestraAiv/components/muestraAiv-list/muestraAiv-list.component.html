@@ -1,7 +1,7 @@
 <mat-card>
   <mat-card-title>Generación de muestra aleatoria AIV</mat-card-title>
   <mat-card-content>
-    <div class="filtros">
+    <div class="tisec-filtros">
       <mat-form-field appearance="outline" class="filtro-campo">
         <mat-label>Periodo *</mat-label>
         <mat-select [(ngModel)]="periodoSeleccionado" [disabled]="cargando()" (selectionChange)="onPeriodoChange()">
@@ -35,7 +35,7 @@
       </mat-form-field>
     </div>
 
-    <div class="filtros">
+    <div class="tisec-filtros">
       <mat-form-field appearance="outline" class="filtro-multiselect">
         <mat-label>Asunto (todos por defecto)</mat-label>
         <mat-select [(ngModel)]="asuntosSeleccionados" multiple [disabled]="cargando()" (selectionChange)="recalcular()">
@@ -98,7 +98,7 @@
       </p>
     </ng-template>
 
-    <div class="acciones-generacion">
+    <div class="tisec-acciones">
       <button mat-stroked-button (click)="cancelar()" [disabled]="cargando()">
         <mat-icon>close</mat-icon> Cancelar
       </button>
@@ -195,7 +195,7 @@
         <button mat-stroked-button (click)="cancelarReemplazo()">Cancelar</button>
       </div>
 
-      <div class="acciones-generacion">
+      <div class="tisec-acciones">
         <button mat-raised-button color="primary" (click)="iniciarEvaluacion()">
           <mat-icon>fact_check</mat-icon> Iniciar evaluación
         </button>

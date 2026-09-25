@@ -142,6 +142,16 @@ export class CalculoCitFormComponent implements OnInit {
     return calcularRangoFechasPeriodo(this.periodoSeleccionado, this.periodos, this.maxDate).max;
   }
 
+  /**
+   * RF12: un periodo totalmente futuro (aun no iniciado) hace que
+   * calcularRangoFechasPeriodo() devuelva fecha inicio > fecha fin (el fin se acota a "hoy",
+   * el inicio no) -- el backend ya rechaza esa combinacion, pero el boton no debe habilitarse
+   * para llegar a ese error evitable.
+   */
+  get fechasInvalidas(): boolean {
+    return !!this.fechaInicio && !!this.fechaFin && this.fechaInicio > this.fechaFin;
+  }
+
   /** Al cambiar de periodo, autocompleta fecha inicio/fin con el rango completo del periodo. */
   onPeriodoChange(): void {
     const rango = calcularRangoFechasPeriodo(this.periodoSeleccionado, this.periodos, this.maxDate);

@@ -101,8 +101,7 @@ export class MainLayoutComponent implements OnInit {
             { label: 'Cálculo CIT', path: '/cit/calculo', disabled: false },
             { label: 'Registros cerrados', path: '/registros-cerrados', disabled: false },
             { label: 'Indicadores y gráficos', path: '/indicadores-graficos', disabled: false },
-            { label: 'Reapertura de evaluaciones', path: '/reapertura-aiv', disabled: false },
-            { label: 'Tolerancia vigente', path: '/tolerancia-vigencia', disabled: false }
+            { label: 'Reapertura de evaluaciones', path: '/reapertura-aiv', disabled: false }
           ]
         }
       ]

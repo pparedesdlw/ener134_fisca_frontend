@@ -57,10 +57,13 @@
       <div class="button-container">
         <button mat-raised-button color="primary"
                 (click)="calcularCit()"
-                [disabled]="calculando || !periodoSeleccionado || !fechaInicio || !fechaFin || !empresaSeleccionada">
+                [disabled]="calculando || !periodoSeleccionado || !fechaInicio || !fechaFin || !empresaSeleccionada || fechasInvalidas">
           <mat-icon>calculate</mat-icon>
           Calcular CIT
         </button>
+        @if (fechasInvalidas) {
+          <span style="color: var(--color-warning-text); align-self: center;">El periodo seleccionado aún no inicia; no hay fechas válidas para calcular.</span>
+        }
         <button mat-raised-button color="accent"
                 (click)="finalizarEvaluacion()"
                 [disabled]="!resultado || finalizando"

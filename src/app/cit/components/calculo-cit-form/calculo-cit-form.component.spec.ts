@@ -328,6 +328,28 @@ describe('CalculoCitFormComponent', () => {
     });
   });
 
+  describe('fechasInvalidas (RF12)', () => {
+    it('debería ser false cuando falta alguna fecha', () => {
+      component.fechaInicio = null;
+      component.fechaFin = new Date(2024, 2, 31);
+      expect(component.fechasInvalidas).toBe(false);
+    });
+
+    it('debería ser false cuando fecha inicio es anterior o igual a fecha fin', () => {
+      component.fechaInicio = new Date(2024, 0, 1);
+      component.fechaFin = new Date(2024, 2, 31);
+      expect(component.fechasInvalidas).toBe(false);
+    });
+
+    it('debería ser true cuando fecha inicio es posterior a fecha fin (periodo aun no iniciado)', () => {
+      // Caso real: calcularRangoFechasPeriodo() acota fecha fin a "hoy" pero no fecha inicio,
+      // asi que un periodo totalmente futuro produce inicio > fin.
+      component.fechaInicio = new Date(2026, 9, 1);
+      component.fechaFin = new Date(2026, 8, 25);
+      expect(component.fechasInvalidas).toBe(true);
+    });
+  });
+
   describe('verHistorico (RF14)', () => {
     it('debería mostrar un mensaje si falta periodo o empresa', () => {
       component.periodoSeleccionado = null;

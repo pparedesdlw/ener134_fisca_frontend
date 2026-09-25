@@ -7,6 +7,7 @@
     "build": "ng build",
     "build:cert": "ng build --configuration=certification",
     "build:prod": "ng build --configuration=production",
+    "build:dev": "ng build --configuration=development-remote",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
   },

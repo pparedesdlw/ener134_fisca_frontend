@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { EvaluacionCitService } from './evaluacionCit.service';
-import { EvaluacionCitResponse, FinalizarEvaluacionCitRequest } from '../models/evaluacionCit.model';
+import { EvaluacionCitResponse, FinalizarEvaluacionCitRequest, HistoricoPreliminarCitResponse } from '../models/evaluacionCit.model';
 import { environment } from '../../../environments/environment';
 
 describe('EvaluacionCitService', () => {
@@ -67,11 +67,19 @@ describe('EvaluacionCitService', () => {
   });
 
   it('historico debería hacer GET a /historico con params', () => {
-    service.historico('PER-2025-01', 'ELUC').subscribe(e => expect(e).toEqual(mockEvaluacion));
+    const mockHistorico: HistoricoPreliminarCitResponse = {
+      consolidadoVigente: mockEvaluacion,
+      calculoActual: {
+        nmd: 90, nta: 100, incumplimientosItem1: 2, incumplimientosItem2: 0, incumplimientosItem3: 1, incumplimientosItem4: 2,
+        detalleItem4: { sinDetalleTh3: 0, sinDetalleTh4: 0, sinDetalleTh5: 0, sinDetalleTh6: 0, sinDetalleTh7: 0, sinDetalleTh8: 2 },
+        nrn: 4, cit: 2.0, tolerancia: 1.5, superaTolerancia: true
+      }
+    };
+    service.historico('PER-2025-01', 'ELUC').subscribe(h => expect(h).toEqual(mockHistorico));
     const httpReq = httpMock.expectOne(r => r.url === `${apiUrl}/historico`);
     expect(httpReq.request.method).toBe('GET');
     expect(httpReq.request.params.get('codigoPeriodo')).toBe('PER-2025-01');
     expect(httpReq.request.params.get('codigoEmpresa')).toBe('ELUC');
-    httpReq.flush(mockEvaluacion);
+    httpReq.flush(mockHistorico);
   });
 });
