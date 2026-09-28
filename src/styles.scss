@@ -78,3 +78,11 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   gap: var(--space-3);
   margin-bottom: var(--space-4);
 }
+
+// Evita que la etiqueta flotante del primer mat-form-field (appearance="outline") quede
+// cortada contra el borde superior del contenido del diálogo cuando el campo ya arranca con
+// valor (readonly o formulario de edición) — reproducible en cualquier diálogo donde ese campo
+// sea de los primeros elementos dentro de mat-dialog-content, sin espacio de sobra arriba.
+.mat-mdc-dialog-content {
+  padding-top: var(--space-5);
+}
