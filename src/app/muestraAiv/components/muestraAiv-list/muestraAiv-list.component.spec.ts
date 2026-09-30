@@ -263,6 +263,37 @@ describe('MuestraAivListComponent', () => {
     expect(router.navigate).toHaveBeenCalledWith(['/registros-cerrados']);
   });
 
+  describe('sumarColumna (CP029: fila Total de la distribución, RF02)', () => {
+    it('debería sumar la columna indicada de todas las filas de distribución', () => {
+      crearComponente();
+      const distribucion = [
+        { tipoRequerimiento: 'Denuncias', universo: 14930, porcentaje: 42.09, muestraPrincipal: 159, muestraAdicional: 15 },
+        { tipoRequerimiento: 'Consultas', universo: 11955, porcentaje: 33.7, muestraPrincipal: 128, muestraAdicional: 13 }
+      ];
+      expect(component.sumarColumna(distribucion, 'universo')).toBe(26885);
+      expect(component.sumarColumna(distribucion, 'muestraPrincipal')).toBe(287);
+      expect(component.sumarColumna(distribucion, 'muestraAdicional')).toBe(28);
+    });
+
+    it('debería devolver 0 con una distribución vacía', () => {
+      crearComponente();
+      expect(component.sumarColumna([], 'muestraAdicional')).toBe(0);
+    });
+  });
+
+  describe('muestraGenerada (CP023: filtros congelados tras generar)', () => {
+    it('debería ser false antes de generar la muestra', () => {
+      crearComponente();
+      expect(component.muestraGenerada()).toBe(false);
+    });
+
+    it('debería pasar a true una vez que la muestra queda generada', () => {
+      crearComponente();
+      component.muestra.set(mockMuestra);
+      expect(component.muestraGenerada()).toBe(true);
+    });
+  });
+
   it('generar debería avisar si faltan filtros obligatorios', () => {
     crearComponente();
     component.generar();

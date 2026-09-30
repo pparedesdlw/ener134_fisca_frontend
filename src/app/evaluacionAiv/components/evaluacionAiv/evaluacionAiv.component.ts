@@ -372,7 +372,13 @@ export class EvaluacionAivComponent implements OnInit {
     });
   }
 
+  /**
+   * RF06: "El registro se considera evaluado solo si los 4 items están evaluados" —
+   * el color se basa en la completitud real de items, no en estadoRegistro, porque
+   * reabrir() resetea estadoRegistro a PENDIENTE para todos los registros aunque
+   * conserven sus 4 items respondidos (ver EvaluacionAivServiceImpl.reabrir()).
+   */
   colorEstado(registro: EvaluacionRegistroResponse): string {
-    return registro.estadoRegistro === 'EVALUADO' ? 'fila-evaluada' : 'fila-pendiente';
+    return registro.itemsTotal >= 4 ? 'fila-evaluada' : 'fila-pendiente';
   }
 }

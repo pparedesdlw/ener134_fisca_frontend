@@ -44,9 +44,14 @@ table {
   width: 100%;
   margin-bottom: var(--space-4);
 }
-::ng-deep .fila-evaluada {
+/**
+ * CP040: especificidad igual a ".mat-mdc-cell { background: inherit; }" de Angular Material,
+ * declarada después en la hoja de estilos — sin subir la especificidad aquí, Material siempre
+ * ganaba el empate y el color nunca se veía, aunque la clase sí se aplicaba en el DOM.
+ */
+::ng-deep td.mat-mdc-cell.fila-evaluada {
   background-color: var(--color-success-bg);
 }
-::ng-deep .fila-pendiente {
+::ng-deep td.mat-mdc-cell.fila-pendiente {
   background-color: var(--color-error-bg);
 }

@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, inject } from '@angular/core';
+import { Component, OnInit, signal, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -18,7 +18,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { AuthService } from '../../../auth/services/auth.service';
 import { MuestraAivService } from '../../services/muestraAiv.service';
-import { MuestraAivResponse, SimulacionMuestraAivResponse } from '../../models/muestraAiv.model';
+import { DistribucionTipoResponse, MuestraAivResponse, SimulacionMuestraAivResponse } from '../../models/muestraAiv.model';
 import { PeriodoService } from '../../../periodos/services/periodo.service';
 import { Periodo } from '../../../periodos/models/periodo.model';
 import { EmpresaConcesionariaService } from '../../../empresas/services/empresa-concesionaria.service';
@@ -78,6 +78,13 @@ export class MuestraAivListComponent implements OnInit {
   cargando = signal<boolean>(false);
   reemplazandoId = signal<number | null>(null);
   motivoReemplazo = '';
+
+  /**
+   * CP023: una vez generada la muestra, los filtros ya no tienen efecto visible (el resumen
+   * queda congelado con los datos de la generación, ver plantilla) -- se deshabilitan para no
+   * dar a entender que cambiarlos recalcula algo. "Cancelar" sigue disponible para empezar de nuevo.
+   */
+  muestraGenerada = computed(() => !!this.muestra());
 
   /** RF02: previsualización sin persistir, recalculada automáticamente al ajustar filtros. */
   simulacion = signal<SimulacionMuestraAivResponse | null>(null);
@@ -310,6 +317,15 @@ export class MuestraAivListComponent implements OnInit {
     this.router.navigate(['/evaluacion-aiv'], {
       queryParams: { periodo: this.periodoSeleccionado, empresa: m.codigoEmpresa, idMuestraAiv: m.id }
     });
+  }
+
+  /**
+   * RF02: fila "Total" de la tabla de distribución — suma las filas realmente mostradas,
+   * en vez de reutilizar tamanioBase/tamanioFinal (el redondeo hacia arriba por categoría,
+   * también exigido por RF02, puede dejar la suma de columnas por encima del valor global).
+   */
+  sumarColumna(distribucion: DistribucionTipoResponse[], campo: 'universo' | 'muestraPrincipal' | 'muestraAdicional'): number {
+    return distribucion.reduce((total, d) => total + d[campo], 0);
   }
 
   private formatDate(date: Date): string {

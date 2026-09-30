@@ -4,7 +4,7 @@
     <div class="tisec-filtros">
       <mat-form-field appearance="outline" class="filtro-campo">
         <mat-label>Periodo *</mat-label>
-        <mat-select [(ngModel)]="periodoSeleccionado" [disabled]="cargando()" (selectionChange)="onPeriodoChange()">
+        <mat-select [(ngModel)]="periodoSeleccionado" [disabled]="cargando() || muestraGenerada()" (selectionChange)="onPeriodoChange()">
           <mat-option *ngFor="let periodo of periodos()" [value]="periodo.codigoPeriodo">
             {{ periodo.codigoPeriodo }} - {{ periodo.descripcion }}
           </mat-option>
@@ -13,21 +13,21 @@
 
       <mat-form-field appearance="outline" class="filtro-campo">
         <mat-label>Fecha inicio *</mat-label>
-        <input matInput [matDatepicker]="pickerInicio" [(ngModel)]="fechaInicio" [min]="periodoMinDate" [max]="periodoMaxDate" [disabled]="cargando()" (dateChange)="recalcular()">
+        <input matInput [matDatepicker]="pickerInicio" [(ngModel)]="fechaInicio" [min]="periodoMinDate" [max]="periodoMaxDate" [disabled]="cargando() || muestraGenerada()" (dateChange)="recalcular()">
         <mat-datepicker-toggle matIconSuffix [for]="pickerInicio"></mat-datepicker-toggle>
         <mat-datepicker #pickerInicio></mat-datepicker>
       </mat-form-field>
 
       <mat-form-field appearance="outline" class="filtro-campo">
         <mat-label>Fecha fin *</mat-label>
-        <input matInput [matDatepicker]="pickerFin" [(ngModel)]="fechaFin" [min]="periodoMinDate" [max]="periodoMaxDate" [disabled]="cargando()" (dateChange)="recalcular()">
+        <input matInput [matDatepicker]="pickerFin" [(ngModel)]="fechaFin" [min]="periodoMinDate" [max]="periodoMaxDate" [disabled]="cargando() || muestraGenerada()" (dateChange)="recalcular()">
         <mat-datepicker-toggle matIconSuffix [for]="pickerFin"></mat-datepicker-toggle>
         <mat-datepicker #pickerFin></mat-datepicker>
       </mat-form-field>
 
       <mat-form-field appearance="outline" class="filtro-campo">
         <mat-label>Empresa *</mat-label>
-        <mat-select [(ngModel)]="empresaSeleccionada" [disabled]="cargando()" (selectionChange)="recalcular()">
+        <mat-select [(ngModel)]="empresaSeleccionada" [disabled]="cargando() || muestraGenerada()" (selectionChange)="recalcular()">
           <mat-option *ngFor="let empresa of empresas()" [value]="empresa.codigoEmpresa">
             {{ empresa.codigoEmpresa }} - {{ empresa.razonSocial }}
           </mat-option>
@@ -38,7 +38,7 @@
     <div class="tisec-filtros">
       <mat-form-field appearance="outline" class="filtro-multiselect">
         <mat-label>Asunto (todos por defecto)</mat-label>
-        <mat-select [(ngModel)]="asuntosSeleccionados" multiple [disabled]="cargando()" (selectionChange)="recalcular()">
+        <mat-select [(ngModel)]="asuntosSeleccionados" multiple [disabled]="cargando() || muestraGenerada()" (selectionChange)="recalcular()">
           <mat-option *ngFor="let asunto of asuntos()" [value]="asunto.codigoAsunto">
             {{ asunto.codigoAsunto }} - {{ asunto.descripcion }}
           </mat-option>
@@ -47,7 +47,7 @@
 
       <mat-form-field appearance="outline" class="filtro-multiselect">
         <mat-label>Ubigeo — Departamento (todos por defecto)</mat-label>
-        <mat-select [(ngModel)]="departamentosSeleccionados" multiple [disabled]="cargando()" (selectionChange)="recalcular()">
+        <mat-select [(ngModel)]="departamentosSeleccionados" multiple [disabled]="cargando() || muestraGenerada()" (selectionChange)="recalcular()">
           <mat-option *ngFor="let dpto of departamentos()" [value]="dpto.codigoDepartamento">
             {{ dpto.descripcionDepartamento }}
           </mat-option>
@@ -66,6 +66,7 @@
           <div><strong>Población (N):</strong> {{ sim.poblacion }}</div>
           <div><strong>Tamaño muestra (n):</strong> {{ sim.tamanioBase }}</div>
           <div><strong>% adicional:</strong> {{ sim.porcentajeAdicional }}</div>
+          <div><strong>Tamaño total de la muestra adicional:</strong> {{ sumarColumna(sim.distribucion, 'muestraAdicional') }}</div>
           <div><strong>Tamaño total:</strong> {{ sim.tamanioFinal }}</div>
         </div>
 
@@ -89,6 +90,15 @@
               <td>{{ d.muestraAdicional }}</td>
             </tr>
           </tbody>
+          <tfoot>
+            <tr class="fila-total">
+              <td>Total</td>
+              <td>{{ sumarColumna(sim.distribucion, 'universo') }}</td>
+              <td></td>
+              <td>{{ sumarColumna(sim.distribucion, 'muestraPrincipal') }}</td>
+              <td>{{ sumarColumna(sim.distribucion, 'muestraAdicional') }}</td>
+            </tr>
+          </tfoot>
         </table>
       </ng-container>
     </ng-container>
@@ -117,6 +127,7 @@
         <div><strong>Población (N):</strong> {{ m.poblacion }}</div>
         <div><strong>Tamaño muestra (n):</strong> {{ m.tamanioBase }}</div>
         <div><strong>% adicional:</strong> {{ m.porcentajeAdicional }}</div>
+        <div><strong>Tamaño total de la muestra adicional:</strong> {{ sumarColumna(m.distribucion, 'muestraAdicional') }}</div>
         <div><strong>Tamaño total:</strong> {{ m.tamanioFinal }}</div>
         <div><strong>Estado:</strong> {{ m.estadoMuestra }}</div>
       </div>
@@ -141,6 +152,15 @@
             <td>{{ d.muestraAdicional }}</td>
           </tr>
         </tbody>
+        <tfoot>
+          <tr class="fila-total">
+            <td>Total</td>
+            <td>{{ sumarColumna(m.distribucion, 'universo') }}</td>
+            <td></td>
+            <td>{{ sumarColumna(m.distribucion, 'muestraPrincipal') }}</td>
+            <td>{{ sumarColumna(m.distribucion, 'muestraAdicional') }}</td>
+          </tr>
+        </tfoot>
       </table>
 
       <h3>Detalle de la muestra</h3>

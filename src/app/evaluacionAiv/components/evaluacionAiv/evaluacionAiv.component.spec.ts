@@ -587,9 +587,15 @@ describe('EvaluacionAivComponent', () => {
       }, 50);
     });
 
-    it('colorEstado debería retornar la clase según el estado del registro', () => {
-      expect(component.colorEstado(registroPrincipal)).toBe('fila-evaluada');
-      expect(component.colorEstado({ ...registroPrincipal, estadoRegistro: 'PENDIENTE' })).toBe('fila-pendiente');
+    it('colorEstado debería retornar fila-evaluada solo si los 4 items están evaluados (RF06)', () => {
+      expect(component.colorEstado({ ...registroPrincipal, itemsTotal: 4 })).toBe('fila-evaluada');
+      expect(component.colorEstado({ ...registroPrincipal, itemsTotal: 3 })).toBe('fila-pendiente');
+      expect(component.colorEstado({ ...registroPrincipal, itemsTotal: 0 })).toBe('fila-pendiente');
+    });
+
+    it('CP040: colorEstado debería pintar fila-evaluada aunque estadoRegistro quede en PENDIENTE tras un reabrir con los 4 items ya completos', () => {
+      const registroReabierto = { ...registroPrincipal, itemsTotal: 4, itemsCumplidos: 4, estadoRegistro: 'PENDIENTE' };
+      expect(component.colorEstado(registroReabierto)).toBe('fila-evaluada');
     });
 
     it('guardarAvances debería refrescar la evaluación y notificar', () => {
