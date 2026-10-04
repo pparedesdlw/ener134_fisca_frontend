@@ -6,6 +6,7 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { of, throwError } from 'rxjs';
 import { EvaluacionAivComponent } from './evaluacionAiv.component';
 import { AuthService } from '../../../auth/services/auth.service';
+import { EmpresaConcesionariaService } from '../../../empresas/services/empresa-concesionaria.service';
 import { EvaluacionAivService } from '../../services/evaluacionAiv.service';
 import { MuestraAivService } from '../../../muestraAiv/services/muestraAiv.service';
 import { MuestraAivResponse } from '../../../muestraAiv/models/muestraAiv.model';
@@ -45,6 +46,8 @@ describe('EvaluacionAivComponent', () => {
     ]);
     const muestraServiceSpy = jasmine.createSpyObj('MuestraAivService', ['generar']);
     const sustentoServiceSpy = jasmine.createSpyObj('SustentoAivService', ['cargarMasivo']);
+    const empresaServiceSpy = jasmine.createSpyObj('EmpresaConcesionariaService', ['listarTodos']);
+    empresaServiceSpy.listarTodos.and.returnValue(of([{ id: 10, codigoEmpresa: 'SEAL', razonSocial: 'ELECTRO SUR S.A.' }]));
     const dialogSpy = jasmine.createSpyObj('MatDialog', ['open']);
     const snackBarSpy = jasmine.createSpyObj('MatSnackBar', ['open']);
 
@@ -54,6 +57,7 @@ describe('EvaluacionAivComponent', () => {
         { provide: EvaluacionAivService, useValue: serviceSpy },
         { provide: MuestraAivService, useValue: muestraServiceSpy },
         { provide: SustentoAivService, useValue: sustentoServiceSpy },
+        { provide: EmpresaConcesionariaService, useValue: empresaServiceSpy },
         { provide: MatDialog, useValue: dialogSpy },
         { provide: MatSnackBar, useValue: snackBarSpy },
         { provide: AuthService, useValue: { currentUsername: 'fdiaz' } },
@@ -243,6 +247,29 @@ describe('EvaluacionAivComponent', () => {
       configurar();
       service.obtenerVigente.and.returnValue(of(mockEvaluacion));
       fixture.detectChanges();
+    });
+
+    it('CP072: la cabecera muestra la empresa como "código - razón social" y el indicador con 2 decimales', () => {
+      service.obtenerVigente.and.returnValue(of({ ...mockEvaluacion, indicadorAiv: 5.2493, superaTolerancia: true }));
+      component.ngOnInit();
+      fixture.detectChanges();
+
+      const resumen: HTMLElement = fixture.nativeElement.querySelector('.resumen');
+      expect(resumen.textContent).toContain('SEAL - ELECTRO SUR S.A.');
+      expect(resumen.textContent).toContain('5.25');
+      expect(resumen.textContent).not.toContain('5.2493');
+    });
+
+    it('CP072: el indicador AIV se pinta en rojo solo cuando supera la tolerancia', () => {
+      service.obtenerVigente.and.returnValue(of({ ...mockEvaluacion, superaTolerancia: true }));
+      component.ngOnInit();
+      fixture.detectChanges();
+      expect(fixture.nativeElement.querySelector('.resumen .supera-tolerancia')).toBeTruthy();
+
+      service.obtenerVigente.and.returnValue(of({ ...mockEvaluacion, superaTolerancia: false }));
+      component.ngOnInit();
+      fixture.detectChanges();
+      expect(fixture.nativeElement.querySelector('.resumen .supera-tolerancia')).toBeNull();
     });
 
     it('registrosFiltrados debería separar principal/adicional/reemplazados', () => {

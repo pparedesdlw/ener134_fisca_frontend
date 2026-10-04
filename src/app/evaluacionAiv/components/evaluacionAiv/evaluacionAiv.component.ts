@@ -15,6 +15,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { AuthService } from '../../../auth/services/auth.service';
+import { EmpresaConcesionariaService } from '../../../empresas/services/empresa-concesionaria.service';
+import { EmpresaConcesionaria } from '../../../empresas/models/empresa-concesionaria.model';
 import { EvaluacionAivService } from '../../services/evaluacionAiv.service';
 import { EvaluacionAivResponse, EvaluacionRegistroResponse } from '../../models/evaluacionAiv.model';
 import { MuestraAivService } from '../../../muestraAiv/services/muestraAiv.service';
@@ -52,6 +54,18 @@ export class EvaluacionAivComponent implements OnInit {
   private dialog = inject(MatDialog);
   private snack = inject(MatSnackBar);
   private authService = inject(AuthService);
+  private empresaService = inject(EmpresaConcesionariaService);
+
+  private empresas = signal<EmpresaConcesionaria[]>([]);
+  /** La evaluación expone el id interno de la empresa; el usuario necesita ver "código - razón social". */
+  etiquetaEmpresa = computed(() => {
+    const evaluacion = this.evaluacion();
+    if (!evaluacion) {
+      return '';
+    }
+    const empresa = this.empresas().find(e => e.id === evaluacion.codigoEmpresa);
+    return empresa ? `${empresa.codigoEmpresa} - ${empresa.razonSocial ?? ''}`.trim() : String(evaluacion.codigoEmpresa);
+  });
 
   get usuario(): string {
     return this.authService.currentUsername;
@@ -124,6 +138,7 @@ export class EvaluacionAivComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.empresaService.listarTodos().subscribe({ next: (e) => this.empresas.set(e) });
     const params = this.route.snapshot.queryParamMap;
     const codigoPeriodo = params.get('periodo');
     const codigoEmpresa = params.get('empresa');

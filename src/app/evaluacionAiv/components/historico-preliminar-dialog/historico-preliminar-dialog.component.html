@@ -51,7 +51,7 @@
       <div><strong>NMD:</strong> {{ e.muestraDefinitiva }}</div>
       <div>
         <strong>Resultado preliminar del AIV:</strong>
-        <span [class.supera-tolerancia]="e.superaTolerancia">{{ e.indicadorAiv }}%</span>
+        <span [class.supera-tolerancia]="e.superaTolerancia">{{ e.indicadorAiv | number:'1.2-2' }}%</span>
       </div>
       <div><strong>Tolerancia aplicable:</strong> {{ e.toleranciaAplicable ?? '—' }}%</div>
     </div>

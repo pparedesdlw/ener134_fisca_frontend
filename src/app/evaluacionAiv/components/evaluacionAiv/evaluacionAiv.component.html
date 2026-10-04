@@ -9,12 +9,12 @@
     <ng-container *ngIf="!cargando() && evaluacion() as e">
       <div class="resumen">
         <div><strong>Periodo:</strong> {{ e.codigoPeriodo }}</div>
-        <div><strong>Empresa:</strong> {{ e.codigoEmpresa }}</div>
+        <div><strong>Empresa:</strong> {{ etiquetaEmpresa() }}</div>
         <div><strong>Estado:</strong> {{ e.estadoEvaluacion }}</div>
         <div><strong>NTA:</strong> {{ e.totalAtenciones }}</div>
         <div><strong>NMD:</strong> {{ e.muestraDefinitiva }}</div>
         <div><strong>NRN:</strong> {{ e.numeroRegistrosNoConformes }}</div>
-        <div><strong>Indicador AIV:</strong> {{ e.indicadorAiv }}</div>
+        <div><strong>Indicador AIV:</strong> <span [class.supera-tolerancia]="e.superaTolerancia">{{ e.indicadorAiv | number:'1.2-2' }}</span></div>
       </div>
 
       <mat-form-field appearance="outline" class="buscador">

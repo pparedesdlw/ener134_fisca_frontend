@@ -46,7 +46,7 @@
     <div>
       <strong>Valor del AIV:</strong>
       <span [class.supera-tolerancia]="data.evaluacion.superaTolerancia">
-        {{ data.evaluacion.indicadorAiv }}%
+        {{ data.evaluacion.indicadorAiv | number:'1.2-2' }}%
       </span>
     </div>
     <div><strong>Tolerancia aplicable:</strong> {{ data.evaluacion.toleranciaAplicable ?? '—' }}%</div>

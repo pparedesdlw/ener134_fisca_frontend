@@ -42,6 +42,14 @@ describe('ResultadoConsolidadoDialogComponent', () => {
     expect(component.esTotal).toBe(false);
   });
 
+  it('CP066: el valor del AIV se muestra con 2 decimales aunque llegue con 4', async () => {
+    await crear({ estadoEvaluacion: 'CONSOLIDADO_TOTAL', itemsResumen: [], indicadorAiv: 5.2493 } as any);
+
+    const calculo: HTMLElement = fixture.nativeElement.querySelector('.calculo');
+    expect(calculo.textContent).toContain('5.25%');
+    expect(calculo.textContent).not.toContain('5.2493');
+  });
+
   it('salir debería cerrar el diálogo', async () => {
     await crear({ estadoEvaluacion: 'CONSOLIDADO_TOTAL', itemsResumen: [] });
     component.salir();
